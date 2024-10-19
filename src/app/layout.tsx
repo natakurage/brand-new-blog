@@ -7,6 +7,17 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicons/favicon.ico",
     apple: "/favicons/apple-touch-icon.png"
+  },
+  openGraph: {
+    siteName: "ナタクラゲのブログ",
+    images: [
+      {
+        url: "/banner.png",
+        width: 1200,
+        height: 630,
+        alt: "ナタクラゲのブログ OGP"
+      }
+    ]
   }
 };
 
