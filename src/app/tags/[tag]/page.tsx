@@ -1,6 +1,13 @@
 import ArticleList from "@/components/ArticleList";
 import getPosts from "@/lib/contentful";
 
+export async function generateMetadata ({ params }: { params: { tag: string } }) {
+  const { tag } = params;
+  return {
+    title: `タグ #${tag} がつけられた記事` + " - ナタクラゲのブログ",
+  };
+}
+
 export default async function TagPage({ params }: { params: { tag: string } }) {
   const { tag } = params;
   const posts = await getPosts({

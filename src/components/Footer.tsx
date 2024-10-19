@@ -35,6 +35,9 @@ export function Footer() {
         <Link href="/articles/about" className="link link-hover">
           About
         </Link>
+        <Link href="/articles/policy" className="link link-hover">
+          Policy
+        </Link>
       </nav>
       <nav>
         <h6 className="footer-title">Social</h6>

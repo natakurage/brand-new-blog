@@ -1,6 +1,13 @@
 import ArticleList from "@/components/ArticleList";
 import getPosts from "@/lib/contentful";
 
+export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {
+  const { q } = searchParams;
+  return {
+    title: `"${q}"の検索結果` + " - ナタクラゲのブログ",
+  };
+}
+
 export default async function SearchPage({ searchParams }: { searchParams: { q: string } }) {
   const { q } = searchParams;
   const posts = await getPosts({

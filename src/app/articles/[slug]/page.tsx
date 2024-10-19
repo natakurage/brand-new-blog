@@ -18,7 +18,7 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   }
   const post = posts[0];
   return {
-    title: post.title + " - Natakurage's Blog",
+    title: post.title + " - ナタクラゲのブログ",
   };
 }
 

@@ -6,7 +6,7 @@ export function NavBar() {
   return (
     <div className="navbar sticky top-0 z-50 bg-base-100 bg-opacity-90">
       <div className="flex-1">
-        <Link href="/" className="btn btn-ghost text-xl">Natakurage&apos;s blog</Link>
+        <Link href="/" className="btn btn-ghost text-xl">ナタクラゲのブログ</Link>
       </div>
       <div className="flex-none">
         <div className="drawer drawer-end">
