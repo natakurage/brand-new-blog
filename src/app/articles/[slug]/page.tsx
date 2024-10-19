@@ -50,11 +50,11 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         <div className="text-sm flex gap-2 justify-end">
           <span className="flex flex-row gap-1">
             <MdAccessTime className="my-auto" />
-            <time>{new Date(post.createdAt).toLocaleDateString()}</time>
+            <time>{new Date(post.createdAt).toLocaleDateString("ja-JP")}</time>
           </span>
           <span className="flex flex-row gap-1">
             <MdUpdate className="my-auto" />
-            <time>{new Date(post.updatedAt).toLocaleDateString()}</time>
+            <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP")}</time>
           </span>
         </div>
         <hr />

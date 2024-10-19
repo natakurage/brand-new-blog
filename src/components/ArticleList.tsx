@@ -29,7 +29,7 @@ export default function ArticleList({ posts }: { posts: BlogPost[] }) {
           </div>
           <div className="flex flex-row gap-1 justify-end">
             <MdUpdate className="my-auto" />
-            <time>{new Date(post.updatedAt).toLocaleDateString()}</time>
+            <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP")}</time>
           </div>
           <Link href={`/articles/${post.slug}`} className="absolute w-full h-full top-0 left-0 z-1" />
         </li>
