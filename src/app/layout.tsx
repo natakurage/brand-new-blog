@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     icon: "/favicons/favicon.ico",
     apple: "/favicons/apple-touch-icon.png"
   }
-}
+};
 
 export default function RootLayout({
   children,

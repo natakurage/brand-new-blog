@@ -1,4 +1,3 @@
-import client, { BlogPost } from "@/lib/contentful";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdAccessTime, MdUpdate } from "react-icons/md";
