@@ -8,15 +8,15 @@ export default function ArticleList({ posts }: { posts: BlogPost[] }) {
       {posts.map((post) => (
         <li
           key={post.slug}
-          className="relative p-4 hover:bg-neutral hover:bg-opacity-50 rounded-lg"
+          className="relative p-4 hover:bg-neutral hover:bg-opacity-50 rounded-lg overflow-hidden"
         >
           <h2 className="text-xl font-bold">
-            {post.title.toString()}
+            {post.title}
           </h2>
-          <p>{post.body.toString().slice(0, 100)}...</p>
+          <p>{post.body.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>
           <div className="space-x-2">
           {
-            (Array.isArray(post.tags)) && post.tags.map((tag: string) => (
+            post.tags?.map((tag) => (
               <Link
                 key={tag}
                 href={`/tags/${tag}`}
