@@ -4,78 +4,80 @@ import Markdown from "react-markdown";
 import { MdAccessTime, MdUpdate } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
+import Link from "next/link";
+import getPosts from "@/lib/contentful";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const entries = await client.getEntries({
+  const posts = await getPosts({
     content_type: "blogPost",
     "fields.slug": slug,
   });
-  if (entries.items.length === 0) {
+  if (posts.length === 0) {
     notFound();
   }
+  const post = posts[0];
   return {
-    title: entries.items[0].fields.title + " - Natakurage's Blog",
+    title: post.title + " - Natakurage's Blog",
   };
 }
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const entries = await client.getEntries({
+  const posts = await getPosts({
     content_type: "blogPost",
     "fields.slug": slug,
   });
-  if (entries.items.length === 0) {
+  if (posts.length === 0) {
     notFound();
   }
-  const { title, body, license } = entries.items[0].fields;
-  const { createdAt, updatedAt } = entries.items[0].sys;
-  const entry = {
-    title,
-    slug,
-    body,
-    createdAt,
-    updatedAt,
-    license
-   } as BlogPost;
-  console.log(entry);
+  const post = posts[0];
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-5xl font-bold">{entry.title}</h1>
-        <div className="text-sm flex gap-4">
+      <div className="space-y-1">
+        <h1 className="text-5xl font-bold">{post.title}</h1>
+        <div className="space-x-2">
+        {
+          post.tags?.map((tag) => (
+            <Link key={tag} href={`/tags/${tag}`}>
+              <span className="badge badge-neutral link link-hover">
+                # {tag}
+              </span>
+            </Link>
+          ))
+        }
+        </div>
+        <div className="text-sm flex gap-2 justify-end">
           <span className="flex flex-row gap-1">
             <MdAccessTime className="my-auto" />
-            <time>{new Date(entry.createdAt).toLocaleDateString()}</time>
+            <time>{new Date(post.createdAt).toLocaleDateString()}</time>
           </span>
           <span className="flex flex-row gap-1">
             <MdUpdate className="my-auto" />
-            <time>{new Date(entry.updatedAt).toLocaleDateString()}</time>
+            <time>{new Date(post.updatedAt).toLocaleDateString()}</time>
           </span>
         </div>
+        <hr />
       </div>
-      <hr />
       <main>
         <Markdown
           className="prose"
           rehypePlugins={[rehypeSlug, [rehypeToc, { headings: ["h2", "h3"]} ]]}
         >
-          {entry.body}
+          {post.body}
         </Markdown>
       </main>
       <div className="border border-neutral border-dashed rounded p-3 space-y-2">
         <h6 className="font-bold">Credit</h6>
         <ul>
-          <li>タイトル: {entry.title}</li>
+          <li>タイトル: {post.title}</li>
           <li>著者: 千本槍みなも@ナタクラゲ</li>
-          <li>作成年: {new Date(entry.createdAt).getFullYear()}</li>
+          <li>作成年: {new Date(post.createdAt).getFullYear()}</li>
         </ul>
         <h6 className="font-bold">License</h6>
-        {entry.license && (
-          <p className="text-sm">
-            <Markdown className="prose">{entry.license}</Markdown>
-          </p>
-        )}
+        {post.license && 
+          <Markdown className="text-sm prose">{post.license}</Markdown>
+        }
       </div>
     </div>
   );

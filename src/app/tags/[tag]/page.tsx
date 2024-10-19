@@ -1,16 +1,16 @@
 import ArticleList from "@/components/ArticleList";
 import getPosts from "@/lib/contentful";
 
-export default async function SearchPage({ searchParams }: { searchParams: { q: string } }) {
-  const { q } = searchParams;
+export default async function TagPage({ params }: { params: { tag: string } }) {
+  const { tag } = params;
   const posts = await getPosts({
     content_type: "blogPost",
-    query: q,
+    "fields.tags[in]": tag,
     limit: 20,
   });
   return (
     <div>
-      <h1 className="text-3xl font-bold">&ldquo;{q}&rdquo;の検索結果</h1>
+      <h1 className="text-3xl font-bold">タグ #{tag} がつけられた記事</h1>
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
