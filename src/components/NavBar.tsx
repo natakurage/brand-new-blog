@@ -3,6 +3,24 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import SearchBar from "./SearchBar";
 
 export function NavBar() {
+  const navbarContents = [
+    {
+      name: "Home",
+      href: "/"
+    },
+    {
+      name: "About",
+      href: "/articles/about"
+    },
+    {
+      name: "お知らせ",
+      href: "/tags/お知らせ"
+    },
+    {
+      name: "小説",
+      href: "/tags/小説"
+    }
+  ];
   return (
     <div className="navbar sticky top-0 z-50 bg-base-100 bg-opacity-90">
       <div className="flex-1">
@@ -19,7 +37,13 @@ export function NavBar() {
           <div className="drawer-side">
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <ul className="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content bg-opacity-100 h-full">
-              <li><Link href="/">Home</Link></li>
+              {
+                navbarContents.map(({ name, href }) => (
+                  <li key={name}>
+                    <Link href={href}>{name}</Link>
+                  </li>
+                ))
+              }
               <li><SearchBar /></li>
             </ul>
           </div>
