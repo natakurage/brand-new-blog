@@ -63,7 +63,33 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         <Markdown
           className="prose"
           remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeSlug, [rehypeToc, { headings: ["h2", "h3"]} ]]}
+          rehypePlugins={[rehypeSlug, [rehypeToc, {
+            headings: ["h2", "h3"],
+            customizeTOC: (toc: object) => {
+              if (!post.showToc) return false;
+              return {
+                type: "element",
+                tagName: "details",
+                properties: { className: "collapse collapse-arrow bg-base-200" },
+                children: [
+                  {
+                    type: "element",
+                    tagName: "summary",
+                    properties: { className: "collapse-title text-xl font-medium" },
+                    children: [
+                      { type: "text", value: "目次" },
+                    ]
+                  },
+                  {
+                    type: "element",
+                    tagName: "div",
+                    properties: { className: "collapse-content" },
+                    children: [toc]
+                  }
+                ]
+              };
+            }
+          }]]}
         >
           {post.body}
         </Markdown>

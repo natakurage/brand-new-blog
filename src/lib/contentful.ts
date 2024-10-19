@@ -19,12 +19,13 @@ export interface BlogPost {
   createdAt: string;
   updatedAt: string;
   tags?: string[];
+  showToc: boolean;
 }
 
 export default async function getPosts(query: EntriesQueries<EntrySkeletonType, undefined>) {
   const entries = await client.getEntries(query);
   return entries.items.map((item) => {
-    const { title, slug, body, license, tags } = item.fields;
+    const { title, slug, body, license, tags, showToc } = item.fields;
     const { createdAt, updatedAt } = item.sys;
     return {
       title,
@@ -33,7 +34,8 @@ export default async function getPosts(query: EntriesQueries<EntrySkeletonType, 
       createdAt,
       updatedAt,
       license,
-      tags
+      tags,
+      showToc
     } as BlogPost;
   });
 }
