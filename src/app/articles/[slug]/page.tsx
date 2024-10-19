@@ -41,16 +41,18 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       <h1 className="text-5xl font-bold">{entry.title}</h1>
       <div className="text-sm flex gap-4">
         <span className="flex flex-row gap-1">
-          <MdAccessTime />
+          <MdAccessTime className="my-auto" />
           <time>{new Date(entry.createdAt).toLocaleDateString()}</time>
         </span>
         <span className="flex flex-row gap-1">
-          <MdUpdate />
+          <MdUpdate className="my-auto" />
           <time>{new Date(entry.updatedAt).toLocaleDateString()}</time>
         </span>
       </div>
       <hr />
-      <Markdown className="prose">{entry.body}</Markdown>
+      <main>
+        <Markdown className="prose">{entry.body}</Markdown>
+      </main>
     </div>
   );
 }
