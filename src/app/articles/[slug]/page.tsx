@@ -75,8 +75,9 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <li>作成年: {new Date(post.createdAt).getFullYear()}</li>
         </ul>
         <h6 className="font-bold">License</h6>
-        {post.license && 
-          <Markdown className="text-sm prose">{post.license}</Markdown>
+        {post.license == null
+          ? <p>ライセンスが不明です。</p>
+          : <Markdown className="text-sm prose">{post.license}</Markdown>
         }
       </div>
     </div>

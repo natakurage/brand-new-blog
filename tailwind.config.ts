@@ -14,6 +14,13 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            color: "var(--foreground)",
+          },
+        },
+      }
     },
   },
   plugins: [daisyui, typography],

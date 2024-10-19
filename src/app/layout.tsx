@@ -9,7 +9,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body>
+      <body className="bg-base-200">
         <NavBar />
         <div className="mx-auto max-w-xl my-8">
           {children}

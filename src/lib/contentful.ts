@@ -9,7 +9,7 @@ export interface BlogPost {
   title: string;
   slug: string;
   body: string;
-  license: string;
+  license?: string;
   createdAt: string;
   updatedAt: string;
   tags?: string[];

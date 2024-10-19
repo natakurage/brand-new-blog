@@ -9,7 +9,7 @@ export function Footer() {
       <aside>
         <div className="flex flex-wrap gap-4">
           <div className="avatar">
-            <div className="ring-primary ring-offset-base-100 w-20 rounded-full ring ring-offset-2">
+            <div className="ring-accent ring-offset-base-100 w-20 rounded-full ring ring-offset-2">
               <Image
                 src="/avatar.png"
                 alt="Natakurage avatar"
