@@ -2,6 +2,8 @@ import client, { BlogPost } from "@/lib/contentful";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdAccessTime, MdUpdate } from "react-icons/md";
+import rehypeSlug from "rehype-slug";
+import rehypeToc from "rehype-toc";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -51,7 +53,12 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       </div>
       <hr />
       <main>
-        <Markdown className="prose">{entry.body}</Markdown>
+        <Markdown
+          className="prose"
+          rehypePlugins={[rehypeSlug, [rehypeToc, { headings: ["h2", "h3"]} ]]}
+        >
+          {entry.body}
+        </Markdown>
       </main>
     </div>
   );
