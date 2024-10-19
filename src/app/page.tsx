@@ -12,8 +12,11 @@ export default async function Home() {
     <div>
       <ul className="space-y-4">
         {entries.items.map((entry) => (
-          <li key={entry.sys.id}>
-            <Link href={`/articles/${entry.fields.slug}`} className="">
+          <li
+            key={entry.sys.id}
+            className="p-4 hover:bg-neutral hover:bg-opacity-50 rounded-lg"
+          >
+            <Link href={`/articles/${entry.fields.slug}`}>
               <h2 className="text-xl font-bold">
                 {entry.fields.title?.toString()}
               </h2>
