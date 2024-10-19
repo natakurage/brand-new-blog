@@ -6,6 +6,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
 import Link from "next/link";
 import getPosts from "@/lib/contentful";
+import remarkGfm from "remark-gfm";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -62,6 +63,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       <main>
         <Markdown
           className="prose"
+          remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeSlug, [rehypeToc, { headings: ["h2", "h3"]} ]]}
         >
           {post.body}
