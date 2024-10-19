@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className="bg-base-200">
         <NavBar />
-        <div className="mx-auto max-w-xl my-8">
+        <div className="mx-auto max-w-xl my-8 p-3 md:p-0">
           {children}
         </div>
         <Footer />
