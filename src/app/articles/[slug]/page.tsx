@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
 import { headers } from "next/headers";
 import CopyButton from "@/components/CopyButton";
+import { YouTubePlayer } from "@/components/YoutubePlayer";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -114,6 +115,32 @@ export default async function ArticlePage({ params }: { params: { slug: string }
               };
             }
           }]]}
+          components={{
+            a: ({ href, children }) => {
+              // YouTubeリンクを検出
+              if (!href) return undefined;
+              const url = new URL(href);
+              if (url.searchParams.get("embed") != null) {
+                let vid = "";
+                if (url.hostname === "www.youtube.com") {
+                  vid = url.searchParams.get("v") || "";
+                  return <YouTubePlayer vid={vid} />;
+                }
+                if (url.hostname === "youtu.be") {
+                  vid = url.pathname.slice(1);
+                  return <YouTubePlayer vid={vid} />;
+                }
+              }
+              return href &&
+                <Link
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {children}
+                </Link>;
+            }
+          }}
         >
           {post.body}
         </Markdown>
