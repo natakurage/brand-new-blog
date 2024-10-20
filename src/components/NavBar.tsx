@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { GiHamburgerMenu } from "react-icons/gi";
 import SearchBar from "./SearchBar";
+import { useState } from "react";
 
 export function NavBar() {
+  const [open, setOpen] = useState(false);
+
   const navbarContents = [
     {
       name: "Home",
@@ -28,7 +33,7 @@ export function NavBar() {
       </div>
       <div className="flex-none">
         <div className="drawer drawer-end">
-          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+          <input id="my-drawer" type="checkbox" checked={open} onChange={(e) => setOpen(e.target.checked)} className="drawer-toggle" />
           <div className="drawer-content">
             <label htmlFor="my-drawer" className="btn btn-square btn-ghost">
               <GiHamburgerMenu size={24} />
@@ -40,11 +45,16 @@ export function NavBar() {
               {
                 navbarContents.map(({ name, href }) => (
                   <li key={name}>
-                    <Link href={href}>{name}</Link>
+                    <Link
+                      href={href}
+                      onClick={() => setOpen(false)}
+                    >
+                      {name}
+                    </Link>
                   </li>
                 ))
               }
-              <li><SearchBar /></li>
+              <li><SearchBar onSubmit={() => setOpen(false)} /></li>
             </ul>
           </div>
         </div>

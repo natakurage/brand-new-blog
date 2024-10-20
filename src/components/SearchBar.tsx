@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MdSearch } from "react-icons/md";
 
-export default function SearchBar() {
+export default function SearchBar({ onSubmit }: { onSubmit: () => void }) {
   const [query, setQuery] = useState("");
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    onSubmit();
     router.push(`/search?q=${query}`);
   };
 
