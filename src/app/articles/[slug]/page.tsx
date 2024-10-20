@@ -6,6 +6,9 @@ import rehypeToc from "rehype-toc";
 import Link from "next/link";
 import getPosts from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
+import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
+import { headers } from "next/headers";
+import CopyButton from "@/components/CopyButton";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -32,6 +35,27 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     notFound();
   }
   const post = posts[0];
+  
+  const shareText = `${post.title} - ナタクラゲのブログ`;
+  const headerList = headers();
+  const host = headerList.get("host");
+  const protocol = headerList.get("x-forwarded-proto") || "https";
+  const shareUrl = `${protocol}://${host}/articles/${post.slug}`;
+
+  const xShareURL = new URL("https://x.com/intent/post");
+  xShareURL.searchParams.append("text", shareText);
+  xShareURL.searchParams.append("url", shareUrl);
+
+  const bskyShareURL = new URL("https://bsky.app/intent/compose");
+  bskyShareURL.searchParams.append("text", `${shareText}\n${shareUrl}`);
+  
+  const pocketShareURL = new URL("https://getpocket.com/edit");
+  pocketShareURL.searchParams.append("url", shareUrl);
+  pocketShareURL.searchParams.append("title", shareText);
+
+  const lineShareURL = new URL("https://line.me/R/msg/text");
+  lineShareURL.searchParams.append("text", `${shareText}\n${shareUrl}`);
+  
   return (
     <div className="space-y-4">
       <div className="space-y-1">
@@ -94,6 +118,40 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           {post.body}
         </Markdown>
       </main>
+      <div className="flex flex-wrap gap-2 justify-between">
+        <Link
+          href={xShareURL.toString()}
+          target="_blank"
+          className="btn  bg-black text-white flex-1"
+        >
+          <FaXTwitter size={24} />
+        </Link>
+        <Link
+          href={bskyShareURL.toString()}
+          target="_blank"
+          className="btn bg-[#0085FF] text-white flex-1"
+        >
+          <FaBluesky size={24} />
+        </Link>
+        <Link
+          href={pocketShareURL.toString()}
+          target="_blank"
+          className="btn bg-[#ED4956] text-white flex-1"
+        >
+          <FaGetPocket size={24} />
+        </Link>
+        <Link
+          href={lineShareURL.toString()}
+          target="_blank"
+          className="btn bg-[#00B900] text-white flex-1"
+        >
+          <FaLine size={24} />
+        </Link>
+        <CopyButton
+          text={shareUrl}
+          className="btn btn-neutral text-white flex-1"
+        />
+      </div>
       <div className="border border-neutral border-dashed rounded p-3 space-y-2">
         <h6 className="font-bold">Credit</h6>
         <ul>
