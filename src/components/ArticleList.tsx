@@ -8,7 +8,7 @@ export default function ArticleList({ posts }: { posts: BlogPost[] }) {
       {posts.map((post) => (
         <li
           key={post.slug}
-          className="relative p-4 hover:bg-neutral hover:bg-opacity-50 rounded-lg overflow-hidden"
+          className="relative p-4 btn-ghost rounded-lg overflow-hidden"
         >
           <h2 className="text-xl font-bold">
             {post.title}
