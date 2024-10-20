@@ -119,7 +119,12 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             a: ({ href, children }) => {
               // YouTubeリンクを検出
               if (!href) return undefined;
-              const url = new URL(href);
+              let url = null;
+              try {
+                url = new URL(href);
+              } catch {
+                return <a href={href}>{children}</a>;
+              }
               if (url.searchParams.get("embed") != null) {
                 let vid = "";
                 if (url.hostname === "www.youtube.com") {
