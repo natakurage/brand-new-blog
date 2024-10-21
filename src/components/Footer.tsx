@@ -8,14 +8,22 @@ export function Footer() {
     <footer className="footer bg-neutral text-neutral-content p-10">
       <aside>
         <div className="flex flex-wrap gap-4">
-          <div className="avatar">
-            <div className="ring-accent ring-offset-base-100 w-20 rounded-full ring ring-offset-2">
-              <Image
-                src="/avatar.png"
-                alt="Natakurage avatar"
-                width={96}
-                height={96}
-              />
+          <div className="tooltip" data-tip="OFUSE">
+            <div className="avatar">
+              <div className="ring-accent hover:ring-secondary ring-offset-base-100 w-20 rounded-full ring ring-offset-2">
+                <Link
+                  href="https://ofuse.me/natakurage"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    src="/avatar.png"
+                    alt="Natakurage avatar"
+                    width={96}
+                    height={96}
+                  />
+                </Link>
+              </div>
             </div>
           </div>
           <div className="max-w-md">
