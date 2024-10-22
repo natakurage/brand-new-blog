@@ -6,5 +6,5 @@ export async function GET() {
     draftMode().disable();
     return new Response("Preview mode disabled", { status: 200 });
   }
-  return new Response("Already disabled", { status: 204 });
+  return new Response(null, { status: 204 });
 }
