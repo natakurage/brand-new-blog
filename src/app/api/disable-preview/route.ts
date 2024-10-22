@@ -1,5 +1,7 @@
 import { draftMode } from "next/headers";
  
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const dMode = draftMode();
   if (dMode.isEnabled) {
