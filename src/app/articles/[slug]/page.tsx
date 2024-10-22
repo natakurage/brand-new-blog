@@ -10,6 +10,7 @@ import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
 import { draftMode, headers } from "next/headers";
 import CopyButton from "@/components/CopyButton";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
+import DisablePreview from "@/components/DisablePreview";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -23,7 +24,7 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   }
   const post = posts[0];
   return {
-    title: "(プレビュー)" + post.title + " - ナタクラゲのブログ",
+    title: (isEnabled ? "(プレビュー)" : "") + post.title + " - ナタクラゲのブログ",
   };
 }
 
@@ -62,23 +63,27 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   return (
     <div className="space-y-4">
       {
-        isEnabled && <div role="alert" className="alert alert-warning">
-          <MdWarning size={24} />
-          <span>
-            このページはプレビューです！
-            もし何らかの理由でこのページが見えてしまった場合、
-            悪いことを考える前に
-            <Link
-              href="https://natakurage.vercel.app/contact"
-              className="link underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              こちら
-            </Link>
-            までお知らせください。
-          </span>
-        </div>
+        isEnabled &&
+        <>
+          <div role="alert" className="alert alert-warning">
+            <MdWarning size={24} />
+            <span>
+              このページはプレビューです！
+              もし何らかの理由でこのページが見えてしまった場合、
+              悪いことを考える前に
+              <Link
+                href="https://natakurage.vercel.app/contact"
+                className="link underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                こちら
+              </Link>
+              までお知らせください。
+            </span>
+          </div>
+          <DisablePreview className="btn btn-ghost btn-sm" />
+        </>
       }
       <div className="space-y-1">
         <h1 className="text-5xl font-bold">{post.title}</h1>
