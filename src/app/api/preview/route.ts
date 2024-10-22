@@ -6,10 +6,10 @@ export async function GET(request: Request) {
   const secret = searchParams.get("secret");
   const slug = searchParams.get("slug");
  
-  if (secret !== process.env.CONTENTFUL_PREVIEW_TOKEN) {
+  if (secret !== process.env.CONTENTFUL_PREVIEW_SECRET) {
     return new Response("Invalid token", { status: 401 });
   }
- 
+  
   draftMode().enable();
  
   if (slug) {

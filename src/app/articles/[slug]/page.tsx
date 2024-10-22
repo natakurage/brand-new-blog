@@ -1,37 +1,39 @@
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
-import { MdAccessTime, MdUpdate } from "react-icons/md";
+import { MdAccessTime, MdUpdate, MdWarning } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
 import Link from "next/link";
 import getPosts from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
-import { headers } from "next/headers";
+import { draftMode, headers } from "next/headers";
 import CopyButton from "@/components/CopyButton";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
+  const { isEnabled } = draftMode();
   const { slug } = params;
   const posts = await getPosts({
     content_type: "blogPost",
     "fields.slug": slug,
-  });
+  }, isEnabled);
   if (posts.length === 0) {
     notFound();
   }
   const post = posts[0];
   return {
-    title: post.title + " - ナタクラゲのブログ",
+    title: "(プレビュー)" + post.title + " - ナタクラゲのブログ",
   };
 }
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
+  const { isEnabled } = draftMode();
   const { slug } = params;
   const posts = await getPosts({
     content_type: "blogPost",
     "fields.slug": slug,
-  });
+  }, isEnabled);
   if (posts.length === 0) {
     notFound();
   }
@@ -59,6 +61,25 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   
   return (
     <div className="space-y-4">
+      {
+        isEnabled && <div role="alert" className="alert alert-warning">
+          <MdWarning size={24} />
+          <span>
+            このページはプレビューです！
+            もし何らかの理由でこのページが見えてしまった場合、
+            悪いことを考える前に
+            <Link
+              href="https://natakurage.vercel.app/contact"
+              className="link underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              こちら
+            </Link>
+            までお知らせください。
+          </span>
+        </div>
+      }
       <div className="space-y-1">
         <h1 className="text-5xl font-bold">{post.title}</h1>
         <div className="space-x-2">
