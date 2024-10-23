@@ -52,7 +52,7 @@ export function Footer() {
         <div className="grid grid-flow-col gap-4">
           <Link
             href="https://natakurage.vercel.app"
-            area-label="Home"
+            aria-label="Home"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -60,7 +60,7 @@ export function Footer() {
           </Link>
           <Link
             href="https://youtube.com/@natakurage"
-            area-label="YouTube"
+            aria-label="YouTube"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -68,7 +68,7 @@ export function Footer() {
           </Link>
           <Link
             href="https://bsky.app/profile/natakurage.bsky.social"
-            area-label="Bluesky"
+            aria-label="Bluesky"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -76,7 +76,7 @@ export function Footer() {
           </Link>
           <Link
             href="https://github.com/natakurage"
-            area-label="GitHub"
+            aria-label="GitHub"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -84,7 +84,7 @@ export function Footer() {
           </Link>
           <Link
             href="https://x.com/v_natakurage"
-            area-label="X (Twitter)"
+            aria-label="X (Twitter)"
             target="_blank"
             rel="noopener noreferrer"
           >
