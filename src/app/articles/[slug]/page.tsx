@@ -179,6 +179,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       <div className="flex flex-wrap gap-2 justify-between">
         <Link
           href={xShareURL.toString()}
+          area-label="Share to Twitter"
           target="_blank"
           className="btn  bg-black text-white flex-1"
         >
@@ -186,6 +187,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </Link>
         <Link
           href={bskyShareURL.toString()}
+          area-label="Share to Bluesky"
           target="_blank"
           className="btn bg-[#0085FF] text-white flex-1"
         >
@@ -193,6 +195,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </Link>
         <Link
           href={pocketShareURL.toString()}
+          area-label="Share to Pocket"
           target="_blank"
           className="btn bg-[#ED4956] text-white flex-1"
         >
@@ -200,6 +203,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </Link>
         <Link
           href={lineShareURL.toString()}
+          area-label="Share to LINE"
           target="_blank"
           className="btn bg-[#00B900] text-white flex-1"
         >

@@ -22,6 +22,7 @@ export default function CopyButton({ text, className }: { text: string, classNam
       </div>
     }
       <button
+        aria-label="Copy text"
         className={className}
         onClick={handleClick}
       >
