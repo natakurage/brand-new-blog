@@ -6,16 +6,13 @@ export const metadata: Metadata = {
   title: "ナタクラゲのブログ",
 };
 
-const postsPerPage = 5;
-
 export default async function Home({ searchParams }: { searchParams: { page?: string } }) {
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { posts, total } = await getPosts({
-    limit: postsPerPage,
+  const { posts, total, limit } = await getPosts({
     offset: pageNum - 1
   });
   return (
-    <ArticleList posts={posts} page={pageNum} total={total} postsPerPage={postsPerPage} />
+    <ArticleList posts={posts} page={pageNum} total={total} limit={limit} />
   );
 }

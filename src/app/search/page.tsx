@@ -8,14 +8,11 @@ export async function generateMetadata ({ searchParams }: { searchParams: { q: s
   };
 }
 
-const postsPerPage = 5;
-
 export default async function SearchPage({ searchParams }: { searchParams: { q: string, page?: string } }) {
   const { q, page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { posts, total } = await getPosts({
+  const { posts, total, limit } = await getPosts({
     filter: { query: q },
-    limit: postsPerPage,
     offset: pageNum - 1
   });
   return (
@@ -24,7 +21,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q: 
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ArticleList posts={posts} total={total} page={pageNum} postsPerPage={postsPerPage} />
+          : <ArticleList posts={posts} total={total} page={pageNum} limit={limit} />
       }
     </div>
   );

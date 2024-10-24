@@ -9,16 +9,13 @@ export async function generateMetadata ({ params }: { params: { tag: string } })
   };
 }
 
-const postsPerPage = 5;
-
 export default async function TagPage({ params, searchParams }: { params: { tag: string }, searchParams: { page?: string } }) {
   const { tag: temp } = params;
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
   const tag = decodeURIComponent(temp);
-  const { posts, total } = await getPosts({
+  const { posts, total, limit } = await getPosts({
     filter: {"fields.tags[in]": tag},
-    limit: postsPerPage,
     offset: pageNum - 1,
   });
   return (
@@ -27,7 +24,7 @@ export default async function TagPage({ params, searchParams }: { params: { tag:
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ArticleList posts={posts} total={total} page={pageNum} postsPerPage={postsPerPage} />
+          : <ArticleList posts={posts} total={total} page={pageNum} limit={limit} />
       }
     </div>
   );

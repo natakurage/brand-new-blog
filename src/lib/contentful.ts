@@ -69,5 +69,7 @@ export async function getPosts(
     total: entries.total,
     errors: entries.errors,
     includes: entries.includes,
+    limit: entries.limit,
+    skip: entries.skip
   };
 }

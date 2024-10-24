@@ -4,8 +4,8 @@ import { MdUpdate } from "react-icons/md";
 import Paginator from "./Pagenator";
 
 export default function ArticleList(
-  { posts, total, page, postsPerPage }:
-  { posts: BlogPost[], total: number, page: number, postsPerPage: number }
+  { posts, total, page, limit: postsPerPage }:
+  { posts: BlogPost[], total: number, page: number, limit: number }
 ) {
   const maxPages = Math.ceil(total / postsPerPage);
   return (
