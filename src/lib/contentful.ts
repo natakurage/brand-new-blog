@@ -29,23 +29,45 @@ export interface BlogPost {
   showToc: boolean;
 }
 
-export default async function getPosts(
-  query: EntriesQueries<EntrySkeletonType, undefined>,
-  preview: boolean = false
+type Filter = Omit<EntriesQueries<EntrySkeletonType, undefined>, "content_type" | "limit" | "skip">
+
+export async function getPosts(
+  {
+    limit = 10,
+    offset = 0,
+    preview = false,
+    filter = {}
+  } : {
+    limit?: number,
+    offset?: number,
+    preview?: boolean,
+    filter?: Filter
+  },
 ) {
+  const query: EntriesQueries<EntrySkeletonType, undefined> = {
+    content_type: "blogPost",
+    limit,
+    skip: offset * limit,
+    ...filter
+  };
   const entries = await getClient(preview).getEntries(query);
-  return entries.items.map((item) => {
-    const { title, slug, body, license, tags, showToc } = item.fields;
-    const { createdAt, updatedAt } = item.sys;
-    return {
-      title,
-      slug,
-      body,
-      createdAt,
-      updatedAt,
-      license,
-      tags,
-      showToc
-    } as BlogPost;
-  });
+  return {
+    posts: entries.items.map((item) => {
+      const { title, slug, body, license, tags, showToc } = item.fields;
+      const { createdAt, updatedAt } = item.sys;
+      return {
+          title,
+          slug,
+          body,
+          createdAt,
+          updatedAt,
+          license,
+          tags,
+          showToc
+        } as BlogPost;
+    }),
+    total: entries.total,
+    errors: entries.errors,
+    includes: entries.includes,
+  };
 }

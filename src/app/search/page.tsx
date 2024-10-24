@@ -1,5 +1,5 @@
 import ArticleList from "@/components/ArticleList";
-import getPosts from "@/lib/contentful";
+import { getPosts } from "@/lib/contentful";
 
 export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {
   const { q } = searchParams;
@@ -8,12 +8,15 @@ export async function generateMetadata ({ searchParams }: { searchParams: { q: s
   };
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: { q: string } }) {
-  const { q } = searchParams;
-  const posts = await getPosts({
-    content_type: "blogPost",
-    query: q,
-    limit: 20,
+const postsPerPage = 5;
+
+export default async function SearchPage({ searchParams }: { searchParams: { q: string, page?: string } }) {
+  const { q, page = 1 } = searchParams;
+  const pageNum = Number(page);
+  const { posts, total } = await getPosts({
+    filter: { query: q },
+    limit: postsPerPage,
+    offset: pageNum - 1
   });
   return (
     <div>
@@ -21,7 +24,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q: 
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ArticleList posts={posts} />
+          : <ArticleList posts={posts} total={total} page={pageNum} postsPerPage={postsPerPage} />
       }
     </div>
   );

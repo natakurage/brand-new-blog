@@ -4,7 +4,7 @@ import { MdAccessTime, MdUpdate, MdWarning } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
 import Link from "next/link";
-import getPosts from "@/lib/contentful";
+import { getPosts } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
 import { draftMode, headers } from "next/headers";
@@ -15,10 +15,10 @@ import DisablePreview from "@/components/DisablePreview";
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const posts = await getPosts({
-    content_type: "blogPost",
-    "fields.slug": slug,
-  }, isEnabled);
+  const { posts } = await getPosts({
+    filter: { "fields.slug": slug },
+    preview: isEnabled
+  });
   if (posts.length === 0) {
     notFound();
   }
@@ -31,10 +31,10 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const posts = await getPosts({
-    content_type: "blogPost",
-    "fields.slug": slug,
-  }, isEnabled);
+  const { posts } = await getPosts({
+    filter: { "fields.slug": slug },
+    preview: isEnabled
+  });
   if (posts.length === 0) {
     notFound();
   }
