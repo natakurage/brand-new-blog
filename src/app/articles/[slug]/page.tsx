@@ -112,7 +112,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       </header>
       <article>
         <Markdown
-          className="prose"
+          className="prose dark:!prose-invert"
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeSlug, [rehypeToc, {
             headings: ["h2", "h3"],
@@ -225,7 +225,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <h6 className="font-bold">License</h6>
           {post.license == null
             ? <p>ライセンスが不明です。</p>
-            : <Markdown className="text-sm prose">{post.license}</Markdown>
+            : <Markdown className="prose dark:!prose-invert">{post.license}</Markdown>
           }
         </div>
       </footer>

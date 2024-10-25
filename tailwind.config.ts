@@ -13,13 +13,6 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-      },
-      typography: {
-        DEFAULT: {
-          css: {
-            color: "var(--foreground)",
-          },
-        },
       }
     },
   },
