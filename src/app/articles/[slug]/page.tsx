@@ -61,7 +61,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   lineShareURL.searchParams.append("text", `${shareText}\n${shareUrl}`);
   
   return (
-    <div className="space-y-4">
+    <main className="space-y-16">
       {
         isEnabled &&
         <>
@@ -85,7 +85,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <DisablePreview className="btn btn-ghost btn-sm" />
         </>
       }
-      <div className="space-y-1">
+      <header className="space-y-1">
         <h1 className="text-5xl font-bold">{post.title}</h1>
         <div className="space-x-2">
         {
@@ -109,8 +109,8 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           </span>
         </div>
         <hr />
-      </div>
-      <main>
+      </header>
+      <article>
         <Markdown
           className="prose"
           remarkPlugins={[remarkGfm]}
@@ -175,58 +175,60 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         >
           {post.body}
         </Markdown>
-      </main>
-      <div className="flex flex-wrap gap-2 justify-between">
-        <Link
-          href={xShareURL.toString()}
-          aria-label="Share to Twitter"
-          target="_blank"
-          className="btn  bg-black text-white flex-1"
-        >
-          <FaXTwitter size={24} />
-        </Link>
-        <Link
-          href={bskyShareURL.toString()}
-          aria-label="Share to Bluesky"
-          target="_blank"
-          className="btn bg-[#0085FF] text-white flex-1"
-        >
-          <FaBluesky size={24} />
-        </Link>
-        <Link
-          href={pocketShareURL.toString()}
-          aria-label="Share to Pocket"
-          target="_blank"
-          className="btn bg-[#ED4956] text-white flex-1"
-        >
-          <FaGetPocket size={24} />
-        </Link>
-        <Link
-          href={lineShareURL.toString()}
-          aria-label="Share to LINE"
-          target="_blank"
-          className="btn bg-[#00B900] text-white flex-1"
-        >
-          <FaLine size={24} />
-        </Link>
-        <CopyButton
-          text={shareUrl}
-          className="btn btn-neutral text-white flex-1"
-        />
-      </div>
-      <div className="border border-neutral border-dashed rounded p-3 space-y-2">
-        <h6 className="font-bold">Credit</h6>
-        <ul>
-          <li>タイトル: {post.title}</li>
-          <li>著者: 千本槍みなも@ナタクラゲ</li>
-          <li>作成年: {new Date(post.createdAt).getFullYear()}</li>
-        </ul>
-        <h6 className="font-bold">License</h6>
-        {post.license == null
-          ? <p>ライセンスが不明です。</p>
-          : <Markdown className="text-sm prose">{post.license}</Markdown>
-        }
-      </div>
-    </div>
+      </article>
+      <footer className="space-y-3">
+        <div className="flex flex-wrap gap-2 justify-between">
+          <Link
+            href={xShareURL.toString()}
+            aria-label="Share to Twitter"
+            target="_blank"
+            className="btn  bg-black text-white flex-1"
+          >
+            <FaXTwitter size={24} />
+          </Link>
+          <Link
+            href={bskyShareURL.toString()}
+            aria-label="Share to Bluesky"
+            target="_blank"
+            className="btn bg-[#0085FF] text-white flex-1"
+          >
+            <FaBluesky size={24} />
+          </Link>
+          <Link
+            href={pocketShareURL.toString()}
+            aria-label="Share to Pocket"
+            target="_blank"
+            className="btn bg-[#ED4956] text-white flex-1"
+          >
+            <FaGetPocket size={24} />
+          </Link>
+          <Link
+            href={lineShareURL.toString()}
+            aria-label="Share to LINE"
+            target="_blank"
+            className="btn bg-[#00B900] text-white flex-1"
+          >
+            <FaLine size={24} />
+          </Link>
+          <CopyButton
+            text={shareUrl}
+            className="btn btn-neutral text-white flex-1"
+          />
+        </div>
+        <div className="border border-neutral border-dashed rounded p-3 space-y-2">
+          <h6 className="font-bold">Credit</h6>
+          <ul>
+            <li>タイトル: {post.title}</li>
+            <li>著者: 千本槍みなも@ナタクラゲ</li>
+            <li>作成年: {new Date(post.createdAt).getFullYear()}</li>
+          </ul>
+          <h6 className="font-bold">License</h6>
+          {post.license == null
+            ? <p>ライセンスが不明です。</p>
+            : <Markdown className="text-sm prose">{post.license}</Markdown>
+          }
+        </div>
+      </footer>
+    </main>
   );
 }
