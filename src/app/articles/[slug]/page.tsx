@@ -11,6 +11,8 @@ import { draftMode, headers } from "next/headers";
 import CopyButton from "@/components/CopyButton";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import DisablePreview from "@/components/DisablePreview";
+import React from "react";
+import EmbedCard from "@/components/EmbedCard";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -170,6 +172,14 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                 >
                   {children}
                 </Link>;
+            },
+            p: ({ children }) => {
+              if (children == null) return undefined;
+              // if p contains only single a Node
+              if (React.Children.count(children) === 1 && React.isValidElement(children) && children.props.node.tagName === "a") {
+                return <EmbedCard url={children.props.href} />;
+              }
+              return <p>{children}</p>;
             }
           }}
         >
