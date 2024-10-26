@@ -4,10 +4,10 @@ import { MdUpdate } from "react-icons/md";
 import Paginator from "./Pagenator";
 
 export default function ArticleList(
-  { posts, total, page, limit: postsPerPage }:
+  { posts, total, page, limit }:
   { posts: BlogPost[], total: number, page: number, limit: number }
 ) {
-  const maxPages = Math.ceil(total / postsPerPage);
+  const maxPages = Math.ceil(total / limit);
   return (
     <div>
       <ul className="space-y-4">
