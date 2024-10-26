@@ -85,7 +85,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   lineShareURL.searchParams.append("text", `${shareText}\n${shareUrl}`);
   
   return (
-    <main className="space-y-16">
+    <main>
       {
         isEnabled &&
         <>
@@ -134,7 +134,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </div>
         <hr />
       </header>
-      <article>
+      <article className="my-16">
         <Markdown
           className="prose dark:!prose-invert"
           remarkPlugins={[remarkGfm]}
