@@ -88,7 +88,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     <main>
       {
         isEnabled &&
-        <>
+        <div className="my-4 space-y-2">
           <div role="alert" className="alert alert-warning">
             <MdWarning size={24} />
             <span>
@@ -107,7 +107,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             </span>
           </div>
           <DisablePreview className="btn btn-ghost btn-sm" />
-        </>
+        </div>
       }
       <header className="space-y-1">
         <h1 className="text-5xl font-bold">{post.title}</h1>
