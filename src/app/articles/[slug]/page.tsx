@@ -14,6 +14,8 @@ import DisablePreview from "@/components/DisablePreview";
 import React from "react";
 import EmbedCard from "@/components/EmbedCard";
 import data from "@/app/data/data.json";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -137,8 +139,8 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       <article className="my-16">
         <Markdown
           className="prose dark:!prose-invert"
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeSlug, [rehypeToc, {
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[rehypeSlug, rehypeKatex, [rehypeToc, {
             headings: ["h2", "h3"],
             customizeTOC: (toc: object) => {
               if (!post.showToc) return false;
