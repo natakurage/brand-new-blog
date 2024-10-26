@@ -19,7 +19,7 @@ export function NavBar() {
     },
     {
       name: "記事リスト",
-      href: "/list"
+      href: "/lists"
     },
     {
       name: "お知らせ",
