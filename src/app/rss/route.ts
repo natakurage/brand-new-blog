@@ -1,12 +1,17 @@
 import { getPosts } from "@/lib/contentful";
 import rss from "rss";
-
-const url = "https://natakurage-blog.vercel.app";
+import data from "@/app/data/data.json";
 
 export async function GET() {
+  const url = process.env.HOST;
+
+  if (!url) {
+    return new Response(null, { status: 404 });
+  }
+
   const feed = new rss({
-    title: "ナタクラゲのブログ",
-    description: "ナタクラゲのブログ",
+    title: data.siteName,
+    description: data.description,
     site_url: url,
     feed_url: `${url}/rss.xml`,
     language: "ja",
@@ -19,7 +24,7 @@ export async function GET() {
       title: post.title,
       description: post.body.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100) + "...",
       url: `${url}/articles/${post.slug}`,
-      author: "千本槍みなも@ナタクラゲ",
+      author: data.author,
       date: post.createdAt,
     });
   });  

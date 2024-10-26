@@ -2,6 +2,7 @@ import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { Metadata } from "next";
+import data from "@/app/data/data.json";
 
 export const metadata: Metadata = {
   icons: {
@@ -9,13 +10,13 @@ export const metadata: Metadata = {
     apple: "/favicons/apple-touch-icon.png"
   },
   openGraph: {
-    siteName: "ナタクラゲのブログ",
+    siteName: data.siteName,
     images: [
       {
         url: "/banner.png",
         width: 1200,
         height: 630,
-        alt: "ナタクラゲのブログ OGP"
+        alt: data.siteName + " OGP"
       }
     ]
   }

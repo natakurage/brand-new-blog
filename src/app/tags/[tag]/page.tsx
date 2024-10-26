@@ -1,11 +1,12 @@
 import ArticleList from "@/components/ArticleList";
 import { getPosts } from "@/lib/contentful";
+import data from "@/app/data/data.json";
 
 export async function generateMetadata ({ params }: { params: { tag: string } }) {
   const { tag: temp } = params;
   const tag = decodeURIComponent(temp);
   return {
-    title: `タグ #${tag} がつけられた記事` + " - ナタクラゲのブログ",
+    title: `タグ #${tag} がつけられた記事` + " - " + data.siteName,
   };
 }
 

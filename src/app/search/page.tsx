@@ -1,10 +1,11 @@
 import ArticleList from "@/components/ArticleList";
 import { getPosts } from "@/lib/contentful";
+import data from "@/app/data/data.json";
 
 export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {
   const { q } = searchParams;
   return {
-    title: `"${q}"の検索結果` + " - ナタクラゲのブログ",
+    title: `"${q}"の検索結果` + " - " + data.siteName,
   };
 }
 

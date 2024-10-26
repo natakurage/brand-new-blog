@@ -5,36 +5,15 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
 import { MdRssFeed } from "react-icons/md";
+import data from "@/app/data/data.json";
 
 export function NavBar() {
   const [open, setOpen] = useState(false);
 
-  const navbarContents = [
-    {
-      name: "Home",
-      href: "/"
-    },
-    {
-      name: "About",
-      href: "/articles/about"
-    },
-    {
-      name: "記事リスト",
-      href: "/lists"
-    },
-    {
-      name: "お知らせ",
-      href: "/tags/お知らせ"
-    },
-    {
-      name: "小説",
-      href: "/tags/小説"
-    }
-  ];
   return (
     <div className="navbar sticky top-0 z-50 bg-base-100 bg-opacity-90">
       <div className="flex-1">
-        <Link href="/" className="btn btn-ghost text-xl">ナタクラゲのブログ</Link>
+        <Link href="/" className="btn btn-ghost text-xl">{data.siteName}</Link>
       </div>
       <div className="flex-none">
         <div className="drawer drawer-end">
@@ -48,7 +27,7 @@ export function NavBar() {
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <ul className="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content bg-opacity-100 h-full">
               {
-                navbarContents.map(({ name, href }) => (
+                data.navbarPages.map(({ name, href }) => (
                   <li key={name}>
                     <Link
                       href={href}

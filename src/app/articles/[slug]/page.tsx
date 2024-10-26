@@ -13,6 +13,7 @@ import { YouTubePlayer } from "@/components/YoutubePlayer";
 import DisablePreview from "@/components/DisablePreview";
 import React from "react";
 import EmbedCard from "@/components/EmbedCard";
+import data from "@/app/data/data.json";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -26,7 +27,7 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   }
   const post = posts[0];
   return {
-    title: (isEnabled ? "(プレビュー)" : "") + post.title + " - ナタクラゲのブログ",
+    title: (isEnabled ? "(プレビュー)" : "") + post.title + " - " + data.siteName,
   };
 }
 
@@ -63,7 +64,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   }
   const post = posts[0];
   
-  const shareText = `${post.title} - ナタクラゲのブログ`;
+  const shareText = `${post.title} - ${data.siteName}`;
   const headerList = headers();
   const host = headerList.get("host");
   const protocol = headerList.get("x-forwarded-proto") || "https";
@@ -95,7 +96,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
               もし何らかの理由でこのページが見えてしまった場合、
               悪いことを考える前に
               <Link
-                href="https://natakurage.vercel.app/contact"
+                href={data.contactURL}
                 className="link underline"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -226,7 +227,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <h6 className="font-bold">Credit</h6>
           <ul>
             <li>タイトル: {post.title}</li>
-            <li>著者: 千本槍みなも@ナタクラゲ</li>
+            <li>著者: {data.author}</li>
             <li>作成年: {new Date(post.createdAt).getFullYear()}</li>
           </ul>
           <h6 className="font-bold">License</h6>
