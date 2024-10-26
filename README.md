@@ -10,6 +10,6 @@
 ## TODO
 
 - [x] Add RSS feed
-- [ ] Add Embed Card
+- [x] Add Embed Card
 - [ ] Add Google Analytics?
 - [ ] コンテンツとプログラムの分離（？）
