@@ -8,7 +8,7 @@ export default function ListList(
 ) {
   const maxPages = Math.ceil(total / limit);
   return (
-    <div>
+    <div className="space-y-8">
       <ul className="space-y-4">
         {lists.map((list) => (
           <li
