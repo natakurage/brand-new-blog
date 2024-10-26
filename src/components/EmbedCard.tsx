@@ -29,7 +29,12 @@ export default async function EmbedCard({ url }: { url: string }) {
           <span>{new URL(metadata.website).host}</span>
         </div>
       </div>
-      <Link href={url} className="absolute w-full h-full top-0 left-0" />
+      <Link
+        href={url}
+        className="absolute w-full h-full top-0 left-0"
+        target="_blank"
+        rel="noopener noreferrer"
+      />
     </div>
   );
 }

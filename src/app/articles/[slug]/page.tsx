@@ -30,6 +30,27 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   };
 }
 
+async function LinkProcessor({ href, children }: { href: string, children: React.ReactNode }) {
+  let url = null;
+  try {
+    url = new URL(href);
+  } catch {
+    return <a href={href}>{children}</a>;
+  }
+  if (url.searchParams.get("embed") != null) {
+    let vid = "";
+    if (url.hostname === "www.youtube.com") {
+      vid = url.searchParams.get("v") || "";
+      return <YouTubePlayer vid={vid} />;
+    }
+    if (url.hostname === "youtu.be") {
+      vid = url.pathname.slice(1);
+      return <YouTubePlayer vid={vid} />;
+    }
+  }
+  return href && <EmbedCard url={href} />;
+}
+
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
   const { slug } = params;
@@ -144,40 +165,16 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             }
           }]]}
           components={{
-            a: ({ href, children }) => {
-              // YouTubeリンクを検出
-              if (!href) return undefined;
-              let url = null;
-              try {
-                url = new URL(href);
-              } catch {
-                return <a href={href}>{children}</a>;
-              }
-              if (url.searchParams.get("embed") != null) {
-                let vid = "";
-                if (url.hostname === "www.youtube.com") {
-                  vid = url.searchParams.get("v") || "";
-                  return <YouTubePlayer vid={vid} />;
-                }
-                if (url.hostname === "youtu.be") {
-                  vid = url.pathname.slice(1);
-                  return <YouTubePlayer vid={vid} />;
-                }
-              }
-              return href &&
-                <Link
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {children}
-                </Link>;
-            },
             p: ({ children }) => {
-              if (children == null) return undefined;
-              // if p contains only single a Node
-              if (React.Children.count(children) === 1 && React.isValidElement(children) && children.props.node.tagName === "a") {
-                return <EmbedCard url={children.props.href} />;
+              if (children == null) return null;
+              // 単独の<a>を含む<p>の場合
+              if (React.Children.count(children) === 1 && React.isValidElement(children) && children.type === "a") {
+                const href = children.props.href;
+                if (typeof href === "string") {
+                  return <LinkProcessor href={href}>
+                    {children.props.children}
+                  </LinkProcessor>; 
+                }
               }
               return <p>{children}</p>;
             }
