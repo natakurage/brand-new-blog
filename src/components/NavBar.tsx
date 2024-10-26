@@ -18,6 +18,10 @@ export function NavBar() {
       href: "/articles/about"
     },
     {
+      name: "記事リスト",
+      href: "/list"
+    },
+    {
       name: "お知らせ",
       href: "/tags/お知らせ"
     },
