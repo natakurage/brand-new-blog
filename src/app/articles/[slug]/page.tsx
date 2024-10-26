@@ -16,6 +16,8 @@ import EmbedCard from "@/components/EmbedCard";
 import data from "@/app/data/data.json";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
+import "./style.css";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -138,7 +140,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       </header>
       <article className="my-16">
         <Markdown
-          className="prose dark:!prose-invert"
+          className="prose dark:!prose-invert break-words"
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[rehypeSlug, rehypeKatex, [rehypeToc, {
             headings: ["h2", "h3"],
@@ -235,7 +237,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <h6 className="font-bold">License</h6>
           {post.license == null
             ? <p>ライセンスが不明です。</p>
-            : <Markdown className="prose dark:!prose-invert">{post.license}</Markdown>
+            : <Markdown className="prose dark:!prose-invert break-words">{post.license}</Markdown>
           }
         </div>
       </footer>
