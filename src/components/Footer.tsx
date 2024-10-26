@@ -39,7 +39,7 @@ export function Footer() {
                 >
                   <Image
                     src={data.avatar}
-                    alt={data.avatarAlt}
+                    alt="avatar icon"
                     width={96}
                     height={96}
                   />

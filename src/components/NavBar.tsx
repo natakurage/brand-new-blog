@@ -6,14 +6,18 @@ import SearchBar from "./SearchBar";
 import { useState } from "react";
 import { MdRssFeed } from "react-icons/md";
 import data from "@/app/data/data.json";
+import Image from "next/image";
 
 export function NavBar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="navbar sticky top-0 z-50 bg-base-100 bg-opacity-90">
+    <div className="navbar sticky top-0 z-50 backdrop-blur-lg">
       <div className="flex-1">
-        <Link href="/" className="btn btn-ghost text-xl">{data.siteName}</Link>
+        <Link href="/" className="btn btn-ghost text-xl font-mono">
+          <Image src={data.topLogo} alt="site logo" width={48} height={48} />
+          {data.siteName}
+        </Link>
       </div>
       <div className="flex-none">
         <div className="drawer drawer-end">
