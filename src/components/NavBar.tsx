@@ -4,6 +4,7 @@ import Link from "next/link";
 import { GiHamburgerMenu } from "react-icons/gi";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
+import { MdRssFeed } from "react-icons/md";
 
 export function NavBar() {
   const [open, setOpen] = useState(false);
@@ -59,6 +60,11 @@ export function NavBar() {
                 ))
               }
               <li><SearchBar onSubmit={() => setOpen(false)} /></li>
+              <li className="flex flex-row">
+                <Link href="/rss">
+                  <MdRssFeed size={24} />
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

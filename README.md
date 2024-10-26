@@ -9,7 +9,7 @@
 
 ## TODO
 
-- [ ] Add RSS feed
+- [x] Add RSS feed
 - [ ] Add Embed Card
 - [ ] Add Google Analytics?
 - [ ] コンテンツとプログラムの分離（？）
