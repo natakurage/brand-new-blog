@@ -16,7 +16,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q: 
     offset: pageNum - 1
   });
   return (
-    <div>
+    <div className="space-y-4">
       <h1 className="text-3xl font-bold">&ldquo;{q}&rdquo;の検索結果</h1>
       {
         posts.length === 0

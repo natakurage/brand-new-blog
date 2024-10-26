@@ -19,7 +19,7 @@ export default async function TagPage({ params, searchParams }: { params: { tag:
     offset: pageNum - 1,
   });
   return (
-    <div>
+    <div className="space-y-4">
       <h1 className="text-3xl font-bold">タグ #{tag} がつけられた記事</h1>
       {
         posts.length === 0
