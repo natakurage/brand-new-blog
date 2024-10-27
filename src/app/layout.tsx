@@ -3,6 +3,7 @@ import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { Metadata } from "next";
 import data from "@/app/data/data.json";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   icons: {
@@ -32,6 +33,9 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="bg-base-200">
+        <NextTopLoader
+          color="#50FFDF"
+        />
         <NavBar />
         <div className="mx-auto max-w-xl my-8 p-3 md:p-0">
           {children}
