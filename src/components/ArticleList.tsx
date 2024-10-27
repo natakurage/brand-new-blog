@@ -14,7 +14,7 @@ export default function ArticleList(
         {posts.map((post) => (
           <li
             key={post.slug}
-            className="relative p-4 btn-ghost rounded-lg overflow-hidden"
+            className="relative p-4 btn-ghost rounded-lg break-words"
           >
             <h2 className="text-xl font-bold">
               {post.title}
