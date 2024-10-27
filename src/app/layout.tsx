@@ -34,7 +34,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className="bg-base-200">
         <NextTopLoader
-          color="#50FFDF"
+          color="#FF50DF"
         />
         <NavBar />
         <div className="mx-auto max-w-xl my-8 p-3 md:p-0">
