@@ -11,7 +11,8 @@ export default async function Home({ searchParams }: { searchParams: { page?: st
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
   const { posts, total, limit } = await getPosts({
-    offset: pageNum - 1
+    offset: pageNum - 1,
+    filter: { order: "-sys.createdAt" },
   });
   return (
     <ArticleList posts={posts} page={pageNum} total={total} limit={limit} />
