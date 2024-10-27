@@ -16,7 +16,7 @@ export function NavBar() {
       <div className="flex-1">
         <Link href="/" className="btn btn-ghost text-xl font-mono">
           <Image src={data.topLogo} alt="site logo" width={48} height={48} />
-          {data.siteName}
+          <span className="hidden sm:block">{data.siteName}</span>
         </Link>
       </div>
       <div className="flex-none">
