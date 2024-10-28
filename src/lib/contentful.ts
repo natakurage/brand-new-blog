@@ -1,4 +1,4 @@
-import { createClient, EntriesQueries, Entry, EntrySkeletonType } from "contentful";
+import { ContentfulClientApi, createClient, EntriesQueries, Entry, EntrySkeletonType, Tag } from "contentful";
 
 const space = process.env.CONTENTFUL_SPACE_ID;
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN;
@@ -8,7 +8,7 @@ if (!space || !accessToken || !previewAccessToken) {
   throw new Error("Missing Contentful credentials.");
 }
 
-const client = createClient({
+const normalClient = createClient({
   space, accessToken,
 });
 
@@ -16,7 +16,7 @@ const previewClient = createClient({
   space, accessToken: previewAccessToken, host: "preview.contentful.com",
 });
 
-const getClient = (preview: boolean) => preview ? previewClient : client;
+const getClient = (preview: boolean) => preview ? previewClient : normalClient;
 
 export interface BlogPost {
   id: string;
@@ -26,7 +26,7 @@ export interface BlogPost {
   license?: string;
   createdAt: string;
   updatedAt: string;
-  tags?: string[];
+  tags?: Tag[];
   showToc: boolean;
 }
 
@@ -38,6 +38,42 @@ export interface PostList {
 }
 
 type Filter = Omit<EntriesQueries<EntrySkeletonType, undefined>, "content_type" | "limit" | "skip">
+
+const tagsCache = new Map();
+
+export async function getTagWithCache(id: string, client?: ContentfulClientApi<undefined>) {
+  if (!client) {
+    client = getClient(false);
+  }
+  if (tagsCache.has(id)) {
+    console.log(`Cache hit for ${id}`);
+    return tagsCache.get(id);
+  }
+  const tag = await client.getTag(id);
+  tagsCache.set(id, tag);
+  return tag;
+}
+
+async function EntryToPost(entry: Entry, client: ContentfulClientApi<undefined>) {
+    const { title, slug, body, license, showToc } = entry.fields;
+    const { createdAt, updatedAt } = entry.sys;
+    const tags = await Promise.all(
+      entry.metadata.tags.map(async (tag) => (
+        (await getTagWithCache(tag.sys.id, client))
+      ))
+    );
+    return {
+      id: entry.sys.id,
+      title,
+      slug,
+      body,
+      createdAt,
+      updatedAt,
+      license,
+      tags,
+      showToc
+    } as BlogPost;
+}
 
 export async function getPosts(
   {
@@ -52,28 +88,19 @@ export async function getPosts(
     filter?: Filter
   },
 ) {
-  const entries = await getClient(preview).getEntries({
+  const client = getClient(preview);
+  const entries = await client.getEntries({
     content_type: "blogPost",
     limit,
     skip: offset * limit,
-    ...filter
+    ...filter,
+    include: 1
   });
   return {
-    posts: entries.items.map((item) => {
-      const { title, slug, body, license, tags, showToc } = item.fields;
-      const { createdAt, updatedAt } = item.sys;
-      return {
-          id: item.sys.id,
-          title,
-          slug,
-          body,
-          createdAt,
-          updatedAt,
-          license,
-          tags,
-          showToc
-        } as BlogPost;
-    }),
+    posts: await Promise.all(
+      entries.items.map((item) => (
+      EntryToPost(item, client)
+    ))),
     total: entries.total,
     errors: entries.errors,
     includes: entries.includes,
@@ -83,27 +110,17 @@ export async function getPosts(
 }
 
 export async function getList(id: string, preview = false) {
-  const entry = await getClient(preview).getEntry(id);
+  const client = getClient(preview);
+  const entry = await client.getEntry(id);
   if (entry.sys.contentType.sys.id !== "postList") {
     throw new Error("Invalid content type");
   }
-  const posts = entry.fields.posts as Entry[];
+  const entries = entry.fields.posts as Entry[];
   return {
-    posts: posts?.map((item) => {
-      const { title, slug, body, license, tags, showToc } = item.fields;
-      const { createdAt, updatedAt } = item.sys;
-      return {
-          id: item.sys.id,
-          title,
-          slug,
-          body,
-          createdAt,
-          updatedAt,
-          license,
-          tags,
-          showToc
-        } as BlogPost;
-    }),
+    posts: await Promise.all(
+      entries.map((item) => (
+      EntryToPost(item, client)
+    ))),
     title: entry.fields.title,
     description: entry.fields.description
   } as PostList;

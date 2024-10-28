@@ -24,11 +24,11 @@ export default function ArticleList(
             {
               post.tags?.map((tag) => (
                 <Link
-                  key={tag}
-                  href={`/tags/${tag}`}
+                  key={tag.sys.id}
+                  href={`/tags/${tag.sys.id}`}
                   className="badge badge-neutral link link-hover relative z-10"
                 >
-                  # {tag}
+                  # {tag.name}
                 </Link>
               ))
             }

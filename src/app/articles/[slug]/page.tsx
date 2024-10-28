@@ -118,9 +118,9 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         <div className="space-x-2">
         {
           post.tags?.map((tag) => (
-            <Link key={tag} href={`/tags/${tag}`}>
+            <Link key={tag.sys.id} href={`/tags/${tag.sys.id}`}>
               <span className="badge badge-neutral link link-hover">
-                # {tag}
+                # {tag.name}
               </span>
             </Link>
           ))
