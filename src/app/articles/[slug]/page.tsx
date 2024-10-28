@@ -114,7 +114,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </div>
       }
       <header className="space-y-1">
-        <h1 className="text-5xl font-bold">{post.title}</h1>
+        <h1 className="text-4xl font-bold">{post.title}</h1>
         <div className="space-x-2">
         {
           post.tags?.map((tag) => (
