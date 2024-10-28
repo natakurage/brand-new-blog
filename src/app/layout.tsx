@@ -41,7 +41,7 @@ export default function RootLayout({
         />
         <NavBar />
         <div className="flex justify-center gap-10 md:mx-4 my-8">
-          <div className="max-w-xl p-3">
+          <div className="max-w-xl p-3 w-full">
             {children}
           </div>
           {
