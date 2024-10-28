@@ -227,7 +227,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             className="btn btn-neutral text-white flex-1"
           />
         </div>
-        <div className="border border-neutral border-dashed rounded p-3 space-y-2">
+        <div className="border border-base-content border-dashed rounded p-3 space-y-2">
           <h6 className="font-bold">Credit</h6>
           <ul>
             <li>タイトル: {post.title}</li>
