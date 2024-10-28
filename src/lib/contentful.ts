@@ -46,7 +46,6 @@ export async function getTagWithCache(id: string, client?: ContentfulClientApi<u
     client = getClient(false);
   }
   if (tagsCache.has(id)) {
-    console.log(`Cache hit for ${id}`);
     return tagsCache.get(id);
   }
   const tag = await client.getTag(id);
