@@ -44,23 +44,26 @@ export default function RootLayout({
           <div className="max-w-xl p-3">
             {children}
           </div>
-          <aside className="hidden md:block max-w-72">
-            <ul className="menu p-3 overflow-y-auto w-full bg-base-100 text-base-content bg-opacity-100">
-             {
-                data.navbarPages.map(({ name, href }) => (
-                  <li key={name}>
-                    <Link href={href} >{name}</Link>
-                  </li>
-                ))
-              }
-              <li><SearchBar /></li>
-              <li className="flex flex-row">
-                <Link href="/rss">
-                  <MdRssFeed size={24} />
-                </Link>
-              </li>
-            </ul>
-          </aside>
+          {
+            data.useSidebar && 
+            <aside className="hidden md:block max-w-72">
+              <ul className="menu p-3 overflow-y-auto w-full bg-base-100 text-base-content bg-opacity-100">
+              {
+                  data.navbarPages.map(({ name, href }) => (
+                    <li key={name}>
+                      <Link href={href} >{name}</Link>
+                    </li>
+                  ))
+                }
+                <li><SearchBar /></li>
+                <li className="flex flex-row">
+                  <Link href="/rss">
+                    <MdRssFeed size={24} />
+                  </Link>
+                </li>
+              </ul>
+            </aside>
+          }
         </div>
         <Footer />
       </body>

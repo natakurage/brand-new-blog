@@ -19,7 +19,7 @@ export function NavBar() {
           <span className="hidden sm:block">{data.siteName}</span>
         </Link>
       </div>
-      <div className="flex-none md:hidden">
+      <div className={"flex-none" + (data.useSidebar ? "md:hidden" : "")}>
         <div className="drawer drawer-end">
           <input id="my-drawer" type="checkbox" checked={open} onChange={(e) => setOpen(e.target.checked)} className="drawer-toggle" />
           <div className="drawer-content">

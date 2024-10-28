@@ -9,6 +9,7 @@
     "donateURL": "https://ofuse.me/natakurage",
     "bio": "地獄の番人。宇宙の破壊を企んでいるが、実際は虫も殺せない社会的弱者。貧乏でNintendo Switchが買えないため資本主義を恨んでいる。ぼっちでバンドが組めないため音楽に携わるすべての人間を憎んでいる。",
     "contactURL": "https://natakurage.vercel.app/contact",
+    "useSidebar": false,
     "navbarPages": [
       {
         "name": "Home",
