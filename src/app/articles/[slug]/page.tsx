@@ -4,7 +4,7 @@ import { MdAccessTime, MdUpdate, MdWarning } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
 import Link from "next/link";
-import { getPosts } from "@/lib/contentful";
+import { getPosts, getRelatedPosts } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
 import { draftMode, headers } from "next/headers";
@@ -18,6 +18,7 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import "./style.css";
+import { RelatedPosts } from "@/components/RelatedPosts";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -67,6 +68,17 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     notFound();
   }
   const post = posts[0];
+
+  const { posts: relatedPosts } = await getRelatedPosts({
+    tagIds: post.tags?.map((tag) => tag.sys.id),
+  });
+  const { posts: newPosts } = await getPosts({
+    limit: 6,
+  });
+  const { posts: recommendedPosts } = await getPosts({
+    limit: 6,
+    filter: { "fields.slug[in]": [data.recommendedPosts] },
+  });
   
   const shareText = `${post.title} - ${data.siteName}`;
   const headerList = headers();
@@ -239,6 +251,27 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             ? <p>ライセンスが不明です。</p>
             : <Markdown className="prose dark:!prose-invert break-words">{post.license}</Markdown>
           }
+        </div>
+        <hr />
+        <div className="space-y-4">
+        {
+          data.showRelatedPosts && relatedPosts.length > 0 && <>
+            <h2 className="text-2xl font-bold">関連記事</h2>
+            <RelatedPosts posts={relatedPosts} />
+          </>
+        }
+        {
+          data.showNewPosts && newPosts.length > 0 && <>
+            <h2 className="text-2xl font-bold">新着記事</h2>
+            <RelatedPosts posts={newPosts} />
+          </>
+        }
+        {
+          recommendedPosts.length > 0 && <>
+            <h2 className="text-2xl font-bold">おすすめ記事</h2>
+            <RelatedPosts posts={recommendedPosts} />
+          </>
+        }        
         </div>
       </footer>
     </main>

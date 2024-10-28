@@ -46,6 +46,11 @@
         "href": "/articles/policy"
       }
     ],
+    "showRelatedPosts": true,
+    "showNewPosts": true,
+    "recommendedPosts": [
+      "model-renew-2024", "alexinomia"
+    ],
     "socials": {
       "Website": "https://natakurage.vercel.app",
       "YouTube": "https://youtube.com/@natakurage",

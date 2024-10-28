@@ -108,6 +108,23 @@ export async function getPosts(
   };
 }
 
+export async function getRelatedPosts(
+  {
+    tagIds = [],
+    limit = 6
+  } : {
+    tagIds?: string[],
+    limit?: number
+  }
+) {
+  return getPosts({
+    limit,
+    filter: {
+      "metadata.tags.sys.id[in]": tagIds,
+    },
+  });
+}
+
 export async function getList(id: string, preview = false) {
   const client = getClient(preview);
   const entry = await client.getEntry(id);
