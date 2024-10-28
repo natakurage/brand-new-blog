@@ -4,6 +4,9 @@ import { Footer } from "@/components/Footer";
 import { Metadata } from "next";
 import data from "@/app/data/data.json";
 import NextTopLoader from "nextjs-toploader";
+import Link from "next/link";
+import SearchBar from "@/components/SearchBar";
+import { MdRssFeed } from "react-icons/md";
 
 export const metadata: Metadata = {
   icons: {
@@ -37,8 +40,27 @@ export default function RootLayout({
           color="#FF50DF"
         />
         <NavBar />
-        <div className="mx-auto max-w-xl my-8 p-3 md:p-0">
-          {children}
+        <div className="flex justify-center gap-10 md:mx-4 my-8">
+          <div className="max-w-xl p-3">
+            {children}
+          </div>
+          <aside className="hidden md:block max-w-72">
+            <ul className="menu p-3 overflow-y-auto w-full bg-base-100 text-base-content bg-opacity-100">
+             {
+                data.navbarPages.map(({ name, href }) => (
+                  <li key={name}>
+                    <Link href={href} >{name}</Link>
+                  </li>
+                ))
+              }
+              <li><SearchBar /></li>
+              <li className="flex flex-row">
+                <Link href="/rss">
+                  <MdRssFeed size={24} />
+                </Link>
+              </li>
+            </ul>
+          </aside>
         </div>
         <Footer />
       </body>
