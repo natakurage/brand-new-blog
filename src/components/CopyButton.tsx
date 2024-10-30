@@ -15,7 +15,7 @@ export default function CopyButton({ text, className }: { text: string, classNam
   return (
     <>
     {
-      copied && <div className="toast toast-bottom toast-end">
+      copied && <div className="toast toast-bottom toast-end z-50">
         <div className="alert alert-success">
           <span className="font-bold">Copied!</span>
         </div>
