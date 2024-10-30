@@ -110,9 +110,11 @@ export async function getPosts(
 
 export async function getRelatedPosts(
   {
+    slug,
     tagIds = [],
     limit = 6
   } : {
+    slug: string,
     tagIds?: string[],
     limit?: number
   }
@@ -121,6 +123,7 @@ export async function getRelatedPosts(
     limit,
     filter: {
       "metadata.tags.sys.id[in]": tagIds,
+      "fields.slug[ne]": slug,
     },
   });
 }

@@ -70,10 +70,12 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   const post = posts[0];
 
   const { posts: relatedPosts } = await getRelatedPosts({
+    slug: post.slug,
     tagIds: post.tags?.map((tag) => tag.sys.id),
   });
   const { posts: newPosts } = await getPosts({
     limit: 6,
+    filter: { "fields.slug[nin]": [post.slug] },
   });
   const { posts: recommendedPosts } = await getPosts({
     limit: 6,
