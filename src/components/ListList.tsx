@@ -1,6 +1,6 @@
 import { PostList } from "@/lib/contentful";
 import Link from "next/link";
-import Paginator from "./Pagenator";
+import Paginator from "./Paginator";
 
 export default function ListList(
   { lists, total, page, limit }:

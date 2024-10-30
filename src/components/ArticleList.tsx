@@ -1,7 +1,7 @@
 import { BlogPost } from "@/lib/contentful";
 import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
-import Paginator from "./Pagenator";
+import Paginator from "./Paginator";
 import removeMd from "remove-markdown";
 
 export default function ArticleList(

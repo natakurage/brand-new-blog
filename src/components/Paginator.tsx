@@ -7,7 +7,7 @@ export default function Paginator({ page, maxPages, numPages = 5 }: { page: numb
       {
         page !== 1 && <Link
           className="join-item btn"
-          href={"/"}
+          href={"?"}
         >
           <MdFirstPage size={24} />
         </Link>
@@ -20,7 +20,7 @@ export default function Paginator({ page, maxPages, numPages = 5 }: { page: numb
           return <Link
             key={current}
             className={current === page ? "join-item btn btn-active" : "join-item btn"}
-            href={"/?page=" + current}
+            href={"?page=" + current}
           >
             {current}
           </Link>;
@@ -29,7 +29,7 @@ export default function Paginator({ page, maxPages, numPages = 5 }: { page: numb
       {
         page !== maxPages && <Link
         className="join-item btn"
-        href={"/?page=" + maxPages}
+        href={"?page=" + maxPages}
       >
         <MdLastPage size={24} />
       </Link>
