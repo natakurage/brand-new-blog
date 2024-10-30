@@ -1,6 +1,7 @@
 import { getPosts } from "@/lib/contentful";
 import rss from "rss";
 import data from "@/app/data/data.json";
+import removeMd from "remove-markdown";
 
 export async function GET() {
   const url = process.env.HOST;
@@ -22,7 +23,7 @@ export async function GET() {
   posts.forEach((post) => {
     feed.item({
       title: post.title,
-      description: post.body.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100) + "...",
+      description: removeMd(post.body).slice(0, 100) + "...",
       url: `${url}/articles/${post.slug}`,
       author: data.author,
       date: post.createdAt,

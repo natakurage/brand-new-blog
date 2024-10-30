@@ -2,6 +2,7 @@ import { BlogPost } from "@/lib/contentful";
 import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
 import Paginator from "./Pagenator";
+import removeMd from "remove-markdown";
 
 export default function ArticleList(
   { posts, total, page, limit }:
@@ -19,7 +20,7 @@ export default function ArticleList(
             <h2 className="text-xl font-bold">
               {post.title}
             </h2>
-            <p>{post.body.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>
+            <p>{removeMd(post.body).slice(0, 100)}...</p>
             <div className="space-x-2">
             {
               post.tags?.map((tag) => (

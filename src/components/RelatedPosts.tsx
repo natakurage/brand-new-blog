@@ -1,6 +1,7 @@
 import { BlogPost } from "@/lib/contentful";
 import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
+import removeMd from "remove-markdown";
 
 export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
   return (
@@ -16,7 +17,7 @@ export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
                 {post.title}
               </h2>
               <p className="line-clamp-3">
-                {post.body.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...
+                {removeMd(post.body).slice(0, 100)}...
               </p>
               <div className="flex gap-2 flex-wrap">
               {

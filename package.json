@@ -25,6 +25,7 @@
     "rehype-toc": "^3.0.2",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
+    "remove-markdown": "^0.5.5",
     "rss": "^1.2.2"
   },
   "devDependencies": {
