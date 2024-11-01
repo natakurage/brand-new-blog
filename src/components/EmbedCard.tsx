@@ -24,6 +24,9 @@ export default function EmbedCard({ url }: { url: string }) {
     };
     temp();
   }, [url]);
+
+  const isInternal = typeof window !== "undefined" && window.location.host === new URL(url).host;
+
   if (!meta) {
     // show skeleton
     return (
@@ -40,6 +43,7 @@ export default function EmbedCard({ url }: { url: string }) {
       </div>
     );
   }
+  console.log(meta.favicons);
   return (
     <div className="card glass card-side card-compact bg-base-100 shadow-xl not-prose">
       <figure className="w-1/3">
@@ -48,7 +52,7 @@ export default function EmbedCard({ url }: { url: string }) {
         meta.metadata.banner && <img
           src={meta.metadata.banner}
           alt={meta.metadata.title}
-          className="h-full object-cover"
+          className="h-full aspect-[1.91/1] object-cover"
         />
       }
       </figure>
@@ -68,8 +72,8 @@ export default function EmbedCard({ url }: { url: string }) {
       <Link
         href={url}
         className="absolute w-full h-full top-0 left-0"
-        target="_blank"
-        rel="noopener noreferrer"
+        target={isInternal ? undefined :"_blank"}
+        rel={isInternal ? undefined : "noopener noreferrer"}
       />
     </div>
   );
