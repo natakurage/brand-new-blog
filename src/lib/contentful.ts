@@ -130,7 +130,12 @@ export async function getRelatedPosts(
 
 export async function getList(id: string, preview = false) {
   const client = getClient(preview);
-  const entry = await client.getEntry(id);
+  let entry = null;
+  try {
+    entry = await client.getEntry(id);
+  } catch {
+    return null;
+  }
   if (entry.sys.contentType.sys.id !== "postList") {
     throw new Error("Invalid content type");
   }

@@ -9,11 +9,8 @@ export default async function ListsPage(
   const { id } = params;
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
-  let list = null;
-  try {
-    list = await getList(id, false);
-  } catch (error) {
-    console.error(error);
+  const list = await getList(id, false);
+  if (!list) { 
     notFound();
   }
   const posts = list?.posts ?? [];

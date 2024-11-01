@@ -7,7 +7,7 @@ const withEllipsis = (str: string, len: number) => (
 );
 
 export default async function ListNavigator({ current, listId }: { current: string, listId: string }) {
-  const { title, posts } = await getList(listId);
+  const { title, posts } = await getList(listId) ?? {};
   if (posts == null || posts?.length === 0) {
     return null;
   }
