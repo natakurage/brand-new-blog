@@ -42,19 +42,19 @@ export default function EmbedCard({ url }: { url: string }) {
   }
   return (
     <div className="card glass card-side card-compact bg-base-100 shadow-xl not-prose">
+      <figure className="w-1/3">
       {
-        meta.metadata.banner && <figure className="w-1/3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={meta.metadata.banner}
-            alt={meta.metadata.title}
-            className="h-full object-cover"
-          />
-        </figure>
+        // eslint-disable-next-line @next/next/no-img-element
+        meta.metadata.banner && <img
+          src={meta.metadata.banner}
+          alt={meta.metadata.title}
+          className="h-full object-cover"
+        />
       }
-      <div className={`card-body bg-[${meta.metadata.themeColor}] flex-1`}>
+      </figure>
+      <div className={"card-body flex-1" + (meta.metadata.themeColor ? ` bg-[${meta.metadata.themeColor}]` : "")}>
         <h2 className="card-title line-clamp-2">{meta.metadata.title}</h2>
-        <p className="line-clamp-1">{meta.metadata.description}</p>
+        <p className="line-clamp-1 min-h-5">{meta.metadata.description}</p>
         <div className="flex gap-1 justify-end">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
