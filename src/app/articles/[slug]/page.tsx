@@ -59,7 +59,7 @@ async function LinkProcessor({ href, children }: { href: string, children: React
 }
 
 export default async function ArticlePage(
-  { params,  searchParams}
+  { params,  searchParams }
   : { params: { slug: string }, searchParams: { listId?: string } }
 ) {
   const { isEnabled } = draftMode();
@@ -74,18 +74,24 @@ export default async function ArticlePage(
   }
   const post = posts[0];
 
-  const { posts: relatedPosts } = await getRelatedPosts({
-    slug: post.slug,
-    tagIds: post.tags?.map((tag) => tag.sys.id),
-  });
-  const { posts: newPosts } = await getPosts({
-    limit: 6,
-    filter: { "fields.slug[nin]": [post.slug] },
-  });
-  const { posts: recommendedPosts } = await getPosts({
-    limit: 6,
-    filter: { "fields.slug[in]": [data.recommendedPosts] },
-  });
+  const [
+    { posts: relatedPosts },
+    { posts: newPosts },
+    { posts: recommendedPosts }
+  ] = await Promise.all([
+    getRelatedPosts({
+      slug: post.slug,
+      tagIds: post.tags?.map((tag) => tag.sys.id),
+    }),
+    getPosts({
+      limit: 6,
+      filter: { "fields.slug[nin]": [post.slug] },
+    }),
+    getPosts({
+      limit: 6,
+      filter: { "fields.slug[in]": [data.recommendedPosts] },
+    })
+  ]);
   
   const shareText = `${post.title} - ${data.siteName}`;
   const headerList = headers();
