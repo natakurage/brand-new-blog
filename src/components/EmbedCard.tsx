@@ -1,20 +1,9 @@
 "use client";
 
 import { getMeta } from "@/app/actions";
+import { Metadata } from "@/lib/fetchMetadata";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-interface Metadata {
-  metadata: {
-      website: string;
-      title: string;
-      description: string | undefined;
-      banner: string | undefined;
-      themeColor: string | undefined;
-  };
-  socials: Record<string, string | undefined>;
-  favicons: string[];
-};
 
 export default function EmbedCard({ url }: { url: string }) {
   const [meta, setMeta] = useState<Metadata>();
@@ -43,7 +32,6 @@ export default function EmbedCard({ url }: { url: string }) {
       </div>
     );
   }
-  console.log(meta.favicons);
   return (
     <div className="card glass card-side card-compact bg-base-100 shadow-xl not-prose">
       <figure className="w-1/3">

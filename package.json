@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
+    "cheerio": "^1.0.0",
     "contentful": "^11.1.4",
     "install": "^0.13.0",
-    "meta-fetcher": "^3.1.1",
     "next": "14.2.15",
     "nextjs-toploader": "^3.7.15",
     "npm": "^10.9.0",
