@@ -19,6 +19,7 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import "./style.css";
 import { RelatedPosts } from "@/components/RelatedPosts";
+import ListNavigator from "@/components/ListNavigator";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -57,9 +58,13 @@ async function LinkProcessor({ href, children }: { href: string, children: React
   return href && <EmbedCard url={href} />;
 }
 
-export default async function ArticlePage({ params }: { params: { slug: string } }) {
+export default async function ArticlePage(
+  { params,  searchParams}
+  : { params: { slug: string }, searchParams: { listId?: string } }
+) {
   const { isEnabled } = draftMode();
   const { slug } = params;
+  const { listId } = searchParams;
   const { posts } = await getPosts({
     filter: { "fields.slug": slug },
     preview: isEnabled
@@ -203,6 +208,9 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         </Markdown>
       </article>
       <footer className="space-y-3">
+        {
+          listId && <ListNavigator current={slug} listId={listId} />
+        }
         <div className="flex flex-wrap gap-2 justify-between">
           <Link
             href={xShareURL.toString()}
