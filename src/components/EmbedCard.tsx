@@ -9,17 +9,21 @@ export default function EmbedCard({ url }: { url: string }) {
   const [meta, setMeta] = useState<Metadata>();
   useEffect(() => {
     const temp = async () => {
-      setMeta(await getMeta(url));
+      let url2 = url;
+      if (url.startsWith("/")) {
+        url2 = new URL(url, window.location.origin).href;
+      }
+      setMeta(await getMeta(url2));
     };
     temp();
   }, [url]);
 
-  const isInternal = typeof window !== "undefined" && window.location.host === new URL(url).host;
+  const isInternal = url.startsWith("/") || typeof window !== "undefined" && window.location.origin === new URL(url).origin;
 
   if (!meta) {
     // show skeleton
     return (
-      <div className="card glass card-side card-compact bg-base-100 shadow-xl not-prose">
+      <div className="card glass card-side card-compact bg-base-100 shadow-xl my-5 not-prose">
         <figure className="w-1/3 skeleton" />
         <div className="card-body flex-1">
           <h2 className="card-title h-14 line-clamp-2 skeleton" />
@@ -33,7 +37,7 @@ export default function EmbedCard({ url }: { url: string }) {
     );
   }
   return (
-    <div className="card glass card-side card-compact bg-base-100 shadow-xl not-prose">
+    <div className="card glass card-side card-compact bg-base-100 shadow-xl my-5 not-prose">
       <figure className="w-1/3">
       {
         // eslint-disable-next-line @next/next/no-img-element

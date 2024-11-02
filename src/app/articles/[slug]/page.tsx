@@ -39,6 +39,9 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
 
 async function LinkProcessor({ href, children }: { href: string, children: React.ReactNode }) {
   let url = null;
+  if (href.startsWith("/")) {
+    return <EmbedCard url={href} />;
+  }
   try {
     url = new URL(href);
   } catch {
