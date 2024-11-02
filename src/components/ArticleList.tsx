@@ -5,8 +5,8 @@ import Paginator from "./Paginator";
 import removeMd from "remove-markdown";
 
 export default function ArticleList(
-  { posts, total, page, limit }:
-  { posts: BlogPost[], total: number, page: number, limit: number }
+  { posts, total, page, limit, suffix }:
+  { posts: BlogPost[], total: number, page: number, limit: number, suffix?: string }
 ) {
   const maxPages = Math.ceil(total / limit);
   return (
@@ -38,7 +38,7 @@ export default function ArticleList(
               <MdAccessTime className="my-auto" />
               <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
             </div>
-            <Link href={`/articles/${post.slug}`} className="absolute w-full h-full top-0 left-0 z-1" />
+            <Link href={`/articles/${post.slug}` + suffix} className="absolute w-full h-full top-0 left-0 z-1" />
           </li>
         ))}
       </ul>

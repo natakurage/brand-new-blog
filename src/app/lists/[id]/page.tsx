@@ -18,7 +18,13 @@ export default async function ListsPage(
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">記事リスト &ldquo;{list.title}&rdquo;</h1>
       <p className="text-sm">{list.description}</p>
-      <ArticleList posts={posts} total={posts.length} page={pageNum} limit={10} />
+      <ArticleList
+        posts={posts}
+        total={posts.length}
+        page={pageNum}
+        limit={10}
+        suffix={`?listId=${list.id}`}
+      />
     </div>
   );
 }

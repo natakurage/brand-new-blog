@@ -141,6 +141,7 @@ export async function getList(id: string, preview = false) {
   }
   const entries = entry.fields.posts as Entry[];
   return {
+    id: entry.sys.id,
     posts: await Promise.all(
       entries.map((item) => (
       EntryToPost(item, client)
