@@ -38,7 +38,7 @@ export default function ArticleList(
               <MdAccessTime className="my-auto" />
               <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
             </div>
-            <Link href={`/articles/${post.slug}` + suffix} className="absolute w-full h-full top-0 left-0 z-1" />
+            <Link href={`/articles/${post.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
           </li>
         ))}
       </ul>
