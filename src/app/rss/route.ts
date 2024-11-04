@@ -3,8 +3,8 @@ import rss from "rss";
 import data from "@/app/data/data.json";
 import removeMd from "remove-markdown";
 
-export async function GET() {
-  const url = process.env.HOST;
+export async function GET(request: Request) {
+  const url = new URL(request.url).origin;
 
   if (!url) {
     return new Response(null, { status: 404 });
