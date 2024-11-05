@@ -1,4 +1,5 @@
 import { ContentfulClientApi, createClient, EntriesQueries, Entry, EntrySkeletonType, Tag } from "contentful";
+import { getAdapter } from "axios";
 
 const space = process.env.CONTENTFUL_SPACE_ID;
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN;
@@ -8,12 +9,14 @@ if (!space || !accessToken || !previewAccessToken) {
   throw new Error("Missing Contentful credentials.");
 }
 
+const fetchAdapter = getAdapter("fetch");
+
 const normalClient = createClient({
-  space, accessToken,
+  space, accessToken, adapter: fetchAdapter
 });
 
 const previewClient = createClient({
-  space, accessToken: previewAccessToken, host: "preview.contentful.com",
+  space, accessToken: previewAccessToken, host: "preview.contentful.com", adapter: fetchAdapter
 });
 
 const getClient = (preview: boolean) => preview ? previewClient : normalClient;
