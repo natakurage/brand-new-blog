@@ -3,7 +3,6 @@
 ## 使用技術
 - Next.js
 - Contentful
-- Vercel
 - TailwindCSS
 - DaisyUI
 
