@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   <title>${data.siteName}</title>
   <description>${data.description}</description>
   <link>${url}</link>
-  <generator></generator>
+  <generator>${data.siteName}</generator>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   <atom:link href="${url}/rss" rel="self" type="application/rss+xml"/>
   <language><![CDATA[ja]]></language>
