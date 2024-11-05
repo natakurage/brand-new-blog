@@ -8,8 +8,6 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
 
-const googleVerification = process.env.GOOGLE_VERIFICATION_CODE;
-
 export const metadata: Metadata = {
   icons: {
     icon: "/favicons/favicon.ico",
@@ -25,9 +23,6 @@ export const metadata: Metadata = {
         alt: data.siteName + " OGP"
       }
     ]
-  },
-  verification: {
-    google: googleVerification
   }
 };
 
