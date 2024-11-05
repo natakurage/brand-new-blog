@@ -20,6 +20,9 @@ import "katex/dist/katex.min.css";
 import "./style.css";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import ListNavigator from "@/components/ListNavigator";
+import Image from "next/image";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -210,6 +213,39 @@ export default async function ArticlePage(
                 }
               }
               return <p>{children}</p>;
+            },
+            img: ({ src, alt }) => {
+              if (src == null) return null;
+              return (
+                <Image
+                  src={`${protocol}:${src}`}
+                  alt={alt ? alt : "Article Image"}
+                  fill
+                  className="object-contain !relative !w-auto mx-auto"
+                />
+              );
+            },
+            pre: ({ children }) => {
+              if (children == null) {
+                return null;
+              }
+              if (
+                !React.isValidElement(children)
+                || children.type !== "code"
+              ) {
+                return <pre>{children}</pre>;
+              }
+              const className = children.props.className;
+              const codeContent = children.props.children;
+              const language = className?.replace("language-", "");
+              return (
+                <SyntaxHighlighter
+                  language={language}
+                  style={dracula}
+                >
+                  {String(codeContent).replace(/\n$/, "")}
+                </SyntaxHighlighter>
+              );
             }
           }}
         >
