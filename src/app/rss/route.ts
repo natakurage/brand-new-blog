@@ -38,5 +38,7 @@ export async function GET(request: Request) {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>${rss}`;
 
-  return new Response(xml, { headers: { "Content-Type": "application/rss+xml" } });
+  return new Response(xml, { headers: {
+    "Content-Type": "application/rss+xml; charset=UTF-8",
+  }});
 }
