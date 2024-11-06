@@ -4,7 +4,7 @@ import { MdAccessTime, MdUpdate, MdWarning } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
 import Link from "next/link";
-import { getPosts, getRelatedPosts } from "@/lib/contentful";
+import { getAllPostSlugs, getPosts, getRelatedPosts } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
 import { draftMode, headers } from "next/headers";
@@ -67,8 +67,8 @@ async function LinkProcessor({ href, children }: { href: string, children: React
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const { posts } = await getPosts({ preview: false });
-  return posts.map((post) => ({ slug: post.slug }));
+  const slugs = await getAllPostSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export default async function ArticlePage(
