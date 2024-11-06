@@ -173,6 +173,10 @@ export default async function ArticlePage(
             <MdUpdate className="my-auto" />
             <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
           </span>
+          Debug: current time:
+          {new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}
+          {" "}
+          {new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })}
         </div>
         <hr />
       </header>
