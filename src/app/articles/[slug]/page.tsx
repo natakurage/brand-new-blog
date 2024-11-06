@@ -11,7 +11,7 @@ import { draftMode } from "next/headers";
 import CopyButton from "@/components/CopyButton";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import DisablePreview from "@/components/DisablePreview";
-import React from "react";
+import React, { Suspense } from "react";
 import EmbedCard from "@/components/EmbedCard";
 import data from "@/app/data/data.json";
 import remarkMath from "remark-math";
@@ -271,7 +271,9 @@ export default async function ArticlePage(
         </Markdown>
       </article>
       <footer className="space-y-3">
-        <ListNavigator slug={slug} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ListNavigator slug={slug} />
+        </Suspense>
         <div className="flex flex-wrap gap-2 justify-between">
           <Link
             href={xShareURL.toString()}

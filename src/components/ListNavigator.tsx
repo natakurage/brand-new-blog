@@ -30,7 +30,6 @@ export default function ListNavigator({ slug }: { slug: string }) {
         router.push("?");
         return;
       }
-      console.log(_posts, slug);
       const _idx = _posts.findIndex((post) => post.slug === slug);
       if (_idx === -1) {
         router.push("?");
