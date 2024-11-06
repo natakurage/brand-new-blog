@@ -64,20 +64,16 @@ async function LinkProcessor({ href, children }: { href: string, children: React
   return href && <EmbedCard url={href} />;
 }
 
-export const dynamic = "force-static";
-
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug, listId: undefined }));
 }
 
 export default async function ArticlePage(
-  { params,  searchParams }
-  : { params: { slug: string }, searchParams: { listId?: string } }
+  { params } : { params: { slug: string } }
 ) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const { listId } = searchParams;
   const { posts } = await getPosts({
     filter: { "fields.slug": slug },
     preview: isEnabled
@@ -267,9 +263,7 @@ export default async function ArticlePage(
         </Markdown>
       </article>
       <footer className="space-y-3">
-        {
-          listId && <ListNavigator current={slug} listId={listId} />
-        }
+        <ListNavigator slug={slug} />
         <div className="flex flex-wrap gap-2 justify-between">
           <Link
             href={xShareURL.toString()}
