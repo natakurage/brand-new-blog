@@ -64,7 +64,7 @@ async function LinkProcessor({ href, children }: { href: string, children: React
   return href && <EmbedCard url={href} />;
 }
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 export default async function ArticlePage(
   { params,  searchParams }
