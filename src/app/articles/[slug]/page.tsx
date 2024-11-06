@@ -64,7 +64,12 @@ async function LinkProcessor({ href, children }: { href: string, children: React
   return href && <EmbedCard url={href} />;
 }
 
-export const revalidate = 120;
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const { posts } = await getPosts({ preview: false });
+  return posts.map((post) => ({ slug: post.slug }));
+}
 
 export default async function ArticlePage(
   { params,  searchParams }
