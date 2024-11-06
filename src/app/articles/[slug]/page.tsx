@@ -217,12 +217,15 @@ export default async function ArticlePage(
             img: ({ src, alt }) => {
               if (src == null) return null;
               return (
-                <Image
-                  src={`${protocol}:${src}`}
-                  alt={alt ? alt : "Article Image"}
-                  fill
-                  className="object-contain !relative !w-auto mx-auto"
-                />
+                <span className="block relative">
+                  <Image
+                    src={`${protocol}:${src}`}
+                    alt={alt ? alt : "Article Image"}
+                    fill
+                    sizes="100%"
+                    className="object-contain !relative !w-auto mx-auto"
+                  />
+                </span>
               );
             },
             pre: ({ children }) => {
