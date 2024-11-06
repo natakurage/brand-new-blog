@@ -64,6 +64,8 @@ async function LinkProcessor({ href, children }: { href: string, children: React
   return href && <EmbedCard url={href} />;
 }
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug, listId: undefined }));
