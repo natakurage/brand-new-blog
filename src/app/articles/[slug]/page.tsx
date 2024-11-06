@@ -64,7 +64,7 @@ async function LinkProcessor({ href, children }: { href: string, children: React
   return href && <EmbedCard url={href} />;
 }
 
-export const dynamic = "error";
+export const dynamic = "force-static";
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
