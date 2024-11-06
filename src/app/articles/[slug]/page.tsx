@@ -6,7 +6,7 @@ import rehypeToc from "rehype-toc";
 import Link from "next/link";
 import { getAllPostSlugs, getPosts, getRelatedPosts } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
-import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
+import { FaBluesky, FaGetPocket, FaLine, FaScrewdriverWrench, FaXTwitter } from "react-icons/fa6";
 import { draftMode } from "next/headers";
 import CopyButton from "@/components/CopyButton";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
@@ -162,7 +162,7 @@ export default async function ArticlePage(
           ))
         }
         </div>
-        <div className="text-sm flex gap-2 justify-end">
+        <div className="text-sm flex flex-wrap gap-2 justify-end">
           <span className="flex flex-row gap-1">
             <MdAccessTime className="my-auto" />
             <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
@@ -171,10 +171,16 @@ export default async function ArticlePage(
             <MdUpdate className="my-auto" />
             <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
           </span>
-          Debug: current time:
-          {new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}
-          {" "}
-          {new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })}
+          <span className="flex flex-row gap-1">
+            <FaScrewdriverWrench className="my-auto" />
+            <time>
+            {
+              new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })
+              + " "
+              + new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })
+            }
+            </time>
+          </span>
         </div>
         <hr />
       </header>
