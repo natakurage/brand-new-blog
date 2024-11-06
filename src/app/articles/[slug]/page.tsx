@@ -7,7 +7,7 @@ import Link from "next/link";
 import { getAllPostSlugs, getPosts, getRelatedPosts } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
-import { draftMode, headers } from "next/headers";
+import { draftMode } from "next/headers";
 import CopyButton from "@/components/CopyButton";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import DisablePreview from "@/components/DisablePreview";
@@ -101,12 +101,14 @@ export default async function ArticlePage(
       filter: { "fields.slug[in]": [data.recommendedPosts] },
     })
   ]);
+
+  const origin = process.env.NEXT_PUBLIC_ORIGIN;
+  if (!origin) {
+    throw new Error("Missing NEXT_PUBLIC_ORIGIN");
+  }
   
   const shareText = `${post.title} - ${data.siteName}`;
-  const headerList = headers();
-  const host = headerList.get("host");
-  const protocol = headerList.get("x-forwarded-proto") || "https";
-  const shareUrl = `${protocol}://${host}/articles/${post.slug}`;
+  const shareUrl = `${origin}/articles/${post.slug}`;
 
   const xShareURL = new URL("https://x.com/intent/post");
   xShareURL.searchParams.append("text", shareText);
@@ -226,7 +228,7 @@ export default async function ArticlePage(
               return (
                 <span className="block relative">
                   <Image
-                    src={`${protocol}:${src}`}
+                    src={`https:${src}`}
                     alt={alt ? alt : "Article Image"}
                     fill
                     sizes="100%"
