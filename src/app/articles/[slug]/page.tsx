@@ -165,15 +165,15 @@ export default async function ArticlePage(
         }
         </div>
         <div className="text-sm flex flex-wrap gap-2 justify-end">
-          <span className="flex flex-row gap-1">
+          <span className="flex flex-row gap-1 tooltip" data-tip="Published">
             <MdAccessTime className="my-auto" />
             <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
           </span>
-          <span className="flex flex-row gap-1">
+          <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
             <MdUpdate className="my-auto" />
             <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
           </span>
-          <span className="flex flex-row gap-1">
+          <span className="flex flex-row gap-1 tooltip" data-tip="Built">
             <FaScrewdriverWrench className="my-auto" />
             <time>
             {
