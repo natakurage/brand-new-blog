@@ -16,11 +16,12 @@ export default function Paginator({ page, maxPages, numPages = 5 }: { page: numb
         Array.from({ length: numPages }).map((_, i) => {
           const current = page + i - 2;
           if (current <= 0 || current > maxPages) return null;
+          const href = current === 1 ? "?" : "?page=" + current;
 
           return <Link
             key={current}
             className={current === page ? "join-item btn btn-active" : "join-item btn"}
-            href={"?page=" + current}
+            href={href}
           >
             {current}
           </Link>;
