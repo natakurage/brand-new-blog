@@ -111,6 +111,15 @@ export async function getPosts(
   };
 }
 
+export async function getAllPostSlugs() {
+  const client = getClient(false);
+  const entries = await client.getEntries({
+    content_type: "blogPost",
+    select: ["fields.slug"],
+  });
+  return entries.items.map((item) => item.fields.slug);
+}
+
 export async function getRelatedPosts(
   {
     slug,

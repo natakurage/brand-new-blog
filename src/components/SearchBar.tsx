@@ -10,6 +10,7 @@ export default function SearchBar({ onSubmit }: { onSubmit?: () => void }) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (query.length < 2) return;
     onSubmit?.();
     router.push(`/search?q=${query}`);
   };

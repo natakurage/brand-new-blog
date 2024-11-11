@@ -4,14 +4,14 @@ import { MdAccessTime, MdUpdate, MdWarning } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
 import Link from "next/link";
-import { getPosts, getRelatedPosts } from "@/lib/contentful";
+import { getAllPostSlugs, getPosts, getRelatedPosts } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
-import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
-import { draftMode, headers } from "next/headers";
+import { FaBluesky, FaGetPocket, FaLine, FaScrewdriverWrench, FaXTwitter } from "react-icons/fa6";
+import { draftMode } from "next/headers";
 import CopyButton from "@/components/CopyButton";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import DisablePreview from "@/components/DisablePreview";
-import React from "react";
+import React, { Suspense } from "react";
 import EmbedCard from "@/components/EmbedCard";
 import data from "@/app/data/data.json";
 import remarkMath from "remark-math";
@@ -20,6 +20,9 @@ import "katex/dist/katex.min.css";
 import "./style.css";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import ListNavigator from "@/components/ListNavigator";
+import Image from "next/image";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -61,13 +64,18 @@ async function LinkProcessor({ href, children }: { href: string, children: React
   return href && <EmbedCard url={href} />;
 }
 
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await getAllPostSlugs();
+  return slugs.map((slug) => ({ slug, listId: undefined }));
+}
+
 export default async function ArticlePage(
-  { params,  searchParams }
-  : { params: { slug: string }, searchParams: { listId?: string } }
+  { params } : { params: { slug: string } }
 ) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const { listId } = searchParams;
   const { posts } = await getPosts({
     filter: { "fields.slug": slug },
     preview: isEnabled
@@ -95,12 +103,14 @@ export default async function ArticlePage(
       filter: { "fields.slug[in]": [data.recommendedPosts] },
     })
   ]);
+
+  const origin = process.env.NEXT_PUBLIC_ORIGIN;
+  if (!origin) {
+    throw new Error("Missing NEXT_PUBLIC_ORIGIN");
+  }
   
   const shareText = `${post.title} - ${data.siteName}`;
-  const headerList = headers();
-  const host = headerList.get("host");
-  const protocol = headerList.get("x-forwarded-proto") || "https";
-  const shareUrl = `${protocol}://${host}/articles/${post.slug}`;
+  const shareUrl = `${origin}/articles/${post.slug}`;
 
   const xShareURL = new URL("https://x.com/intent/post");
   xShareURL.searchParams.append("text", shareText);
@@ -154,14 +164,24 @@ export default async function ArticlePage(
           ))
         }
         </div>
-        <div className="text-sm flex gap-2 justify-end">
-          <span className="flex flex-row gap-1">
+        <div className="text-sm flex flex-wrap gap-2 justify-end">
+          <span className="flex flex-row gap-1 tooltip" data-tip="Published">
             <MdAccessTime className="my-auto" />
             <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
           </span>
-          <span className="flex flex-row gap-1">
+          <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
             <MdUpdate className="my-auto" />
             <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+          </span>
+          <span className="flex flex-row gap-1 tooltip" data-tip="Built">
+            <FaScrewdriverWrench className="my-auto" />
+            <time>
+            {
+              new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })
+              + " "
+              + new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })
+            }
+            </time>
           </span>
         </div>
         <hr />
@@ -210,6 +230,42 @@ export default async function ArticlePage(
                 }
               }
               return <p>{children}</p>;
+            },
+            img: ({ src, alt }) => {
+              if (src == null) return null;
+              return (
+                <span className="block relative">
+                  <Image
+                    src={`https:${src}`}
+                    alt={alt ? alt : "Article Image"}
+                    fill
+                    sizes="100%"
+                    className="object-contain !relative !w-auto mx-auto"
+                  />
+                </span>
+              );
+            },
+            pre: ({ children }) => {
+              if (children == null) {
+                return null;
+              }
+              if (
+                !React.isValidElement(children)
+                || children.type !== "code"
+              ) {
+                return <pre>{children}</pre>;
+              }
+              const className = children.props.className;
+              const codeContent = children.props.children;
+              const language = className?.replace("language-", "");
+              return (
+                <SyntaxHighlighter
+                  language={language}
+                  style={dracula}
+                >
+                  {String(codeContent).replace(/\n$/, "")}
+                </SyntaxHighlighter>
+              );
             }
           }}
         >
@@ -217,9 +273,9 @@ export default async function ArticlePage(
         </Markdown>
       </article>
       <footer className="space-y-3">
-        {
-          listId && <ListNavigator current={slug} listId={listId} />
-        }
+        <Suspense fallback={<div>Loading...</div>}>
+          <ListNavigator slug={slug} />
+        </Suspense>
         <div className="flex flex-wrap gap-2 justify-between">
           <Link
             href={xShareURL.toString()}
