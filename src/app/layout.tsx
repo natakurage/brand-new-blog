@@ -9,6 +9,7 @@ import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000"),
   icons: {
     icon: "/favicons/favicon.ico",
     apple: "/favicons/apple-touch-icon.png"
