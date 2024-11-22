@@ -6,7 +6,7 @@ import { FaCheckCircle } from "react-icons/fa";
 export default function AntiAdblock() {
   useEffect(() => {
     const adTest = async () => {
-      if (typeof localStorage === "undefined" || localStorage.getItem("popupshown") === "true"){
+      if (typeof localStorage === "undefined" || localStorage.getItem("adtested") === "true"){
         return;
       }
       const testURL = "https://ad.doubleclick.net/fakepage.html";
@@ -30,9 +30,9 @@ export default function AntiAdblock() {
         const modal = document.getElementById("my_modal_2");
         if (modal) {
           (modal as HTMLDialogElement).showModal();
-          localStorage.setItem("popupshown", "true");
         }
       }
+      localStorage.setItem("adtested", "true");
     };
     adTest();
   });
