@@ -7,6 +7,7 @@ import NextTopLoader from "nextjs-toploader";
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
+import AntiAdblock from "@/components/AntiAdblock";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000"),
@@ -67,6 +68,9 @@ export default function RootLayout({
           }
         </div>
         <Footer />
+        {
+          data.adblock && <AntiAdblock />
+        }
       </body>
     </html>
   );
