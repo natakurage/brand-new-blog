@@ -30,6 +30,32 @@ export interface BlogPost {
   showToc: boolean;
 }
 
+export interface Song {
+  id: string;
+  title: string;
+  url: string[];
+  artist: string[];
+  releaseDate: string;
+  slug: string;
+  description: string;
+  credit: string[];
+  lyrics: string;
+  license?: string;
+  tags?: Tag[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Album {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  license?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PostList {
   id: string;
   title: string;
@@ -195,4 +221,75 @@ export async function getLists(
     limit: entries.limit,
     skip: entries.skip
   };
+}
+
+export async function getSong(slug: string, preview = false) {
+  const client = getClient(preview);
+  let entry = null;
+  try {
+    const entries = await client.getEntries({
+      content_type: "song",
+      "fields.slug": slug
+    });
+    if (entries.items.length === 0) {
+      return null;
+    }
+    entry = entries.items[0];
+  } catch {
+    return null;
+  }
+  if (entry.sys.contentType.sys.id !== "song") {
+    throw new Error("Invalid content type");
+  }
+  const tags = await Promise.all(
+    entry.metadata.tags.map(async (tag) => (
+      (await getTagWithCache(tag.sys.id, client))
+    ))
+  );
+  return {
+    id: entry.sys.id,
+    title: entry.fields.title,
+    url: entry.fields.url,
+    artist: entry.fields.artist,
+    releaseDate: entry.fields.releaseDate,
+    slug: entry.fields.slug,
+    description: entry.fields.description,
+    credit: entry.fields.credit,
+    lyrics: entry.fields.lyrics,
+    license: entry.fields.license,
+    tags,
+    createdAt: entry.sys.createdAt,
+    updatedAt: entry.sys.updatedAt,
+  } as Song;
+}
+
+export async function getAllSongSlugs() {
+  const client = getClient(false);
+  const entries = await client.getEntries({
+    content_type: "song",
+    select: ["fields.slug"],
+  });
+  return entries.items.map((item) => item.fields.slug);
+}
+
+export async function getAlbum(id: string, preview = false) {
+  const client = getClient(preview);
+  let entry = null;
+  try {
+    entry = await client.getEntry(id);
+  } catch {
+    return null;
+  }
+  if (entry.sys.contentType.sys.id !== "album") {
+    throw new Error("Invalid content type");
+  }
+  return {
+    id: entry.sys.id,
+    title: entry.fields.title,
+    slug: entry.fields.slug,
+    description: entry.fields.description,
+    license: entry.fields.license,
+    createdAt: entry.sys.createdAt,
+    updatedAt: entry.sys.updatedAt,
+  } as Album;
 }
