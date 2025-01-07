@@ -90,7 +90,7 @@ export default async function SongPage(
 ) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const song = await getSong(slug);
+  const song = await getSong(slug, isEnabled);
   if (!song) {
     notFound();
   }
