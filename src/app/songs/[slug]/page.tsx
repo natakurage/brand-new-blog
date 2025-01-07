@@ -24,7 +24,7 @@ import PreviewWarning from "@/components/PreviewWarning";
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const song = await getSong(slug);
+  const song = await getSong(slug, isEnabled);
   if (!song) {
     notFound();
   }
