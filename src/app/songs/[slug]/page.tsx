@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
-import { MdAccessTime, MdWarning } from "react-icons/md";
+import { MdAccessTime } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import { getAllSongSlugs, getSong } from "@/lib/contentful";
@@ -8,7 +8,6 @@ import remarkGfm from "remark-gfm";
 import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
-import DisablePreview from "@/components/DisablePreview";
 import React, { Suspense } from "react";
 import EmbedCard from "@/components/EmbedCard";
 import data from "@/app/data/data.json";
@@ -20,6 +19,7 @@ import ListNavigator from "@/components/ListNavigator";
 import Image from "next/image";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
+import PreviewWarning from "@/components/PreviewWarning";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -85,7 +85,7 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug, listId: undefined }));
 }
 
-export default async function ArticlePage(
+export default async function SongPage(
   { params } : { params: { slug: string } }
 ) {
   const { isEnabled } = draftMode();
@@ -105,29 +105,7 @@ export default async function ArticlePage(
   
   return (
     <main>
-      {
-        isEnabled &&
-        <div className="my-4 space-y-2">
-          <div role="alert" className="alert alert-warning">
-            <MdWarning size={24} />
-            <span>
-              このページはプレビューです！
-              もし何らかの理由でこのページが見えてしまった場合、
-              悪いことを考える前に
-              <Link
-                href={data.contactURL}
-                className="link underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                こちら
-              </Link>
-              までお知らせください。
-            </span>
-          </div>
-          <DisablePreview className="btn btn-ghost btn-sm" />
-        </div>
-      }
+      { isEnabled && <PreviewWarning /> }
       <header className="space-y-1">
         <h1 className="text-4xl font-bold">{song.title}</h1>
         <div>{song.artist.join(", ")}</div>
