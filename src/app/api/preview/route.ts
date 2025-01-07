@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get("secret");
   const slug = searchParams.get("slug");
+  const type = searchParams.get("type");
  
   if (secret !== process.env.CONTENTFUL_PREVIEW_SECRET) {
     return new Response("Invalid token", { status: 401 });
@@ -13,7 +14,10 @@ export async function GET(request: Request) {
   draftMode().enable();
  
   if (slug) {
-    redirect(`/articles/${slug}`);
+    if (type == "article")
+      redirect(`/articles/${slug}`);
+    else if (type == "song")
+      redirect(`/songs/${slug}`);
   }
  
   redirect("/");
