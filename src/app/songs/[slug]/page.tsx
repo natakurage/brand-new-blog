@@ -3,7 +3,7 @@ import Markdown from "react-markdown";
 import { MdAccessTime } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import Link from "next/link";
-import { getAllSongSlugs, getSong } from "@/lib/contentful";
+import { SongManager } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
@@ -24,7 +24,7 @@ import PreviewWarning from "@/components/PreviewWarning";
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const song = await getSong(slug, isEnabled);
+  const song = await new SongManager().getBySlug(slug, isEnabled);
   if (!song) {
     notFound();
   }
@@ -81,8 +81,8 @@ function getYouTubeId(url: string) {
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const slugs = await getAllSongSlugs();
-  return slugs.map((slug) => ({ slug, listId: undefined }));
+  const slugs = await new SongManager().getAllSlugs();
+  return slugs.map((slug) => ({ slug, key: undefined }));
 }
 
 export default async function SongPage(
@@ -90,7 +90,7 @@ export default async function SongPage(
 ) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const song = await getSong(slug, isEnabled);
+  const song = await new SongManager().getBySlug(slug, isEnabled);
   if (!song) {
     notFound();
   }
@@ -102,7 +102,7 @@ export default async function SongPage(
 
   const shareText = `${song.title} - ${data.siteName}`;
   const shareUrl = `${origin}/songs/${song.slug}`;
-  
+
   return (
     <main>
       { isEnabled && <PreviewWarning /> }
@@ -121,10 +121,12 @@ export default async function SongPage(
         }
         </div>
         <div className="text-sm flex flex-wrap gap-2 justify-end">
-          <span className="flex flex-row gap-1 tooltip" data-tip="Published">
-            <MdAccessTime className="my-auto" />
-            <time>{new Date(song.releaseDate).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-          </span>
+          {
+            song.releaseDate && <span className="flex flex-row gap-1 tooltip" data-tip="Published">
+              <MdAccessTime className="my-auto" />
+              <time>{new Date(song.releaseDate).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+            </span>
+          }
           <span className="flex flex-row gap-1 tooltip" data-tip="Built">
             <FaScrewdriverWrench className="my-auto" />
             <time>
@@ -140,24 +142,26 @@ export default async function SongPage(
       </header>
       <article className="my-16 space-y-4">
         {
-          // youtubeリンクがあれば埋め込む
-          song.url.find((url) => isYouTube(url)) &&
-          <YouTubePlayer vid={getYouTubeId(song.url.find((url) => isYouTube(url))!) || ""} />
-        }
-        <div>
-          <ul>
+          song.url && <div>
             {
-              song.url.map((url) => (
-                <li key={url} className="text-sm text-primary flex flex-row">
-                  <FaExternalLinkAlt />
-                  <Link href={url} target="_blank" rel="noopener noreferrer">
-                    {url}
-                  </Link>
-                </li>
-              ))
+              // youtubeリンクがあれば埋め込む
+              song.url.find((url) => isYouTube(url)) &&
+              <YouTubePlayer vid={getYouTubeId(song.url.find((url) => isYouTube(url))!) || ""} />
             }
-          </ul>
-        </div>
+            <ul>
+              {
+                song.url.map((url) => (
+                  <li key={url} className="text-sm text-primary flex flex-row">
+                    <FaExternalLinkAlt />
+                    <Link href={url} target="_blank" rel="noopener noreferrer">
+                      {url}
+                    </Link>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        }
         <Markdown
           className="prose dark:!prose-invert break-words"
           remarkPlugins={[remarkGfm, remarkMath]}
@@ -192,23 +196,27 @@ export default async function SongPage(
             },
           }}
         >
-          {song.description}
+          {song.content}
         </Markdown>
-        <ul className="text-right">
-          {
-            song.credit.map((credit, index) => (
-              <li key={index}>{credit}</li>
-            ))
-          }
-        </ul>
+        {
+          song.credit && <ul className="text-right">
+            {
+              song.credit.map((credit, index) => (
+                <li key={index}>{credit}</li>
+              ))
+            }
+          </ul>
+        }
         <h2 className="text-2xl font-bold">Lyrics</h2>
-        <Markdown className="prose dark:!prose-invert break-words">
-          {song.lyrics.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n')}
-        </Markdown>
+        {
+          song.lyrics && <Markdown className="prose dark:!prose-invert break-words">
+            {song.lyrics.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n')}
+          </Markdown>
+        }
       </article>
       <footer className="space-y-3">
         <Suspense fallback={<div>Loading...</div>}>
-          <ListNavigator slug={slug} />
+          <ListNavigator slug={slug} managerType="Album" useSlug />
         </Suspense>
         <ShareButtons shareText={shareText} shareUrl={shareUrl} />
         <div className="border border-base-content border-dashed rounded p-3 space-y-2">
@@ -217,11 +225,11 @@ export default async function SongPage(
             <li>タイトル: {song.title}</li>
             <li>アーティスト: {song.artist.join(", ")}</li>
             {
-              song.credit.map((credit, index) => (
+              song.credit && song.credit.map((credit, index) => (
                 <li key={index}>{credit}</li>
               ))
             }
-            <li>作成年: {new Date(song.releaseDate).getFullYear()}</li>
+            {song.releaseDate && <li>作成年: {new Date(song.releaseDate).getFullYear()}</li>}
           </ul>
           <h6 className="font-bold">License</h6>
           {song.license == null

@@ -1,5 +1,5 @@
-import ArticleList from "@/components/ArticleList";
-import { getPosts, getTagWithCache } from "@/lib/contentful";
+import ItemList from "@/components/ItemList";
+import { BlogPostManager, getTagWithCache } from "@/lib/contentful";
 import data from "@/app/data/data.json";
 
 export async function generateMetadata ({ params }: { params: { tagId: string } }) {
@@ -15,7 +15,7 @@ export default async function TagPage({ params, searchParams }: { params: { tagI
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
   const tag = await getTagWithCache(tagId);
-  const { posts, total, limit } = await getPosts({
+  const { items: posts, total, limit } = await new BlogPostManager().query({
     filter: {"metadata.tags.sys.id[all]": tag.sys.id},
     offset: pageNum - 1,
   });
@@ -25,7 +25,7 @@ export default async function TagPage({ params, searchParams }: { params: { tagI
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ArticleList posts={posts} total={total} page={pageNum} limit={limit} />
+          : <ItemList items={posts} total={total} page={pageNum} limit={limit} />
       }
     </div>
   );

@@ -1,4 +1,4 @@
-import { getPosts } from "@/lib/contentful";
+import { BlogPostManager } from "@/lib/contentful";
 import data from "@/app/data/data.json";
 import removeMd from "remove-markdown";
 
@@ -9,11 +9,11 @@ export async function GET(request: Request) {
     return new Response(null, { status: 404 });
   }
 
-  const { posts } = await getPosts({});
+  const { items: posts } = await new BlogPostManager().query({});
 
   const items = posts.map(post => `<item>
       <title><![CDATA[${post.title}]]></title>
-      <description><![CDATA[${removeMd(post.body).slice(0, 100) + "..."}]]></description>
+      <description><![CDATA[${removeMd(post.content).slice(0, 100) + "..."}]]></description>
       <link>${url}/articles/${post.slug}</link>
       <guid isPermaLink="false">${url}/articles/${post.slug}</guid>
       <dc:creator><![CDATA[${data.author}]]></dc:creator>

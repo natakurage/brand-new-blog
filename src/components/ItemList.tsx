@@ -1,29 +1,29 @@
-import { BlogPost } from "@/lib/contentful";
+import { BlogItem } from "@/lib/contentful";
 import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
 import Paginator from "./Paginator";
 import removeMd from "remove-markdown";
 
-export default function ArticleList(
-  { posts, total, page, limit, suffix }:
-  { posts: BlogPost[], total: number, page: number, limit: number, suffix?: string }
+export default function ItemList(
+  { items, total, page, limit, suffix }:
+  { items: (BlogItem | null)[], total: number, page: number, limit: number, suffix?: string }
 ) {
   const maxPages = Math.ceil(total / limit);
   return (
     <div className="space-y-8">
       <ul className="space-y-4">
-        {posts.map((post) => (
+        {items.map((item) => (item &&
           <li
-            key={post.slug}
+            key={item.slug}
             className="relative p-4 btn-ghost rounded-lg break-words"
           >
             <h2 className="text-xl font-bold">
-              {post.title}
+              {item.title}
             </h2>
-            <p>{removeMd(post.body).slice(0, 100)}...</p>
+            <p>{removeMd(item.content).slice(0, 100)}...</p>
             <div className="space-x-2">
             {
-              post.tags?.map((tag) => (
+              item.tags?.map((tag) => (
                 <Link
                   key={tag.sys.id}
                   href={`/tags/${tag.sys.id}`}
@@ -36,9 +36,9 @@ export default function ArticleList(
             </div>
             <div className="flex flex-row gap-1 justify-end">
               <MdAccessTime className="my-auto" />
-              <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+              <time>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
             </div>
-            <Link href={`/articles/${post.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
+            <Link href={`/${item.typeUrl}/${item.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
           </li>
         ))}
       </ul>

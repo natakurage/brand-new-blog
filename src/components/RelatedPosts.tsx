@@ -17,7 +17,7 @@ export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
                 {post.title}
               </h2>
               <p className="line-clamp-3">
-                {removeMd(post.body).slice(0, 100)}...
+                {removeMd(post.content).slice(0, 100)}...
               </p>
               <div className="flex gap-2 flex-wrap">
               {

@@ -1,5 +1,5 @@
-import ArticleList from "@/components/ArticleList";
-import { getPosts } from "@/lib/contentful";
+import ItemList from "@/components/ItemList";
+import { BlogPostManager } from "@/lib/contentful";
 import data from "@/app/data/data.json";
 
 export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {
@@ -12,7 +12,7 @@ export async function generateMetadata ({ searchParams }: { searchParams: { q: s
 export default async function SearchPage({ searchParams }: { searchParams: { q: string, page?: string } }) {
   const { q, page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { posts, total, limit } = await getPosts({
+  const { items: posts, total, limit } = await new BlogPostManager().query({
     filter: { query: q },
     offset: pageNum - 1
   });
@@ -22,7 +22,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q: 
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ArticleList posts={posts} total={total} page={pageNum} limit={limit} />
+          : <ItemList items={posts} total={total} page={pageNum} limit={limit} />
       }
     </div>
   );

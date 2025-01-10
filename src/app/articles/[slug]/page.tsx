@@ -4,7 +4,7 @@ import { MdAccessTime, MdUpdate } from "react-icons/md";
 import rehypeSlug from "rehype-slug";
 import rehypeToc from "rehype-toc";
 import Link from "next/link";
-import { getAllPostSlugs, getPosts, getRelatedPosts } from "@/lib/contentful";
+import { BlogPostManager } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
@@ -27,14 +27,10 @@ import PreviewWarning from "@/components/PreviewWarning";
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const { posts } = await getPosts({
-    filter: { "fields.slug": slug },
-    preview: isEnabled
-  });
-  if (posts.length === 0) {
+  const post = await new BlogPostManager().getBySlug(slug, isEnabled);
+  if (!post) {
     notFound();
   }
-  const post = posts[0];
   return {
     title: (isEnabled ? "(プレビュー)" : "") + post.title + " - " + data.siteName,
   };
@@ -67,8 +63,8 @@ async function LinkProcessor({ href, children }: { href: string, children: React
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const slugs = await getAllPostSlugs();
-  return slugs.map((slug) => ({ slug, listId: undefined }));
+  const slugs = await new BlogPostManager().getAllSlugs();
+  return slugs.map((slug) => ({ slug, key: undefined }));
 }
 
 export default async function ArticlePage(
@@ -76,29 +72,26 @@ export default async function ArticlePage(
 ) {
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const { posts } = await getPosts({
-    filter: { "fields.slug": slug },
-    preview: isEnabled
-  });
-  if (posts.length === 0) {
+  const manager = new BlogPostManager();
+  const post = await manager.getBySlug(slug, isEnabled);
+  if (!post) {
     notFound();
   }
-  const post = posts[0];
 
   const [
-    { posts: relatedPosts },
-    { posts: newPosts },
-    { posts: recommendedPosts }
+    { items: relatedPosts },
+    { items: newPosts },
+    { items: recommendedPosts }
   ] = await Promise.all([
-    getRelatedPosts({
+    manager.getRelatedPosts({
       slug: post.slug,
       tagIds: post.tags?.map((tag) => tag.sys.id),
     }),
-    getPosts({
+    manager.query({
       limit: 6,
       filter: { "fields.slug[nin]": [post.slug] },
     }),
-    getPosts({
+    manager.query({
       limit: 6,
       filter: { "fields.slug[in]": [data.recommendedPosts] },
     })
@@ -233,12 +226,12 @@ export default async function ArticlePage(
             }
           }}
         >
-          {post.body}
+          {post.content}
         </Markdown>
       </article>
       <footer className="space-y-3">
         <Suspense fallback={<div>Loading...</div>}>
-          <ListNavigator slug={slug} />
+          <ListNavigator slug={slug} managerType="PostList" />
         </Suspense>
         <ShareButtons shareText={shareText} shareUrl={shareUrl} />
         <div className="border border-base-content border-dashed rounded p-3 space-y-2">

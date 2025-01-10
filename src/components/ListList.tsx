@@ -1,10 +1,10 @@
-import { PostList } from "@/lib/contentful";
+import { BlogItem, ItemList } from "@/lib/contentful";
 import Link from "next/link";
 import Paginator from "./Paginator";
 
-export default function ListList(
+export default function ListList<T extends BlogItem>(
   { lists, total, page, limit }:
-  { lists: PostList[], total: number, page: number, limit: number }
+  { lists: ItemList<T>[], total: number, page: number, limit: number }
 ) {
   const maxPages = Math.ceil(total / limit);
   return (
@@ -18,8 +18,8 @@ export default function ListList(
             <h2 className="text-xl font-bold">
               {list.title}
             </h2>
-            <p>{list.description.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>
-            <Link href={`/lists/${list.id}`} className="absolute w-full h-full top-0 left-0 z-1" />
+            {list.description && <p>{list.description.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>}
+            <Link href={`/${list.typeUrl}/${list.id}`} className="absolute w-full h-full top-0 left-0 z-1" />
           </li>
         ))}
       </ul>

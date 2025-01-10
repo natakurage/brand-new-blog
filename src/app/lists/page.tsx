@@ -1,5 +1,5 @@
 import ListList from "@/components/ListList";
-import { getLists } from "@/lib/contentful";
+import { PostListManager } from "@/lib/contentful";
 import { Metadata } from "next";
 import data from "@/app/data/data.json";
 
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function ListPage({ searchParams }: { searchParams: { page?: string } }) {
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { lists, limit } = await getLists({});
+  const { lists, limit } = await new PostListManager().query({});
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">リスト一覧</h1>
