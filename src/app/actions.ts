@@ -25,6 +25,7 @@ export async function listNavigatorInfo(key: string, currentSlug: string, manage
   const next = items[currentId + 1] ?? null;
   return {
     listTitle: title,
+    typeUrl: list.typeUrl,
     prev: prev == null ? null : {
       title: prev.title,
       slug: prev.slug,
