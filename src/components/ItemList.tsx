@@ -5,8 +5,8 @@ import Paginator from "./Paginator";
 import removeMd from "remove-markdown";
 
 export default function ItemList(
-  { items, total, page, limit, suffix }:
-  { items: (BlogItem | null)[], total: number, page: number, limit: number, suffix?: string }
+  { items, total, page, limit, suffix, showDate = true }:
+  { items: (BlogItem | null)[], total: number, page: number, limit: number, suffix?: string, showDate?: boolean }
 ) {
   const maxPages = Math.ceil(total / limit);
   return (
@@ -34,10 +34,12 @@ export default function ItemList(
               ))
             }
             </div>
-            <div className="flex flex-row gap-1 justify-end">
-              <MdAccessTime className="my-auto" />
-              <time>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-            </div>
+            {
+              showDate && <div className="flex flex-row gap-1 justify-end">
+                <MdAccessTime className="my-auto" />
+                <time>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+              </div>
+            }
             <Link href={`/${item.typeUrl}/${item.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
           </li>
         ))}

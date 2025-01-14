@@ -14,7 +14,7 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   };
 }
 
-export default async function ListsPage(
+export default async function AlbumPage(
   { params, searchParams }
   : { params: { slug: string }, searchParams: { page?: string } }
 ) {
@@ -29,6 +29,7 @@ export default async function ListsPage(
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">アルバム &ldquo;{album.title}&rdquo;</h1>
+      <div>{album.artist?.join(", ")}</div>
       <p className="text-sm">{album.description}</p>
       <ItemList
         items={songs}
@@ -36,6 +37,7 @@ export default async function ListsPage(
         page={pageNum}
         limit={10}
         suffix={`?key=${album.slug}`}
+        showDate={false}
       />
     </div>
   );
