@@ -1,43 +1,25 @@
-"use client";
-
-import { Metadata } from "@/lib/fetchMetadata";
+import { fetchMetadata } from "@/lib/fetchMetadata";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
 
 export default function EmbedCard({ url }: { url: string }) {
-  const [meta, setMeta] = useState<Metadata>();
-  useEffect(() => {
-    const temp = async () => {
-      let url2 = url;
-      if (url.startsWith("/")) {
-        url2 = new URL(url, window.location.origin).href;
-      }
-      const searchParams = new URLSearchParams({ url: url2 });
-      const metaRes = await fetch("/api/get-metadata?" + searchParams);
-      const meta = await metaRes.json();
-      setMeta(meta);
-    };
-    temp();
-  }, [url]);
+  return <Suspense fallback={<EmbedCardSkeleton />} >
+    <EmbedCardInner url={url}/>
+  </Suspense>;
+}
+
+async function EmbedCardInner({ url }: { url: string }) {
+  let url2 = url;
+  if (url.startsWith("/")) {
+    url2 = new URL(url, window.location.origin).href;
+  }
+  const meta = await fetchMetadata(url2);
+
+  // temp: wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   const isInternal = url.startsWith("/") || typeof window !== "undefined" && window.location.origin === new URL(url).origin;
 
-  if (!meta) {
-    // show skeleton
-    return (
-      <div className="card glass card-side card-compact bg-base-100 shadow-xl my-5 not-prose">
-        <figure className="w-1/3 skeleton" />
-        <div className="card-body flex-1">
-          <h2 className="card-title h-14 line-clamp-2 skeleton" />
-          <p className="h-5 skeleton" />
-          <div className="flex gap-1 justify-end">
-            <div className="w-4 h-4 my-auto skeleton" />
-            <span className="w-24 h-5 my-auto skeleton" />
-          </div>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="card glass card-side card-compact bg-base-100 shadow-xl my-5 not-prose">
       <figure className="w-1/3">
@@ -69,6 +51,22 @@ export default function EmbedCard({ url }: { url: string }) {
         target={isInternal ? undefined :"_blank"}
         rel={isInternal ? undefined : "noopener noreferrer"}
       />
+    </div>
+  );
+}
+
+function EmbedCardSkeleton() {
+  return (
+    <div className="card glass card-side card-compact bg-base-100 shadow-xl my-5 not-prose">
+      <figure className="w-1/3 skeleton" />
+      <div className="card-body flex-1">
+        <h2 className="card-title h-14 line-clamp-2 skeleton" />
+        <p className="h-5 skeleton" />
+        <div className="flex gap-1 justify-end">
+          <div className="w-4 h-4 my-auto skeleton" />
+          <span className="w-24 h-5 my-auto skeleton" />
+        </div>
+      </div>
     </div>
   );
 }
