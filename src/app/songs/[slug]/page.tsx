@@ -9,7 +9,6 @@ import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import React, { Suspense } from "react";
-import EmbedCard from "@/components/EmbedCard";
 import data from "@/app/data/data.json";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -20,6 +19,7 @@ import Image from "next/image";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
 import PreviewWarning from "@/components/PreviewWarning";
+import LinkProcessor, { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -31,51 +31,6 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   return {
     title: (isEnabled ? "(プレビュー)" : "") + song.title + " - " + data.siteName,
   };
-}
-
-function LinkProcessor({ href, children }: { href: string, children: React.ReactNode }) {
-  let url = null;
-  if (href.startsWith("/")) {
-    return <EmbedCard url={href} />;
-  }
-  try {
-    url = new URL(href);
-  } catch {
-    return <a href={href}>{children}</a>;
-  }
-  if (url.searchParams.get("embed") != null) {
-    let vid = "";
-    if (url.hostname === "www.youtube.com") {
-      vid = url.searchParams.get("v") || "";
-      return <YouTubePlayer vid={vid} />;
-    }
-    if (url.hostname === "youtu.be") {
-      vid = url.pathname.slice(1);
-      return <YouTubePlayer vid={vid} />;
-    }
-  }
-  return href && <EmbedCard url={href} />;
-}
-
-function isYouTube(url: string) {
-  try {
-    const u = new URL(url);
-    return u.hostname === "www.youtube.com" || u.hostname === "youtu.be";
-  } catch {
-    return false;
-  }
-}
-
-function getYouTubeId(url: string) {
-  try {
-    const u = new URL(url);
-    if (u.hostname === "youtu.be") return u.pathname.slice(1);
-    else {
-      return u.searchParams.get("v");
-    }
-  } catch {
-    return null;
-  }
 }
 
 export const revalidate = 60;

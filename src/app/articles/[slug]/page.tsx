@@ -8,9 +8,7 @@ import { BlogPostManager } from "@/lib/contentful";
 import remarkGfm from "remark-gfm";
 import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
-import { YouTubePlayer } from "@/components/YoutubePlayer";
 import React, { Suspense } from "react";
-import EmbedCard from "@/components/EmbedCard";
 import data from "@/app/data/data.json";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -23,6 +21,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ShareButtons from "@/components/ShareButtons";
 import PreviewWarning from "@/components/PreviewWarning";
+import LinkProcessor from "@/components/LinkProcessor";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -34,30 +33,6 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   return {
     title: (isEnabled ? "(プレビュー)" : "") + post.title + " - " + data.siteName,
   };
-}
-
-async function LinkProcessor({ href, children }: { href: string, children: React.ReactNode }) {
-  let url = null;
-  if (href.startsWith("/")) {
-    return <EmbedCard url={href} />;
-  }
-  try {
-    url = new URL(href);
-  } catch {
-    return <a href={href}>{children}</a>;
-  }
-  if (url.searchParams.get("embed") != null) {
-    let vid = "";
-    if (url.hostname === "www.youtube.com") {
-      vid = url.searchParams.get("v") || "";
-      return <YouTubePlayer vid={vid} />;
-    }
-    if (url.hostname === "youtu.be") {
-      vid = url.pathname.slice(1);
-      return <YouTubePlayer vid={vid} />;
-    }
-  }
-  return href && <EmbedCard url={href} />;
 }
 
 export const revalidate = 60;
@@ -186,20 +161,34 @@ export default async function ArticlePage(
                   </LinkProcessor>; 
                 }
               }
-              return <p>{children}</p>;
-            },
-            img: ({ src, alt }) => {
-              if (src == null) return null;
+              const childrenContainsImg = React.Children.toArray(children).some((child) => React.isValidElement(child) && child.type === "img");
+              if (!childrenContainsImg) return <p>{children}</p>;
               return (
-                <span className="block relative">
-                  <Image
-                    src={`https:${src}`}
-                    alt={alt ? alt : "Article Image"}
-                    fill
-                    sizes="100%"
-                    className="object-contain !relative !w-auto mx-auto"
-                  />
-                </span>
+                <figure className="relative">
+                  {
+                    React.Children.map(children, (child) => {
+                      if (React.isValidElement(child)) {
+                        if (child.type === "img") {
+                          const { src, alt } = child.props;
+                          return (
+                            <Image
+                              key={src}
+                              src={`https:${src}`}
+                              alt={alt ? alt : "Article Image"}
+                              fill
+                              sizes="100%"
+                              className="object-contain !relative !w-auto mx-auto"
+                            />
+                          );
+                        }
+                        if (child.type === "em") {
+                          return <figcaption className="italic text-center">{child.props.children}</figcaption>;
+                        }
+                      }
+                      return child;
+                    })
+                  }
+                </figure>
               );
             },
             pre: ({ children }) => {
