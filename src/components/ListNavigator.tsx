@@ -1,6 +1,6 @@
 "use client";
 
-import { listNavigatorInfo, listNavigatorItem } from "@/app/actions";
+import { listNavigatorInfo, listNavigatorItem } from "@/lib/contentful";
 import { ItemListManagerMapKeys } from "@/lib/contentful";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -28,7 +28,14 @@ export default function ListNavigator(
       return;
     }
     const f = async () => {
-      const navigatorInfo = await listNavigatorInfo(key, slug, managerType, useSlug);
+      const searchParams = new URLSearchParams({
+        slug,
+        key,
+        type: managerType,
+        useSlug: useSlug ? "true" : "false"
+      });
+      const response = await fetch("/api/list-navigator?" + searchParams);
+      const navigatorInfo = await response.json() as listNavigatorInfo;
       if (navigatorInfo == null) {
         router.push("?");
         return;

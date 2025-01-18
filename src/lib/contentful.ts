@@ -360,3 +360,16 @@ export async function getTagWithCache(id: string, client?: ContentfulClientApi<u
   tagsCache.set(id, tag);
   return tag;
 }
+
+export interface listNavigatorItem {
+  title: string;
+  slug: string;
+  typeUrl: string;
+}
+
+export interface listNavigatorInfo {
+  listTitle: string;
+  typeUrl: string;
+  prev: null | listNavigatorItem;
+  next: null | listNavigatorItem;
+}

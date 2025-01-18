@@ -1,6 +1,5 @@
 "use client";
 
-import { getMeta } from "@/app/actions";
 import { Metadata } from "@/lib/fetchMetadata";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -13,7 +12,10 @@ export default function EmbedCard({ url }: { url: string }) {
       if (url.startsWith("/")) {
         url2 = new URL(url, window.location.origin).href;
       }
-      setMeta(await getMeta(url2));
+      const searchParams = new URLSearchParams({ url: url2 });
+      const metaRes = await fetch("/api/get-metadata?" + searchParams);
+      const meta = await metaRes.json();
+      setMeta(meta);
     };
     temp();
   }, [url]);
