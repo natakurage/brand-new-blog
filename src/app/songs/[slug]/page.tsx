@@ -1,25 +1,21 @@
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdAccessTime } from "react-icons/md";
-import rehypeSlug from "rehype-slug";
 import Link from "next/link";
 import { SongManager } from "@/lib/contentful";
-import remarkGfm from "remark-gfm";
 import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import React, { Suspense } from "react";
 import data from "@/app/data/data.json";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import "./style.css";
 import ListNavigator from "@/components/ListNavigator";
-import Image from "next/image";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
 import PreviewWarning from "@/components/PreviewWarning";
-import LinkProcessor, { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
+import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
+import ArticleBody from "@/components/ArticleBody";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -117,42 +113,7 @@ export default async function SongPage(
             </ul>
           </div>
         }
-        <Markdown
-          className="prose dark:!prose-invert break-words"
-          remarkPlugins={[remarkGfm, remarkMath]}
-          rehypePlugins={[rehypeSlug, rehypeKatex]}
-          components={{
-            p: ({ children }) => {
-              if (children == null) return null;
-              // 単独の<a>を含む<p>の場合
-              if (React.Children.count(children) === 1 && React.isValidElement(children) && children.type === "a") {
-                const href = children.props.href;
-                if (typeof href === "string") {
-                  return <LinkProcessor href={href}>
-                    {children.props.children}
-                  </LinkProcessor>; 
-                }
-              }
-              return <p>{children}</p>;
-            },
-            img: ({ src, alt }) => {
-              if (src == null) return null;
-              return (
-                <span className="block relative">
-                  <Image
-                    src={`https:${src}`}
-                    alt={alt ? alt : "Article Image"}
-                    fill
-                    sizes="100%"
-                    className="object-contain !relative !w-auto mx-auto"
-                  />
-                </span>
-              );
-            },
-          }}
-        >
-          {song.content}
-        </Markdown>
+        <ArticleBody content={song.content} />
         {
           song.credit && <ul className="text-right">
             {
