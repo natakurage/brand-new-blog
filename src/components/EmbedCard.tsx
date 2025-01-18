@@ -15,9 +15,6 @@ async function EmbedCardInner({ url }: { url: string }) {
   }
   const meta = await fetchMetadata(url2);
 
-  // temp: wait 5 seconds
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-
   const isInternal = url.startsWith("/") || typeof window !== "undefined" && window.location.origin === new URL(url).origin;
 
   return (
