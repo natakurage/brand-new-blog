@@ -18,8 +18,6 @@ export default function EmbedCard({ url }: { url: string }) {
     temp();
   }, [url]);
 
-  console.log(meta?.metadata.title, meta?.favicons);
-
   const isInternal = url.startsWith("/") || typeof window !== "undefined" && window.location.origin === new URL(url).origin;
 
   if (!meta) {
