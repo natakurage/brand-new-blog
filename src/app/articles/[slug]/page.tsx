@@ -7,8 +7,6 @@ import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
 import React, { Suspense } from "react";
 import data from "@/app/data/data.json";
-import "katex/dist/katex.min.css";
-import "./style.css";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import ListNavigator from "@/components/ListNavigator";
 import ShareButtons from "@/components/ShareButtons";

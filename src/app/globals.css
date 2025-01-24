@@ -20,3 +20,8 @@ body {
     text-wrap: balance;
   }
 }
+
+span.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}

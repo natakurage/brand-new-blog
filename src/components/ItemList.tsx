@@ -15,7 +15,7 @@ export default function ItemList(
         {items.map((item) => (item &&
           <li
             key={item.slug}
-            className="relative p-4 btn-ghost rounded-lg break-words"
+            className="relative p-4 btn-ghost shadow-lg hover:shadow-xl rounded-lg break-words"
           >
             <h2 className="text-xl font-bold">
               {item.title}

@@ -9,6 +9,7 @@ import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import React from "react";
 import Image from "next/image";
 import LinkProcessor from "./LinkProcessor";
+import "katex/dist/katex.min.css";
 
 export default function ArticleBody({ content, showToc = false }: { content: string, showToc?: boolean }) {
   return (

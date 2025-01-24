@@ -9,7 +9,7 @@ export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
       {posts.map((post) => (
         <li
           key={post.slug}
-          className="card card-compact glass rounded-lg break-words"
+          className="card shadow-lg hover:shadow-xl card-compact rounded-lg break-words"
         >
           <div>
             <div className="card-body">
