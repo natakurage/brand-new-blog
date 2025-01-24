@@ -8,6 +8,7 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
 import AntiAdblock from "@/components/AntiAdblock";
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000"),
@@ -36,41 +37,43 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
-      <body className="bg-base-200">
-        <NextTopLoader
-          color="#FF50DF"
-        />
-        <NavBar />
-        <div className="flex justify-center gap-10 md:mx-4 my-8">
-          <div className="max-w-xl p-3 w-full">
-            {children}
+    <html suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+          <NextTopLoader
+            color="#FF50DF"
+          />
+          <NavBar />
+          <div className="flex justify-center gap-10 md:mx-4 my-8">
+            <div className="max-w-xl p-3 w-full">
+              {children}
+            </div>
+            {
+              data.useSidebar && 
+              <aside className="hidden md:block max-w-72">
+                <ul className="menu p-3 overflow-y-auto w-full bg-base-100 text-base-content bg-opacity-100">
+                {
+                    data.navbarPages.map(({ name, href }) => (
+                      <li key={name}>
+                        <Link href={href} >{name}</Link>
+                      </li>
+                    ))
+                  }
+                  <li><SearchBar /></li>
+                  <li className="flex flex-row">
+                    <Link href="/rss">
+                      <MdRssFeed size={24} />
+                    </Link>
+                  </li>
+                </ul>
+              </aside>
+            }
           </div>
+          <Footer />
           {
-            data.useSidebar && 
-            <aside className="hidden md:block max-w-72">
-              <ul className="menu p-3 overflow-y-auto w-full bg-base-100 text-base-content bg-opacity-100">
-              {
-                  data.navbarPages.map(({ name, href }) => (
-                    <li key={name}>
-                      <Link href={href} >{name}</Link>
-                    </li>
-                  ))
-                }
-                <li><SearchBar /></li>
-                <li className="flex flex-row">
-                  <Link href="/rss">
-                    <MdRssFeed size={24} />
-                  </Link>
-                </li>
-              </ul>
-            </aside>
+            data.adblock && <AntiAdblock />
           }
-        </div>
-        <Footer />
-        {
-          data.adblock && <AntiAdblock />
-        }
+        </ThemeProvider>
       </body>
     </html>
   );

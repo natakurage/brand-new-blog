@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function TweetEmbed({ url }: { url: string }) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   useEffect(() => {
     if (document.getElementById('twitter-wjs')) return;
     const script = document.createElement('script');
@@ -11,16 +13,16 @@ export default function TweetEmbed({ url }: { url: string }) {
     script.id = 'twitter-wjs';
     document.body.appendChild(script);
 
+    setIsDarkMode(document.documentElement.dataset.theme === 'dark');
+    
     return () => {
       document.body.removeChild(script);
     };
   }, []);
 
   return (
-    <div className="">
-      <blockquote className="twitter-tweet">
-        <a href={url}>{url}</a>
-      </blockquote>
-    </div>
+    <blockquote className="twitter-tweet" data-theme={isDarkMode ? "dark" : "light"}>
+      <a href={url}>{url}</a>
+    </blockquote>
   );
 }
