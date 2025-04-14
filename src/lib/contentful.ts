@@ -117,13 +117,13 @@ export abstract class BlogItemManager<
     {
       preview = false,
       limit = 10,
-      offset = 0,
+      page = 0,
       filter = {}
     } :
     {
       preview?: boolean,
       limit?: number,
-      offset?: number,
+      page?: number,
       filter?: Filter<EntrySkeleton>
     },
   ) {
@@ -131,7 +131,7 @@ export abstract class BlogItemManager<
     const entries = await client.getEntries<EntrySkeleton, Locales>({
       content_type: this.contentType,
       limit,
-      skip: offset,
+      skip: page * limit,
       ...filter
     });
     return {
@@ -193,13 +193,13 @@ export abstract class ItemListManager<
   async query(
     {
       limit = 10,
-      offset = 0,
+      page = 0,
       preview = false,
       includeItems = false,
       filter = {}
     } : {
       limit?: number,
-      offset?: number,
+      page?: number,
       preview?: boolean,
       includeItems?: boolean,
       filter?: Filter<EntrySkeleton>
@@ -210,7 +210,7 @@ export abstract class ItemListManager<
       content_type: this.contentType,
       limit,
       include: includeItems ? undefined : 0,
-      skip: offset * limit,
+      skip: page * limit,
       ...filter
     });
     return {

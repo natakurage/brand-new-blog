@@ -11,7 +11,7 @@ export default async function Home({ searchParams }: { searchParams: { page?: st
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
   const { items: posts, total, limit } = await new BlogPostManager().query({
-    offset: pageNum - 1,
+    page: pageNum - 1,
     filter: { order: "-sys.createdAt" },
   });
   return (

@@ -17,7 +17,7 @@ export default async function TagPage({ params, searchParams }: { params: { tagI
   const tag = await getTagWithCache(tagId);
   const { items: posts, total, limit } = await new BlogPostManager().query({
     filter: {"metadata.tags.sys.id[all]": tag.sys.id},
-    offset: pageNum - 1,
+    page: pageNum - 1,
   });
   return (
     <div className="space-y-4">

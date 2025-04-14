@@ -14,7 +14,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q: 
   const pageNum = Number(page);
   const { items: posts, total, limit } = await new BlogPostManager().query({
     filter: { query: q },
-    offset: pageNum - 1
+    page: pageNum - 1
   });
   return (
     <div className="space-y-4">
