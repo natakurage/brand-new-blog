@@ -28,7 +28,7 @@ npm install
 | slug | Short Text | Slug | 必須、一意 |
 | show_toc | Boolean | 目次を表示するか？ | 必須 |
 | body | Long Text | 本文 | 必須 |
-| license | Long Text | 作者 | 必須 |
+| license | Long Text | ライセンス | 必須 |
 
 ##### postList
 記事をまとめたリストを表現
