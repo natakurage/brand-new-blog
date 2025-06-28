@@ -21,7 +21,7 @@ export default function CopyButton({ url, fullText, className }: { url: string, 
   return (
     <>
     {
-      copied && <div className="toast toast-bottom toast-end z-50">
+      copied && <div className="toast toast-bottom toast-end z-50 max-w-sm text-wrap">
         <div className="alert alert-success">
           <span className="font-bold">{copyMessage}</span>
         </div>
