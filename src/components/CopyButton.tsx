@@ -3,12 +3,18 @@
 import { useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 
-export default function CopyButton({ text, className }: { text: string, className?: string }) {
-  const [copied, setCopied] = useState(false);
+type CopyMessageType = "URLをコピーしました!" | "全文をコピーしました!（Shift+クリックでURLをコピー）"
 
-  const handleClick = () => {
-    navigator.clipboard.writeText(text);
+export default function CopyButton({ url, fullText, className }: { url: string, fullText?: string, className?: string }) {
+  const [copied, setCopied] = useState(false);
+  const [copyMessage, setCopyMessage] = useState<CopyMessageType | null>();
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const isFullText = !e.shiftKey && fullText != null;
+    const textToCopy = isFullText ? fullText: url;
+    navigator.clipboard.writeText(textToCopy);
     setCopied(true);
+    setCopyMessage(isFullText ? "全文をコピーしました!（Shift+クリックでURLをコピー）" : "URLをコピーしました!");
     setTimeout(() => setCopied(false), 3000);
   };
 
@@ -17,7 +23,7 @@ export default function CopyButton({ text, className }: { text: string, classNam
     {
       copied && <div className="toast toast-bottom toast-end z-50">
         <div className="alert alert-success">
-          <span className="font-bold">Copied!</span>
+          <span className="font-bold">{copyMessage}</span>
         </div>
       </div>
     }

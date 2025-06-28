@@ -44,6 +44,8 @@ export default async function SongPage(
     notFound();
   }
 
+  const modifiedLyrics = song.lyrics?.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n');
+
   const origin = process.env.NEXT_PUBLIC_ORIGIN;
   if (!origin) {
     throw new Error("Missing NEXT_PUBLIC_ORIGIN");
@@ -51,6 +53,22 @@ export default async function SongPage(
 
   const shareText = `${song.title} - ${data.siteName}`;
   const shareUrl = `${origin}/songs/${song.slug}`;
+
+  const licenseInfo = new Map<string, string>([
+    ["タイトル", song.title],
+    ["アーティスト", song.artist.join(", ")]
+  ]);
+  song.credit?.forEach((credit) => {
+    const [k, v] = credit.split(":");
+    licenseInfo.set(k, v);
+  });
+  ([
+    ["作成年", new Date(song.createdAt).getFullYear().toString()],
+    ["URL", shareUrl],
+    ["ライセンス", song.license],
+  ] as [string, string][]).forEach(([k, v]) => licenseInfo.set(k, v));
+  const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
+  const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${licenseText}`;
 
   return (
     <main>
@@ -124,7 +142,7 @@ export default async function SongPage(
         <h2 className="text-2xl font-bold">Lyrics</h2>
         {
           song.lyrics && <Markdown className="prose dark:!prose-invert break-words">
-            {song.lyrics.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n')}
+            {modifiedLyrics}
           </Markdown>
         }
       </article>
@@ -132,7 +150,7 @@ export default async function SongPage(
         <Suspense fallback={<div>Loading...</div>}>
           <ListNavigator slug={slug} managerType="Album" useSlug />
         </Suspense>
-        <ShareButtons shareText={shareText} shareUrl={shareUrl} />
+        <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
         <div className="border border-base-content border-dashed rounded p-3 space-y-2">
           <h6 className="font-bold">Credit</h6>
           <ul>

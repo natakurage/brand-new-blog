@@ -70,6 +70,15 @@ export default async function ArticlePage(
   const shareText = `${post.title} - ${data.siteName}`;
   const shareUrl = `${origin}/articles/${post.slug}`;
 
+  const licenseInfo = new Map<string, string>([
+    ["タイトル", post.title],
+    ["著者", data.author],
+    ["作成年", new Date(post.createdAt).getFullYear().toString()],
+    ["URL", shareUrl],
+    ["ライセンス", post.license],
+  ] as [string, string][]);
+  const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
+  const shareFullText = `# ${post.title}\n\n ${post.content}\n\n---\n\n${licenseText}`;
   return (
     <main>
       { isEnabled && <PreviewWarning /> }
@@ -115,7 +124,7 @@ export default async function ArticlePage(
         <Suspense fallback={<div>Loading...</div>}>
           <ListNavigator slug={slug} managerType="PostList" />
         </Suspense>
-        <ShareButtons shareText={shareText} shareUrl={shareUrl} />
+        <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
         <div className="border border-base-content border-dashed rounded p-3 space-y-2">
           <h6 className="font-bold">Credit</h6>
           <ul>

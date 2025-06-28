@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaBluesky, FaGetPocket, FaLine, FaXTwitter } from "react-icons/fa6";
 import CopyButton from "@/components/CopyButton";
 
-export default async function ShareButtons({ shareText, shareUrl }: { shareText: string, shareUrl: string }) {
+export default async function ShareButtons({ shareText, shareUrl, fullText }: { shareText: string, shareUrl: string, fullText?: string }) {
   const xShareURL = new URL("https://x.com/intent/post");
   xShareURL.searchParams.append("text", shareText);
   xShareURL.searchParams.append("url", shareUrl);
@@ -52,7 +52,8 @@ export default async function ShareButtons({ shareText, shareUrl }: { shareText:
         <FaLine size={24} />
       </Link>
       <CopyButton
-        text={shareUrl}
+        url={shareUrl}
+        fullText={fullText}
         className="btn btn-neutral text-white flex-1"
       />
     </div>
