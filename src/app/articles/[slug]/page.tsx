@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdAccessTime, MdUpdate } from "react-icons/md";
+import Image from "next/image";
 import Link from "next/link";
 import { BlogPostManager } from "@/lib/contentful";
 import { FaScrewdriverWrench } from "react-icons/fa6";
@@ -82,7 +83,7 @@ export default async function ArticlePage(
   return (
     <main>
       { isEnabled && <PreviewWarning /> }
-      <header className="space-y-1">
+      <header className="space-y-5">
         <h1 className="text-4xl font-bold">{post.title}</h1>
         <div className="space-x-2">
         {
@@ -95,32 +96,54 @@ export default async function ArticlePage(
           ))
         }
         </div>
-        <div className="text-sm flex flex-wrap gap-2 justify-end">
-          <span className="flex flex-row gap-1 tooltip" data-tip="Published">
-            <MdAccessTime className="my-auto" />
-            <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-          </span>
-          <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
-            <MdUpdate className="my-auto" />
-            <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-          </span>
-          <span className="flex flex-row gap-1 tooltip" data-tip="Built">
-            <FaScrewdriverWrench className="my-auto" />
-            <time>
-            {
-              new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })
-              + " "
-              + new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })
-            }
-            </time>
-          </span>
+        <div className="text-sm flex flex-wrap">
+          <div className="flex flex-row me-auto gap-3 items-center">
+            <div className="tooltip" data-tip={data.donate}>
+              <div className="avatar">
+                <div className="ring-accent hover:ring-secondary ring-offset-base-100 w-10 rounded-full ring ring-offset-0">
+                  <Link
+                    href={data.donateURL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      src={data.avatar}
+                      alt="avatar icon"
+                      width={96}
+                      height={96}
+                    />
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <span className="">{data.author}</span>
+          </div>
+          <div className="flex flex-row flex-wrap ms-auto gap-2 items-end">
+            <span className="flex flex-row gap-1 tooltip" data-tip="Published">
+              <MdAccessTime className="my-auto" />
+              <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+            </span>
+            <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
+              <MdUpdate className="my-auto" />
+              <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+            </span>
+            <span className="flex flex-row gap-1 tooltip" data-tip="Built">
+              <FaScrewdriverWrench className="my-auto" />
+              <time>
+              {
+                new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })
+                + " "
+                + new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })
+              }
+              </time>
+            </span>
+          </div>
         </div>
-        <hr />
       </header>
-      <article className="my-16">
+      <article className="my-12 sm:my-24">
         <ArticleBody content={post.content} showToc={post.showToc} />
       </article>
-      <footer className="space-y-3">
+      <footer className="space-y-5">
         <Suspense fallback={<div>Loading...</div>}>
           <ListNavigator slug={slug} managerType="PostList" />
         </Suspense>
@@ -138,7 +161,6 @@ export default async function ArticlePage(
             : <Markdown className="prose dark:!prose-invert break-words">{post.license}</Markdown>
           }
         </div>
-        <hr />
         <div className="space-y-4">
         {
           data.showRelatedPosts && relatedPosts.length > 0 && <>

@@ -14,7 +14,7 @@ import "katex/dist/katex.min.css";
 export default function ArticleBody({ content, showToc = false }: { content: string, showToc?: boolean }) {
   return (
     <Markdown
-      className="prose w-full dark:!prose-invert break-words"
+      className="prose max-w-none dark:!prose-invert break-words"
       remarkPlugins={[remarkGfm, remarkMath]}
       rehypePlugins={[rehypeSlug, rehypeKatex, [rehypeToc, {
         headings: ["h2", "h3"],
