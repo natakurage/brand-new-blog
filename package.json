@@ -11,6 +11,7 @@
     "contentful-generate-types": "cf-content-types-generator contentful-export.json --out @types/contentful --v10 --response"
   },
   "dependencies": {
+    "@vercel/og": "^0.6.8",
     "cheerio": "^1.0.0",
     "contentful": "^11.1.4",
     "contentful-management": "^11.40.5",

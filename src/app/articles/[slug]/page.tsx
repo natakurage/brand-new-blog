@@ -13,6 +13,7 @@ import ListNavigator from "@/components/ListNavigator";
 import ShareButtons from "@/components/ShareButtons";
 import PreviewWarning from "@/components/PreviewWarning";
 import ArticleBody from "@/components/ArticleBody";
+import removeMd from "remove-markdown";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -21,8 +22,24 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   if (!post) {
     notFound();
   }
+  const title = post.title + " - " + data.siteName;
+  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  ogpImageUrl.searchParams.set("title", title);
   return {
-    title: (isEnabled ? "(プレビュー)" : "") + post.title + " - " + data.siteName,
+    title,
+    openGraph: {
+      title: title,
+      description: removeMd(post.content).slice(0, 100) || data.description,
+      url: new URL(`/articles/${post.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+      images: [
+        {
+          url: ogpImageUrl.href,
+          width: 1200,
+          height: 630,
+          alt: post.title + " OGP"
+        }
+      ]
+    }
   };
 }
 
