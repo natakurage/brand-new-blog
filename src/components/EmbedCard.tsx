@@ -9,11 +9,7 @@ export default function EmbedCard({ url }: { url: string }) {
 }
 
 async function EmbedCardInner({ url }: { url: string }) {
-  let url2 = url;
-  if (url.startsWith("/")) {
-    url2 = new URL(url, process.env.NEXT_PUBLIC_ORIGIN).href;
-  }
-  const meta = await fetchMetadata(url2);
+  const meta = await fetchMetadata(url);
 
   const isInternal = url.startsWith("/") || typeof window !== "undefined" && window.location.origin === new URL(url).origin;
 

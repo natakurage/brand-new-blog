@@ -1,4 +1,6 @@
 import { load } from "cheerio";
+import { BlogItem, BlogPostManager, SongManager } from "./contentful";
+import removeMd from "remove-markdown";
 
 export interface Metadata {
   metadata: {
@@ -12,6 +14,44 @@ export interface Metadata {
 };
 
 export async function fetchMetadata(url: string) {
+  // if internal URL
+  if (url.startsWith("/")) {
+    const absUrl = new URL(url, process.env.NEXT_PUBLIC_ORIGIN);
+    const [, type, slug] = absUrl.pathname.split("/");
+    let post: BlogItem | null = null;
+    let flag = true;
+    if (type === "articles") {
+      post = await new BlogPostManager().getBySlug(slug, false);
+    }
+    else if (type === "songs") {
+      post = await new SongManager().getBySlug(slug, false);
+    }
+    else {
+      flag = false;
+    }
+    if (flag) {
+      const metadata: Metadata = {
+        metadata: {
+          website: absUrl.href,
+          title: "Not Found",
+          description: "Page not found",
+          banner: undefined,
+          themeColor: undefined,
+        },
+        favicons: ["/favicons/favicon.ico"]
+      };
+      if (!post) {
+        return metadata;
+      }
+      const bunnerImgUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+      bunnerImgUrl.searchParams.set("title", post.title);
+      metadata.metadata.title = post.title;
+      metadata.metadata.description = removeMd(post.content).slice(0, 100);
+      metadata.metadata.banner = bunnerImgUrl.href;
+      return metadata;
+    }
+  }
+
   const response = await fetch(url);
   const html = await response.text();
   const $ = load(html);
