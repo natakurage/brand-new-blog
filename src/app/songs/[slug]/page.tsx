@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
-import { MdAccessTime } from "react-icons/md";
+import { MdAccessTime, MdMusicNote } from "react-icons/md";
 import Link from "next/link";
 import { SongManager } from "@/lib/contentful";
 import { FaScrewdriverWrench } from "react-icons/fa6";
@@ -14,6 +14,7 @@ import ShareButtons from "@/components/ShareButtons";
 import PreviewWarning from "@/components/PreviewWarning";
 import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
 import ArticleBody from "@/components/ArticleBody";
+import HLSAudioPlayer from "@/components/HLSAudioPlayer";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -126,6 +127,12 @@ export default async function SongPage(
                 ))
               }
             </ul>
+          </div>
+        }
+        {
+          song.streamUrl && <div className="space-y-2">
+            <h2 className="text-2xl font-bold"><MdMusicNote className="my-auto inline" />ここで全部聴く</h2>
+            <HLSAudioPlayer url={song.streamUrl} />
           </div>
         }
         <ArticleBody content={song.content} />

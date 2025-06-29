@@ -6,6 +6,7 @@ export interface TypeSongFields {
     releaseDate?: EntryFieldTypes.Date;
     slug: EntryFieldTypes.Symbol;
     credit?: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
+    streamUrl?: EntryFieldTypes.Symbol;
     url?: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
     description?: EntryFieldTypes.Text;
     lyrics?: EntryFieldTypes.Text;

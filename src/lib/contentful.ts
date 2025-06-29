@@ -72,7 +72,8 @@ export class Song implements BlogItem {
     public releaseDate?: string,
     public tags?: Tag[],
     public license?: string,
-    public url?: string[]
+    public url?: string[],
+    public streamUrl?: string
   ) {}
 }
 
@@ -278,10 +279,10 @@ export class SongManager extends BlogItemManager<
 > {
   contentType = "song";
   override async fromEntry(entry: TypeSong<undefined, "ja">, client: ContentfulClientApi<undefined>) {
-    const { title, slug, description, artist, releaseDate, credit, lyrics, license, url } = entry.fields;
+    const { title, slug, description, artist, releaseDate, credit, lyrics, license, url, streamUrl } = entry.fields;
     const { createdAt, updatedAt } = entry.sys;
     const tags = await Promise.all(entry.metadata.tags.map((tag) => getTagWithCache(tag.sys.id, client)));
-    return new Song(entry.sys.id, title, slug, description ?? "", createdAt, updatedAt, artist, credit, lyrics, releaseDate, tags, license, url);
+    return new Song(entry.sys.id, title, slug, description ?? "", createdAt, updatedAt, artist, credit, lyrics, releaseDate, tags, license, url, streamUrl);
   }
 }
 
