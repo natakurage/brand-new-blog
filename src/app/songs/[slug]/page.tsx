@@ -73,9 +73,9 @@ export default async function SongPage(
   return (
     <main>
       { isEnabled && <PreviewWarning /> }
-      <header className="space-y-1">
+      <header className="space-y-5">
         <h1 className="text-4xl font-bold">{song.title}</h1>
-        <div>{song.artist.join(", ")}</div>
+        <div>by {song.artist.join(", ")}</div>
         <div className="space-x-2">
         {
           song.tags?.map((tag) => (
@@ -105,7 +105,6 @@ export default async function SongPage(
             </time>
           </span>
         </div>
-        <hr />
       </header>
       <article className="my-16 space-y-4">
         {
@@ -146,7 +145,7 @@ export default async function SongPage(
           </Markdown>
         }
       </article>
-      <footer className="space-y-3">
+      <footer className="space-y-5">
         <Suspense fallback={<div>Loading...</div>}>
           <ListNavigator slug={slug} managerType="Album" useSlug />
         </Suspense>
