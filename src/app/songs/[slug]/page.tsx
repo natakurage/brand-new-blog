@@ -15,6 +15,7 @@ import PreviewWarning from "@/components/PreviewWarning";
 import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
 import ArticleBody from "@/components/ArticleBody";
 import HLSAudioPlayer from "@/components/HLSAudioPlayer";
+import removeMd from "remove-markdown";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -23,8 +24,24 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   if (!song) {
     notFound();
   }
+  const title = song.title + " - " + data.siteName;
+  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  ogpImageUrl.searchParams.set("title", title);
   return {
-    title: (isEnabled ? "(プレビュー)" : "") + song.title + " - " + data.siteName,
+    title: (isEnabled ? "(プレビュー)" : "") + title,
+    openGraph: {
+      title: title,
+      description: removeMd(song.content).slice(0, 100) || data.description,
+      url: new URL(`/songs/${song.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+      images: [
+        {
+          url: ogpImageUrl.href,
+          width: 1200,
+          height: 630,
+          alt: song.title + " OGP"
+        }
+      ]
+    }
   };
 }
 

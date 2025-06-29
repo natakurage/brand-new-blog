@@ -26,7 +26,7 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
   return {
-    title,
+    title: (isEnabled ? "(プレビュー)" : "") + title,
     openGraph: {
       title: title,
       description: removeMd(post.content).slice(0, 100) || data.description,
