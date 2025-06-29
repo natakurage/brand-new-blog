@@ -11,7 +11,7 @@ export default function EmbedCard({ url }: { url: string }) {
 async function EmbedCardInner({ url }: { url: string }) {
   let url2 = url;
   if (url.startsWith("/")) {
-    url2 = new URL(url, window.location.origin).href;
+    url2 = new URL(url, process.env.NEXT_PUBLIC_ORIGIN).href;
   }
   const meta = await fetchMetadata(url2);
 
