@@ -1,12 +1,7 @@
 import { notFound } from "next/navigation";
-import Markdown from "react-markdown";
-import { MdAccessTime, MdUpdate } from "react-icons/md";
-import Image from "next/image";
-import Link from "next/link";
 import { BlogPostManager } from "@/lib/contentful";
-import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import data from "@/app/data/data.json";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import ListNavigator from "@/components/ListNavigator";
@@ -14,6 +9,11 @@ import ShareButtons from "@/components/ShareButtons";
 import PreviewWarning from "@/components/PreviewWarning";
 import ArticleBody from "@/components/ArticleBody";
 import removeMd from "remove-markdown";
+import Script from "next/script";
+import HeaderTime from "@/components/HeaderTime";
+import HeaderTags from "@/components/HeaderTags";
+import HeaderAuthor from "@/components/HeaderAuthor";
+import Credit from "@/components/Credit";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -102,59 +102,10 @@ export default async function ArticlePage(
       { isEnabled && <PreviewWarning /> }
       <header className="space-y-5">
         <h1 className="text-4xl font-bold">{post.title}</h1>
-        <div className="space-x-2">
-        {
-          post.tags?.map((tag) => (
-            <Link key={tag.sys.id} href={`/tags/${tag.sys.id}`}>
-              <span className="badge badge-neutral link link-hover">
-                # {tag.name}
-              </span>
-            </Link>
-          ))
-        }
-        </div>
+        <HeaderTags tags={post.tags || []} />
         <div className="text-sm flex flex-wrap">
-          <div className="flex flex-row me-auto gap-3 items-center">
-            <div className="tooltip" data-tip={data.donate}>
-              <div className="avatar">
-                <div className="ring-accent hover:ring-secondary ring-offset-base-100 w-10 rounded-full ring ring-offset-0">
-                  <Link
-                    href={data.donateURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Image
-                      src={data.avatar}
-                      alt="avatar icon"
-                      width={96}
-                      height={96}
-                    />
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <span className="">{data.author}</span>
-          </div>
-          <div className="flex flex-row flex-wrap ms-auto gap-2 items-end">
-            <span className="flex flex-row gap-1 tooltip" data-tip="Published">
-              <MdAccessTime className="my-auto" />
-              <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-            </span>
-            <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
-              <MdUpdate className="my-auto" />
-              <time>{new Date(post.updatedAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-            </span>
-            <span className="flex flex-row gap-1 tooltip" data-tip="Built">
-              <FaScrewdriverWrench className="my-auto" />
-              <time>
-              {
-                new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })
-                + " "
-                + new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })
-              }
-              </time>
-            </span>
-          </div>
+          <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateURL} className="me-auto" />
+          <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} className="ms-auto" />
         </div>
       </header>
       <article className="my-12 sm:my-24">
@@ -165,19 +116,12 @@ export default async function ArticlePage(
           <ListNavigator slug={slug} managerType="PostList" />
         </Suspense>
         <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
-        <div className="border border-base-content border-dashed rounded p-3 space-y-2">
-          <h6 className="font-bold">Credit</h6>
-          <ul>
-            <li>タイトル: {post.title}</li>
-            <li>著者: {data.author}</li>
-            <li>作成年: {new Date(post.createdAt).getFullYear()}</li>
-          </ul>
-          <h6 className="font-bold">License</h6>
-          {post.license == null
-            ? <p>ライセンスが不明です。</p>
-            : <Markdown className="prose dark:!prose-invert break-words">{post.license}</Markdown>
-          }
-        </div>
+        <Credit
+          title={post.title}
+          author={data.author}
+          year={new Date(post.createdAt).getFullYear()}
+          license={post.license}
+        />
         <div className="space-y-4">
         {
           data.showRelatedPosts && relatedPosts.length > 0 && <>

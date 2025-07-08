@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
-import { MdAccessTime, MdMusicNote } from "react-icons/md";
+import { MdMusicNote } from "react-icons/md";
 import Link from "next/link";
 import { SongManager } from "@/lib/contentful";
-import { FaScrewdriverWrench } from "react-icons/fa6";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import React, { Suspense } from "react";
@@ -16,6 +15,9 @@ import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
 import ArticleBody from "@/components/ArticleBody";
 import HLSAudioPlayer from "@/components/HLSAudioPlayer";
 import removeMd from "remove-markdown";
+import HeaderTime from "@/components/HeaderTime";
+import HeaderTags from "@/components/HeaderTags";
+import Credit from "@/components/Credit";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -94,34 +96,9 @@ export default async function SongPage(
       <header className="space-y-5">
         <h1 className="text-4xl font-bold">{song.title}</h1>
         <div>by {song.artist.join(", ")}</div>
-        <div className="space-x-2">
-        {
-          song.tags?.map((tag) => (
-            <Link key={tag.sys.id} href={`/tags/${tag.sys.id}`}>
-              <span className="badge badge-neutral link link-hover">
-                # {tag.name}
-              </span>
-            </Link>
-          ))
-        }
-        </div>
-        <div className="text-sm flex flex-wrap gap-2 justify-end">
-          {
-            song.releaseDate && <span className="flex flex-row gap-1 tooltip" data-tip="Published">
-              <MdAccessTime className="my-auto" />
-              <time>{new Date(song.releaseDate).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-            </span>
-          }
-          <span className="flex flex-row gap-1 tooltip" data-tip="Built">
-            <FaScrewdriverWrench className="my-auto" />
-            <time>
-            {
-              new Date().toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })
-              + " "
-              + new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })
-            }
-            </time>
-          </span>
+        <HeaderTags tags={song.tags || []} />
+        <div className="text-sm flex flex-wrap">
+          <HeaderTime createdAt={song.createdAt} className="ms-auto" />
         </div>
       </header>
       <article className="my-16 space-y-4">
@@ -174,24 +151,13 @@ export default async function SongPage(
           <ListNavigator slug={slug} managerType="Album" useSlug />
         </Suspense>
         <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
-        <div className="border border-base-content border-dashed rounded p-3 space-y-2">
-          <h6 className="font-bold">Credit</h6>
-          <ul>
-            <li>タイトル: {song.title}</li>
-            <li>アーティスト: {song.artist.join(", ")}</li>
-            {
-              song.credit && song.credit.map((credit, index) => (
-                <li key={index}>{credit}</li>
-              ))
-            }
-            {song.releaseDate && <li>作成年: {new Date(song.releaseDate).getFullYear()}</li>}
-          </ul>
-          <h6 className="font-bold">License</h6>
-          {song.license == null
-            ? <p>ライセンスが不明です。</p>
-            : <Markdown className="prose dark:!prose-invert break-words">{song.license}</Markdown>
-          }
-        </div>
+        <Credit
+          title={song.title}
+          artists={song.artist}
+          year={new Date(song.createdAt).getFullYear()}
+          additionalInfo={song.credit}
+          license={song.license}
+        />
       </footer>
     </main>
   );
