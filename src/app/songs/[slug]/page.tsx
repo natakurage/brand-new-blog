@@ -182,10 +182,13 @@ export default async function SongPage(
           </Suspense>
           <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
           <Credit
+            workType="曲"
             title={song.title}
             artists={song.artist}
+            url={shareUrl}
             year={new Date(song.createdAt).getFullYear()}
             additionalInfo={song.credit}
+            licenseSelect={song.licenseSelect}
             license={song.license}
           />
         </footer>

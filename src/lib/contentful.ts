@@ -1,5 +1,6 @@
 import { ContentfulClientApi, createClient, EntriesQueries, Entry, EntrySkeletonType, LocaleCode, Tag } from "contentful";
 import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton } from "../../@types/contentful";
+import { LicenseType } from "@/lib/licenses";
 
 const space = process.env.CONTENTFUL_SPACE_ID;
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN;
@@ -27,6 +28,7 @@ export interface BlogItem {
   createdAt: string;
   updatedAt: string;
   tags?: Tag[];
+  licenseSelect?: LicenseType;
   license?: string;
   typeUrl: string;
 }
@@ -51,6 +53,7 @@ export class BlogPost implements BlogItem {
     public createdAt: string,
     public updatedAt: string,
     public tags?: Tag[],
+    public licenseSelect?: LicenseType,
     public license?: string,
     public showToc?: boolean
   ) {}
@@ -71,6 +74,7 @@ export class Song implements BlogItem {
     public lyrics?: string,
     public releaseDate?: string,
     public tags?: Tag[],
+    public licenseSelect?: LicenseType,
     public license?: string,
     public url?: string[],
     public streamUrl?: string
@@ -102,6 +106,7 @@ export class Album implements ItemList<Song> {
     public artist?: string[],
     public credit?: string[],
     public tags?: Tag[],
+    public licenseSelect?: LicenseType,
     public license?: string
   ) {}
 }
@@ -245,10 +250,10 @@ export class BlogPostManager extends BlogItemManager<
 > {
   contentType = "blogPost";
   override async fromEntry(entry: TypeBlogPost<undefined, "ja">, client: ContentfulClientApi<undefined>) {
-    const { title, slug, body, license, showToc } = entry.fields;
+    const { title, slug, body, license, showToc, licenseSelect } = entry.fields;
     const { createdAt, updatedAt } = entry.sys;
     const tags = await Promise.all(entry.metadata.tags.map((tag) => getTagWithCache(tag.sys.id, client)));
-    return new BlogPost(entry.sys.id, title, slug, body, createdAt, updatedAt, tags, license, showToc);
+    return new BlogPost(entry.sys.id, title, slug, body, createdAt, updatedAt, tags, licenseSelect, license, showToc);
   }
 
   async getRelatedPosts(
@@ -279,10 +284,10 @@ export class SongManager extends BlogItemManager<
 > {
   contentType = "song";
   override async fromEntry(entry: TypeSong<undefined, "ja">, client: ContentfulClientApi<undefined>) {
-    const { title, slug, description, artist, releaseDate, credit, lyrics, license, url, streamUrl } = entry.fields;
+    const { title, slug, description, artist, releaseDate, credit, lyrics, licenseSelect, license, url, streamUrl } = entry.fields;
     const { createdAt, updatedAt } = entry.sys;
     const tags = await Promise.all(entry.metadata.tags.map((tag) => getTagWithCache(tag.sys.id, client)));
-    return new Song(entry.sys.id, title, slug, description ?? "", createdAt, updatedAt, artist, credit, lyrics, releaseDate, tags, license, url, streamUrl);
+    return new Song(entry.sys.id, title, slug, description ?? "", createdAt, updatedAt, artist, credit, lyrics, releaseDate, tags, licenseSelect, license, url, streamUrl);
   }
 }
 
@@ -310,14 +315,14 @@ export class AlbumManager extends ItemListManager<
 > {
   contentType = "musicAlbum";
   override async fromEntry(entry: TypeMusicAlbum<undefined, "ja">, client: ContentfulClientApi<undefined>) {
-    const { title, slug, description, releaseDate, artist, credit, license } = entry.fields;
+    const { title, slug, description, releaseDate, artist, credit, licenseSelect, license } = entry.fields;
     const tags = await Promise.all(entry.metadata.tags.map((tag) => getTagWithCache(tag.sys.id, client)));
     const items = await Promise.all(entry.fields.tracks.map((song) => {
       if (!("metadata" in song)) return null;
       return new SongManager().fromEntry(song, client);
     }));
     const nonNullItems = items.filter((item) => item !== null);
-    return new Album(entry.sys.id, title, slug, nonNullItems, description, releaseDate, artist, credit, tags, license);
+    return new Album(entry.sys.id, title, slug, nonNullItems, description, releaseDate, artist, credit, tags, licenseSelect, license);
   }
 }
 

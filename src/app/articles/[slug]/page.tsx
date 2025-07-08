@@ -155,7 +155,10 @@ export default async function ArticlePage(
           <Credit
             title={post.title}
             author={data.author}
+            url={shareUrl}
             year={new Date(post.createdAt).getFullYear()}
+            licenseSelect={post.licenseSelect}
+            workType="記事"
             license={post.license}
           />
           <div className="space-y-4">
