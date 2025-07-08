@@ -9,6 +9,8 @@ import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
+import Script from "next/script";
+import type {  WebSite, WithContext } from "schema-dts";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000"),
@@ -31,6 +33,32 @@ export const metadata: Metadata = {
 
 // export const runtime = "edge";
 
+function JsonLD() {
+  const jsonLd: WithContext<WebSite> = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: data.siteName,
+    url: process.env.NEXT_PUBLIC_ORIGIN,
+    description: data.description,
+    image: new URL("/banner.png", process.env.NEXT_PUBLIC_ORIGIN).href,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: new URL("/search?q={search_term_string}", process.env.NEXT_PUBLIC_ORIGIN).href,
+      // @ts-expect-error: 'query-input' is not in the schema-dts types but required by schema.org
+      "query-input": "required name=search_term_string"
+    },
+  };
+
+  return (
+    <Script
+      id="json-ld-website"
+      type="application/ld+json"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,6 +67,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body>
+        <JsonLD />
         <ThemeProvider>
           <NextTopLoader
             color="#FF50DF"

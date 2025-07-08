@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdMusicNote } from "react-icons/md";
 import Link from "next/link";
-import { SongManager } from "@/lib/contentful";
+import Script from "next/script";
+import { Song, SongManager } from "@/lib/contentful";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import React, { Suspense } from "react";
@@ -18,6 +19,7 @@ import removeMd from "remove-markdown";
 import HeaderTime from "@/components/HeaderTime";
 import HeaderTags from "@/components/HeaderTags";
 import Credit from "@/components/Credit";
+import type { MusicRecording, WithContext } from "schema-dts";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -52,6 +54,32 @@ export const revalidate = 60;
 export async function generateStaticParams() {
   const slugs = await new SongManager().getAllSlugs();
   return slugs.map((slug) => ({ slug, key: undefined }));
+}
+
+function JsonLD({ song }: { song: Song }) {
+  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  ogpImageUrl.searchParams.set("title", song.title);
+  const jsonLd: WithContext<MusicRecording> = {
+    "@context": "https://schema.org",
+    "@type": "MusicRecording",
+    name: song.title,
+    description: removeMd(song.content).slice(0, 100),
+    url: new URL(`/songs/${song.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+    datePublished: song.releaseDate,
+    byArtist: song.artist.map((artist) => ({
+      "@type": "MusicGroup",
+      name: artist
+    }))
+  };
+
+  return (
+    <Script
+      id="json-ld"
+      strategy="afterInteractive"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
 }
 
 export default async function SongPage(
@@ -91,74 +119,77 @@ export default async function SongPage(
   const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${licenseText}`;
 
   return (
-    <main>
-      { isEnabled && <PreviewWarning /> }
-      <header className="space-y-5">
-        <h1 className="text-4xl font-bold">{song.title}</h1>
-        <div>by {song.artist.join(", ")}</div>
-        <HeaderTags tags={song.tags || []} />
-        <div className="text-sm flex flex-wrap">
-          <HeaderTime createdAt={song.createdAt} className="ms-auto" />
-        </div>
-      </header>
-      <article className="my-16 space-y-4">
-        {
-          song.url && <div>
-            {
-              // youtubeリンクがあれば埋め込む
-              song.url.find((url) => isYouTube(url)) &&
-              <YouTubePlayer vid={getYouTubeId(song.url.find((url) => isYouTube(url))!) || ""} />
-            }
-            <ul>
+    <>
+      <JsonLD song={song} />
+      <main>
+        { isEnabled && <PreviewWarning /> }
+        <header className="space-y-5">
+          <h1 className="text-4xl font-bold">{song.title}</h1>
+          <div>by {song.artist.join(", ")}</div>
+          <HeaderTags tags={song.tags || []} />
+          <div className="text-sm flex flex-wrap">
+            <HeaderTime createdAt={song.createdAt} className="ms-auto" />
+          </div>
+        </header>
+        <article className="my-16 space-y-4">
+          {
+            song.url && <div>
               {
-                song.url.map((url) => (
-                  <li key={url} className="text-sm text-primary flex flex-row">
-                    <FaExternalLinkAlt />
-                    <Link href={url} target="_blank" rel="noopener noreferrer">
-                      {url}
-                    </Link>
-                  </li>
+                // youtubeリンクがあれば埋め込む
+                song.url.find((url) => isYouTube(url)) &&
+                <YouTubePlayer vid={getYouTubeId(song.url.find((url) => isYouTube(url))!) || ""} />
+              }
+              <ul>
+                {
+                  song.url.map((url) => (
+                    <li key={url} className="text-sm text-primary flex flex-row">
+                      <FaExternalLinkAlt />
+                      <Link href={url} target="_blank" rel="noopener noreferrer">
+                        {url}
+                      </Link>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          }
+          {
+            song.streamUrl && <div className="space-y-2">
+              <h2 className="text-2xl font-bold"><MdMusicNote className="my-auto inline" />ここで全部聴く</h2>
+              <HLSAudioPlayer url={song.streamUrl} />
+            </div>
+          }
+          <ArticleBody content={song.content} />
+          {
+            song.credit && <ul className="text-right">
+              {
+                song.credit.map((credit, index) => (
+                  <li key={index}>{credit}</li>
                 ))
               }
             </ul>
-          </div>
-        }
-        {
-          song.streamUrl && <div className="space-y-2">
-            <h2 className="text-2xl font-bold"><MdMusicNote className="my-auto inline" />ここで全部聴く</h2>
-            <HLSAudioPlayer url={song.streamUrl} />
-          </div>
-        }
-        <ArticleBody content={song.content} />
-        {
-          song.credit && <ul className="text-right">
-            {
-              song.credit.map((credit, index) => (
-                <li key={index}>{credit}</li>
-              ))
-            }
-          </ul>
-        }
-        <h2 className="text-2xl font-bold">Lyrics</h2>
-        {
-          song.lyrics && <Markdown className="prose dark:!prose-invert break-words">
-            {modifiedLyrics}
-          </Markdown>
-        }
-      </article>
-      <footer className="space-y-5">
-        <Suspense fallback={<div>Loading...</div>}>
-          <ListNavigator slug={slug} managerType="Album" useSlug />
-        </Suspense>
-        <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
-        <Credit
-          title={song.title}
-          artists={song.artist}
-          year={new Date(song.createdAt).getFullYear()}
-          additionalInfo={song.credit}
-          license={song.license}
-        />
-      </footer>
-    </main>
+          }
+          <h2 className="text-2xl font-bold">Lyrics</h2>
+          {
+            song.lyrics && <Markdown className="prose dark:!prose-invert break-words">
+              {modifiedLyrics}
+            </Markdown>
+          }
+        </article>
+        <footer className="space-y-5">
+          <Suspense fallback={<div>Loading...</div>}>
+            <ListNavigator slug={slug} managerType="Album" useSlug />
+          </Suspense>
+          <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
+          <Credit
+            title={song.title}
+            artists={song.artist}
+            year={new Date(song.createdAt).getFullYear()}
+            additionalInfo={song.credit}
+            license={song.license}
+          />
+        </footer>
+      </main>
+    </>
   );
 }

@@ -1,7 +1,9 @@
-import { AlbumManager } from "@/lib/contentful";
+import { Album, AlbumManager } from "@/lib/contentful";
 import { notFound } from "next/navigation";
 import data from "@/app/data/data.json";
 import ItemList from "@/components/ItemList";
+import Script from "next/script";
+import type { MusicAlbum, WithContext } from "schema-dts";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -12,6 +14,40 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   return {
     title: `アルバム "${album.title}"` + " - " + data.siteName,
   };
+}
+
+function JsonLD({ album }: { album: Album }) {
+  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  ogpImageUrl.searchParams.set("title", album.title);
+
+  const jsonLd: WithContext<MusicAlbum> = {
+    "@context": "https://schema.org",
+    "@type": "MusicAlbum",
+    name: album.title,
+    url: new URL(`/albums/${album.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+    image: ogpImageUrl.href,
+    byArtist: album.artist?.map((artist) => ({
+      "@type": "MusicGroup",
+      name: artist
+    })),
+    description: album.description,
+    datePublished: album.releaseDate,
+    numTracks: album.items.length,
+    track: album.items.map((song) => ({
+      "@type": "MusicRecording",
+      name: song.title,
+      url: new URL(`/songs/${song.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href
+    }))
+  };
+
+  return (
+    <Script
+      id="json-ld"
+      strategy="afterInteractive"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
 }
 
 export default async function AlbumPage(
@@ -27,18 +63,21 @@ export default async function AlbumPage(
   }
   const songs = album.items;
   return (
-    <div className="space-y-4">
-      <h1 className="text-3xl font-bold">アルバム &ldquo;{album.title}&rdquo;</h1>
-      <div>{album.artist?.join(", ")}</div>
-      <p className="text-sm">{album.description}</p>
-      <ItemList
-        items={songs}
-        total={songs.length}
-        page={pageNum}
-        limit={10}
-        suffix={`?key=${album.slug}`}
-        showDate={false}
-      />
-    </div>
+    <>
+      <JsonLD album={album} />
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold">アルバム &ldquo;{album.title}&rdquo;</h1>
+        <div>{album.artist?.join(", ")}</div>
+        <p className="text-sm">{album.description}</p>
+        <ItemList
+          items={songs}
+          total={songs.length}
+          page={pageNum}
+          limit={10}
+          suffix={`?key=${album.slug}`}
+          showDate={false}
+        />
+      </div>
+    </>
   );
 }
