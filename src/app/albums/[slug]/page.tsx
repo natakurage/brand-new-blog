@@ -4,6 +4,7 @@ import data from "@/app/data/data.json";
 import ItemList from "@/components/ItemList";
 import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
+import { ccDeedUrls } from "@/lib/licenses";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -37,7 +38,8 @@ function JsonLD({ album }: { album: Album }) {
       "@type": "MusicRecording",
       name: song.title,
       url: new URL(`/songs/${song.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href
-    }))
+    })),
+    license: album.licenseSelect ? ccDeedUrls[album.licenseSelect] : album.license,
   };
 
   return (

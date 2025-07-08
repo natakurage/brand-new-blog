@@ -15,6 +15,7 @@ import HeaderTags from "@/components/HeaderTags";
 import HeaderAuthor from "@/components/HeaderAuthor";
 import Credit from "@/components/Credit";
 import Script from "next/script";
+import { ccDeedUrls } from "@/lib/licenses";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -71,7 +72,7 @@ function JsonLD({ post }: { post: BlogPost }) {
         image: data.avatar
       }
     ],
-    license: post.license,
+    license: post.licenseSelect ? ccDeedUrls[post.licenseSelect] : post.license,
   };
 
   return (

@@ -20,6 +20,7 @@ import HeaderTime from "@/components/HeaderTime";
 import HeaderTags from "@/components/HeaderTags";
 import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
+import { ccDeedUrls } from "@/lib/licenses";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { isEnabled } = draftMode();
@@ -69,7 +70,8 @@ function JsonLD({ song }: { song: Song }) {
     byArtist: song.artist.map((artist) => ({
       "@type": "MusicGroup",
       name: artist
-    }))
+    })),
+    license: song.licenseSelect ? ccDeedUrls[song.licenseSelect] : song.license,
   };
 
   return (
