@@ -3,11 +3,10 @@ import Markdown from "react-markdown";
 import { MdMusicNote } from "react-icons/md";
 import Link from "next/link";
 import Script from "next/script";
-import { Song, SongManager } from "@/lib/contentful";
+import { loadGlobalSettings, Song, SongManager } from "@/lib/contentful";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import React, { Suspense } from "react";
-import data from "@/app/data/data.json";
 import ListNavigator from "@/components/ListNavigator";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
@@ -23,6 +22,7 @@ import type { MusicRecording, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/licenses";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
+  const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
   const song = await new SongManager().getBySlug(slug, isEnabled);
@@ -87,6 +87,7 @@ function JsonLD({ song }: { song: Song }) {
 export default async function SongPage(
   { params } : { params: { slug: string } }
 ) {
+  const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
   const song = await new SongManager().getBySlug(slug, isEnabled);

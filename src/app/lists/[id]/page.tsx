@@ -1,9 +1,9 @@
 import ItemList from "@/components/ItemList";
-import { PostListManager } from "@/lib/contentful";
+import { loadGlobalSettings, PostListManager } from "@/lib/contentful";
 import { notFound } from "next/navigation";
-import data from "@/app/data/data.json";
 
 export async function generateMetadata ({ params }: { params: { id: string } }) {
+  const data = await loadGlobalSettings();
   const { id } = params;
   const list = await new PostListManager().get(id, false);
   if (!list) { 

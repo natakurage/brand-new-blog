@@ -56,10 +56,7 @@ npm install
 |CONTENTFUL_ACCESS_TOKEN | ContentfulのContent Delivery APIトークン |
 |CONTENTFUL_PREVIEW_ACCESS_TOKEN | ContentfulのContent Preview APIトークン |
 |CONTENTFUL_PREVIEW_SECRET | プレビュー用シークレット（任意の文字列） |
-|HOST | ホスト名（RSS用） |
-
-### プロフィールなど
-プロフィール等の情報はsrc/app/data/data.jsonに記述します。
+|NEXT_PUBLIC_ORIGIN | ホスト名（RSS用） |
 
 ## ライセンス
 

@@ -1,15 +1,17 @@
 import ItemList from "@/components/ItemList";
-import { BlogPostManager } from "@/lib/contentful";
-import { Metadata } from "next";
-import data from "@/app/data/data.json";
+import { loadGlobalSettings, BlogPostManager } from "@/lib/contentful";
 import Script from "next/script";
 import type {  WebSite, WithContext } from "schema-dts";
 
-export const metadata: Metadata = {
-  title: data.siteName,
-};
+export async function generateMetadata() {
+  const data = await loadGlobalSettings();
+  return {
+    title: data.siteName,
+  };
+}
 
-function JsonLD() {
+async function JsonLD() {
+  const data = await loadGlobalSettings();
   const jsonLd: WithContext<WebSite> = {
     "@context": "https://schema.org",
     "@type": "WebSite",

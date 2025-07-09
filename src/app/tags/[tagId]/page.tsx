@@ -1,10 +1,11 @@
 import ItemList from "@/components/ItemList";
-import { BlogPostManager, getTagWithCache } from "@/lib/contentful";
-import data from "@/app/data/data.json";
+import { BlogPostManager, getTagWithCache, loadGlobalSettings } from "@/lib/contentful";
+
 
 export async function generateMetadata ({ params }: { params: { tagId: string } }) {
   const { tagId } = params;
   const tag = await getTagWithCache(tagId);
+  const data = await loadGlobalSettings();
   return {
     title: `タグ #${tag.name} がつけられた記事` + " - " + data.siteName,
   };

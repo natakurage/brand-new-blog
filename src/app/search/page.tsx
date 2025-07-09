@@ -1,9 +1,9 @@
 import ItemList from "@/components/ItemList";
-import { BlogPostManager } from "@/lib/contentful";
-import data from "@/app/data/data.json";
+import { BlogPostManager, loadGlobalSettings } from "@/lib/contentful";
 
 export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {
   const { q } = searchParams;
+  const data = await loadGlobalSettings();
   return {
     title: `"${q}"の検索結果` + " - " + data.siteName,
   };

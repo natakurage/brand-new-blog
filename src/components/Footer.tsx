@@ -1,8 +1,8 @@
-import Image from "next/image";
+import { loadGlobalSettings } from "@/lib/contentful";
 import Link from "next/link";
 import { FaXTwitter, FaGithub, FaBluesky, FaYoutube } from "react-icons/fa6";
-import data from "@/app/data/data.json";
 import { IoIosGlobe } from "react-icons/io";
+import AvatarIcon from "./AvatarIcon";
 
 function SocialIcon({ site, href }: { site: string; href: string }) {
   const icons = new Map([
@@ -24,29 +24,18 @@ function SocialIcon({ site, href }: { site: string; href: string }) {
   );
 }
 
-export function Footer() {
+export async function Footer() {
+  const data = await loadGlobalSettings();
   return (
     <footer className="footer bg-neutral text-neutral-content p-10">
       <aside>
         <div className="flex flex-wrap gap-4">
-          <div className="tooltip" data-tip={data.donate}>
-            <div className="avatar">
-              <div className="ring-accent hover:ring-secondary ring-offset-base-100 w-20 rounded-full ring ring-offset-2">
-                <Link
-                  href={data.donateURL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Image
-                    src={data.avatar}
-                    alt="avatar icon"
-                    width={96}
-                    height={96}
-                  />
-                </Link>
-              </div>
-            </div>
-          </div>
+          <AvatarIcon
+            donate={data.donate}
+            donateURL={data.donateUrl}
+            avatar={data.avatar}
+            className="w-20"
+          />
           <div className="max-w-md">
             <div className="font-bold">{data.author}</div>
             <p>{data.bio}</p>
@@ -70,8 +59,8 @@ export function Footer() {
         <h6 className="footer-title">Social</h6>
         <div className="grid grid-flow-col gap-4">
           {
-            Object.entries(data.socials).map(([site, href]) => (
-              <SocialIcon key={site} site={site} href={href} /> 
+            data.socials.map(({ name, href }) => (
+              <SocialIcon key={name} site={name} href={href} />
             ))
           }
         </div>

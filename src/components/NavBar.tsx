@@ -5,11 +5,20 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import SearchBar from "./SearchBar";
 import { useEffect, useState } from "react";
 import { MdComputer, MdDarkMode, MdLightMode, MdRssFeed } from "react-icons/md";
-import data from "@/app/data/data.json";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 
-export function NavBar() {
+export function NavBar({
+  topLogo,
+  siteName,
+  useSidebar,
+  navbarPages,
+}: {
+  topLogo?: string;
+  siteName: string;
+  useSidebar: boolean;
+  navbarPages: { name: string; href: string }[];
+}) {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -22,8 +31,10 @@ export function NavBar() {
     <div className="navbar sticky top-0 z-50 backdrop-blur-lg">
       <div className="flex-1">
         <Link href="/" className="btn btn-ghost text-xl font-mono">
-          <Image src={data.topLogo} alt="site logo" width={48} height={48} />
-          <span className="hidden sm:block">{data.siteName}</span>
+          {topLogo && (
+            <Image src={topLogo} alt="site logo" width={48} height={48} />
+          )}
+          <span className="hidden sm:block">{siteName}</span>
         </Link>
       </div>
       {
@@ -47,7 +58,7 @@ export function NavBar() {
           </ul>
         </div>
       }
-      <div className={"flex-none" + (data.useSidebar ? " md:hidden" : "")}>
+      <div className={"flex-none" + (useSidebar ? " md:hidden" : "")}>
         <div className="drawer drawer-end">
           <input id="my-drawer" type="checkbox" checked={open} onChange={(e) => setOpen(e.target.checked)} className="drawer-toggle" />
           <div className="drawer-content">
@@ -59,7 +70,7 @@ export function NavBar() {
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <ul className="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content bg-opacity-100 h-full">
               {
-                data.navbarPages.map(({ name, href }) => (
+                navbarPages.map(({ name, href }) => (
                   <li key={name}>
                     <Link
                       href={href}

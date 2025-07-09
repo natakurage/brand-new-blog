@@ -1,12 +1,12 @@
-import { Album, AlbumManager } from "@/lib/contentful";
+import { Album, AlbumManager, loadGlobalSettings } from "@/lib/contentful";
 import { notFound } from "next/navigation";
-import data from "@/app/data/data.json";
 import ItemList from "@/components/ItemList";
 import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/licenses";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
+  const data = await loadGlobalSettings();
   const { slug } = params;
   const album = await new AlbumManager().getBySlug(slug, false);
   if (!album) { 

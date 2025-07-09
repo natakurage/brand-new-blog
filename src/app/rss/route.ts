@@ -1,8 +1,8 @@
-import { BlogPostManager } from "@/lib/contentful";
-import data from "@/app/data/data.json";
+import { BlogPostManager, loadGlobalSettings } from "@/lib/contentful";
 import removeMd from "remove-markdown";
 
 export async function GET(request: Request) {
+  const data = await loadGlobalSettings();
   const url = new URL(request.url).origin;
 
   if (!url) {

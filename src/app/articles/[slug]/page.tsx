@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
-import { BlogPost, BlogPostManager } from "@/lib/contentful";
+import { BlogPost, BlogPostManager, loadGlobalSettings } from "@/lib/contentful";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
 import type { WithContext, BlogPosting } from "schema-dts";
-import data from "@/app/data/data.json";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import ListNavigator from "@/components/ListNavigator";
 import ShareButtons from "@/components/ShareButtons";
@@ -18,6 +17,7 @@ import Script from "next/script";
 import { ccDeedUrls } from "@/lib/licenses";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
+  const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
   const post = await new BlogPostManager().getBySlug(slug, isEnabled);
@@ -52,7 +52,8 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug, key: undefined }));
 }
 
-function JsonLD({ post }: { post: BlogPost }) {
+async function JsonLD({ post }: { post: BlogPost }) {
+  const data = await loadGlobalSettings();
   const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
   ogpImageUrl.searchParams.set("title", post.title);
   const jsonLd: WithContext<BlogPosting> = {
@@ -68,7 +69,7 @@ function JsonLD({ post }: { post: BlogPost }) {
       {
         "@type": "Person",
         name: data.author,
-        url: data.authorURL || undefined,
+        url: data.authorUrl || undefined,
         image: data.avatar
       }
     ],
@@ -88,6 +89,7 @@ function JsonLD({ post }: { post: BlogPost }) {
 export default async function ArticlePage(
   { params } : { params: { slug: string } }
 ) {
+  const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
   const manager = new BlogPostManager();
@@ -141,7 +143,7 @@ export default async function ArticlePage(
           <h1 className="text-4xl font-bold">{post.title}</h1>
           <HeaderTags tags={post.tags || []} />
           <div className="text-sm flex flex-wrap">
-            <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateURL} className="me-auto" />
+            <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
             <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} className="ms-auto" />
           </div>
         </header>

@@ -1,13 +1,14 @@
+import { loadGlobalSettings } from '@/lib/contentful';
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
-import data from '@/app/data/data.json';
 
 export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
+  const data = await loadGlobalSettings();
   const { searchParams } = new URL(request.url);
   const title = searchParams.get('title') || 'Default Title';
-  const absIconUrl = new URL(data.avatar, request.url).href;
+  const absIconUrl = new URL(data.avatar ?? "", request.url).href;
 
   return new ImageResponse(
     (
@@ -35,14 +36,16 @@ export async function GET(request: NextRequest) {
         }}>
           <div tw="mb-8 mx-4">{title}</div>
           <div tw="flex">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={absIconUrl}
-              alt="Logo"
-              width="80"
-              height="80"
-              tw="rounded-full"
-            />
+            {
+              /* eslint-disable-next-line @next/next/no-img-element */
+              data.avatar && <img
+                src={absIconUrl}
+                alt="Logo"
+                width="80"
+                height="80"
+                tw="rounded-full"
+              />
+            }
             <div tw="flex text-4xl items-center justify-center text-center px-4">
               {data.author}
             </div>
