@@ -454,7 +454,10 @@ export const ItemListManagerMap: ReadonlyMap<ItemListManagerMapKeys, ItemListMan
 
 type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
 
-export async function getTagWithCache(tagId: string, client: ContentfulClientApi<undefined>) {
+export async function getTagWithCache(tagId: string, client?: ContentfulClientApi<undefined>) {
+  if (!client) {
+    client = getClient(false);
+  }
   return unstable_cache(() => client.getTag(tagId), ["tag", tagId], {
     tags: ["tag"],
     revalidate: 60 * 60, // 1 hour
