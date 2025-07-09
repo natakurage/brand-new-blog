@@ -39,6 +39,8 @@ npm install
 | posts | References, many | 記事 | 必須 |
 | description | Long Text | 説明 | |
 
+続きは気が向いたら書く
+
 ### プレビュー
 プレビュー用URLは
 
@@ -61,8 +63,6 @@ npm install
 ## ライセンス
 
 このプロジェクトのコードは~MIT ライセンス~ ~GPLv3（2024/12/15変更）~ AGPLv3（2025/06/28再変更）の下で提供されています。詳細は `LICENSE` ファイルをご参照ください。
-
-ただし、`public` ディレクトリ内のアセット（画像など）は [Ceative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/) ライセンスで提供されています。詳細は `public/LICENSE` をご確認ください。
 
 ## TODO
 
