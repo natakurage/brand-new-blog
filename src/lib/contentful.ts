@@ -73,73 +73,61 @@ export interface ItemList<T extends BlogItem> {
   typeUrl: string;
 }
 
-export class BlogPost implements BlogItem {
-  typeUrl = "articles";
-
-  constructor(
-    public id: string,
-    public title: string,
-    public slug: string,
-    public content: string,
-    public createdAt: string,
-    public updatedAt: string,
-    public tags?: Tag[],
-    public licenseSelect?: LicenseType,
-    public license?: string,
-    public showToc?: boolean
-  ) {}
+export interface BlogPost extends BlogItem {
+  typeUrl: "articles",
+  id: string,
+  title: string,
+  slug: string,
+  content: string,
+  createdAt: string,
+  updatedAt: string,
+  tags?: Tag[],
+  licenseSelect?: LicenseType,
+  license?: string,
+  showToc?: boolean
 }
 
-export class Song implements BlogItem {
-  typeUrl = "songs";
-
-  constructor(
-    public id: string,
-    public title: string,
-    public slug: string,
-    public content: string,
-    public createdAt: string,
-    public updatedAt: string,
-    public artist: string[],
-    public credit?: string[],
-    public lyrics?: string,
-    public releaseDate?: string,
-    public tags?: Tag[],
-    public licenseSelect?: LicenseType,
-    public license?: string,
-    public url?: string[],
-    public streamUrl?: string
-  ) {}
+export interface Song extends BlogItem {
+  typeUrl: "songs";
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  artist: string[];
+  credit?: string[];
+  lyrics?: string;
+  releaseDate?: string;
+  tags?: Tag[];
+  licenseSelect?: LicenseType;
+  license?: string;
+  url?: string[];
+  streamUrl?: string;
 }
 
-export class PostList implements ItemList<BlogPost> {
-  typeUrl = "lists";
+export interface PostList extends ItemList<BlogPost> {
+  typeUrl: "lists";
+  id: string,
+  title: string,
+  slug: string,
+  items: BlogPost[],
+  description?: string
+}
 
-  constructor(
-    public id: string,
-    public title: string,
-    public slug: string,
-    public items: BlogPost[],
-    public description?: string
-  ) {}
-};
-
-export class Album implements ItemList<Song> {
-  typeUrl = "albums";
-  
-  constructor(
-    public id: string,
-    public title: string,
-    public slug: string,
-    public items: Song[],
-    public description?: string,
-    public releaseDate?: string,
-    public artist?: string[],
-    public credit?: string[],
-    public tags?: Tag[],
-    public licenseSelect?: LicenseType,
-    public license?: string
-  ) {}
+export interface Album extends ItemList<Song> {
+  typeUrl: "albums";
+  id: string;
+  title: string;
+  slug: string;
+  items: Song[];
+  description?: string;
+  releaseDate?: string;
+  artist?: string[];
+  credit?: string[];
+  tags?: Tag[];
+  licenseSelect?: LicenseType;
+  license?: string;
 }
 
 export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSettings"], {
@@ -350,11 +338,23 @@ export class BlogPostManager extends BlogItemManager<
   BlogPost
 > {
   contentType = "blogPost";
-  override async fromEntry(entry: TypeBlogPost<undefined, "ja">, client: ContentfulClientApi<undefined>) {
+  override async fromEntry(entry: TypeBlogPost<undefined, "ja">, client: ContentfulClientApi<undefined>) : Promise<BlogPost> {
     const { title, slug, body, license, showToc, licenseSelect } = entry.fields;
     const { createdAt, updatedAt } = entry.sys;
     const tags = await Promise.all(entry.metadata.tags.map((tag) => getTagWithCache(tag.sys.id, client)));
-    return new BlogPost(entry.sys.id, title, slug, body, createdAt, updatedAt, tags, licenseSelect, license, showToc);
+    return {
+      typeUrl: "articles",
+      id: entry.sys.id,
+      title,
+      slug,
+      content: body,
+      createdAt,
+      updatedAt,
+      tags,
+      licenseSelect,
+      license,
+      showToc
+    };
   }
 
   async getRelatedPosts(
@@ -384,11 +384,28 @@ export class SongManager extends BlogItemManager<
   Song
 > {
   contentType = "song";
-  override async fromEntry(entry: TypeSong<undefined, "ja">, client: ContentfulClientApi<undefined>) {
+  override async fromEntry(entry: TypeSong<undefined, "ja">, client: ContentfulClientApi<undefined>) : Promise<Song> {
     const { title, slug, description, artist, releaseDate, credit, lyrics, licenseSelect, license, url, streamUrl } = entry.fields;
     const { createdAt, updatedAt } = entry.sys;
     const tags = await Promise.all(entry.metadata.tags.map((tag) => getTagWithCache(tag.sys.id, client)));
-    return new Song(entry.sys.id, title, slug, description ?? "", createdAt, updatedAt, artist, credit, lyrics, releaseDate, tags, licenseSelect, license, url, streamUrl);
+    return {
+      typeUrl: "songs",
+      id: entry.sys.id,
+      title,
+      slug,
+      content: description ?? "",
+      createdAt,
+      updatedAt,
+      artist,
+      credit,
+      lyrics,
+      releaseDate,
+      tags,
+      licenseSelect,
+      license,
+      url,
+      streamUrl
+    };
   }
 }
 
@@ -398,14 +415,21 @@ export class PostListManager extends ItemListManager<
   PostList
 > {
   contentType = "postList";
-  override async fromEntry(entry: TypePostList<undefined, "ja">, client: ContentfulClientApi<undefined>) {
+  override async fromEntry(entry: TypePostList<undefined, "ja">, client: ContentfulClientApi<undefined>) : Promise<PostList> {
     const { title, slug, description } = entry.fields;
     const items = await Promise.all(entry.fields.posts.map((post) => {
       if (!("metadata" in post)) return null;
       return new BlogPostManager().fromEntry(post, client);
     }));
     const nonNullItems = items.filter((item) => item !== null);
-    return new PostList(entry.sys.id, title, slug, nonNullItems, description);
+    return {
+      typeUrl: "lists",
+      id: entry.sys.id,
+      title,
+      slug,
+      items: nonNullItems,
+      description
+    };
   }
 }
 
@@ -415,7 +439,7 @@ export class AlbumManager extends ItemListManager<
   Album
 > {
   contentType = "musicAlbum";
-  override async fromEntry(entry: TypeMusicAlbum<undefined, "ja">, client: ContentfulClientApi<undefined>) {
+  override async fromEntry(entry: TypeMusicAlbum<undefined, "ja">, client: ContentfulClientApi<undefined>) : Promise<Album> {
     const { title, slug, description, releaseDate, artist, credit, licenseSelect, license } = entry.fields;
     const tags = await Promise.all(entry.metadata.tags.map((tag) => getTagWithCache(tag.sys.id, client)));
     const items = await Promise.all(entry.fields.tracks.map((song) => {
@@ -423,7 +447,20 @@ export class AlbumManager extends ItemListManager<
       return new SongManager().fromEntry(song, client);
     }));
     const nonNullItems = items.filter((item) => item !== null);
-    return new Album(entry.sys.id, title, slug, nonNullItems, description, releaseDate, artist, credit, tags, licenseSelect, license);
+    return {
+      typeUrl: "albums",
+      id: entry.sys.id,
+      title,
+      slug,
+      items: nonNullItems,
+      description,
+      releaseDate,
+      artist,
+      credit,
+      tags,
+      licenseSelect,
+      license
+    };
   }
 }
 
