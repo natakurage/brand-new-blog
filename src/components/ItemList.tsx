@@ -1,4 +1,4 @@
-import { BlogItem } from "@/lib/contentful";
+import { BlogItem } from "@/lib/models";
 import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
 import Paginator from "./Paginator";

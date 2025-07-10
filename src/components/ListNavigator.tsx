@@ -1,6 +1,6 @@
 "use client";
 
-import { listNavigatorInfo, listNavigatorItem } from "@/lib/contentful";
+import { listNavigatorInfo, listNavigatorItem } from "@/lib/models";
 import { ItemListManagerMapKeys } from "@/lib/contentful";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";

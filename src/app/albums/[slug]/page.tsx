@@ -1,4 +1,5 @@
-import { Album, AlbumManager, loadGlobalSettings } from "@/lib/contentful";
+import { Album } from "@/lib/models";
+import { AlbumManager, loadGlobalSettings } from "@/lib/contentful";
 import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";
 import Script from "next/script";

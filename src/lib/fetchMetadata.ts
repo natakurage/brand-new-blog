@@ -1,5 +1,6 @@
 import { load } from "cheerio";
-import { BlogItem, BlogPostManager, SongManager } from "./contentful";
+import { BlogItem } from "@/lib/models";
+import { BlogPostManager, SongManager } from "./contentful";
 import removeMd from "remove-markdown";
 
 export interface Metadata {

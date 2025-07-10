@@ -1,4 +1,5 @@
-import { ItemListManagerMap, ItemListManagerMapKeys, listNavigatorInfo } from "@/lib/contentful";
+import { ItemListManagerMap, ItemListManagerMapKeys } from "@/lib/contentful";
+import { listNavigatorInfo } from "@/lib/models";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {

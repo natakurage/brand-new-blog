@@ -1,6 +1,6 @@
-import { ContentfulClientApi, createClient, EntriesQueries, Entry, EntrySkeletonType, LocaleCode, Tag } from "contentful";
+import { ContentfulClientApi, createClient, EntriesQueries, Entry, EntrySkeletonType, LocaleCode } from "contentful";
 import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton, TypeGlobalSettingsSkeleton, TypeLinkListSkeleton } from "../../@types/contentful";
-import { LicenseType } from "@/lib/licenses";
+import { GlobalSettings, LinkItem, BlogItem, BlogPost, ItemList, PostList, Album, Song } from "./models";
 import { unstable_cache } from "next/cache";
 
 const space = process.env.CONTENTFUL_SPACE_ID;
@@ -20,115 +20,6 @@ const previewClient = createClient({
 });
 
 const getClient = (preview: boolean) => preview ? previewClient : normalClient;
-
-interface LinkItem {
-  href: string;
-  name: string;
-}
-
-export interface GlobalSettings {
-  siteName: string;
-  description: string;
-  author: string;
-  authorUrl?: string;
-  copyright: string;
-  donate?: string;
-  donateUrl?: string;
-  bio: string;
-  contactUrl?: string;
-  useSidebar: boolean;
-  adblock: boolean;
-  showRelatedPosts: boolean;
-  showNewPosts: boolean;
-  recommendedPosts: string[];
-  socials: LinkItem[];
-  navbarPages: LinkItem[];
-  footerPages: LinkItem[];
-  avatar?: string;
-  topLogo?: string;
-  banner?: string;
-  favicon: string;
-  appleTouchIcon: string;
-}
-
-export interface BlogItem {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  tags?: Tag[];
-  licenseSelect?: LicenseType;
-  license?: string;
-  typeUrl: string;
-}
-
-export interface ItemList<T extends BlogItem> {
-  id: string;
-  title: string;
-  slug: string;
-  items: T[];
-  description?: string;
-  typeUrl: string;
-}
-
-export interface BlogPost extends BlogItem {
-  typeUrl: "articles",
-  id: string,
-  title: string,
-  slug: string,
-  content: string,
-  createdAt: string,
-  updatedAt: string,
-  tags?: Tag[],
-  licenseSelect?: LicenseType,
-  license?: string,
-  showToc?: boolean
-}
-
-export interface Song extends BlogItem {
-  typeUrl: "songs";
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  artist: string[];
-  credit?: string[];
-  lyrics?: string;
-  releaseDate?: string;
-  tags?: Tag[];
-  licenseSelect?: LicenseType;
-  license?: string;
-  url?: string[];
-  streamUrl?: string;
-}
-
-export interface PostList extends ItemList<BlogPost> {
-  typeUrl: "lists";
-  id: string,
-  title: string,
-  slug: string,
-  items: BlogPost[],
-  description?: string
-}
-
-export interface Album extends ItemList<Song> {
-  typeUrl: "albums";
-  id: string;
-  title: string;
-  slug: string;
-  items: Song[];
-  description?: string;
-  releaseDate?: string;
-  artist?: string[];
-  credit?: string[];
-  tags?: Tag[];
-  licenseSelect?: LicenseType;
-  license?: string;
-}
 
 export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSettings"], {
   tags: ["globalSettings"],
@@ -199,6 +90,8 @@ export async function fetchGlobalSettings(): Promise<GlobalSettings> {
     appleTouchIcon: "https:" + appleTouchIconUrl,
   };
 }
+
+type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
 
 export abstract class BlogItemManager<
   EntrySkeleton extends EntrySkeletonType,
@@ -489,8 +382,6 @@ export const ItemListManagerMap: ReadonlyMap<ItemListManagerMapKeys, ItemListMan
   ["Album", new AlbumManager()]
 ]);
 
-type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
-
 export async function getTagWithCache(tagId: string, client?: ContentfulClientApi<undefined>) {
   if (!client) {
     client = getClient(false);
@@ -499,17 +390,4 @@ export async function getTagWithCache(tagId: string, client?: ContentfulClientAp
     tags: ["tag"],
     revalidate: 60 * 60, // 1 hour
   })();
-}
-
-export interface listNavigatorItem {
-  title: string;
-  slug: string;
-  typeUrl: string;
-}
-
-export interface listNavigatorInfo {
-  listTitle: string;
-  typeUrl: string;
-  prev: null | listNavigatorItem;
-  next: null | listNavigatorItem;
 }

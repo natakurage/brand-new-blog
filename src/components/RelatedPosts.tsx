@@ -1,4 +1,4 @@
-import { BlogPost } from "@/lib/contentful";
+import { BlogPost } from "@/lib/models";
 import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
 import removeMd from "remove-markdown";
