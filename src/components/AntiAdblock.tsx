@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
 export default function AntiAdblock() {
+  const modalRef = useRef<HTMLDialogElement>(null);
+
   useEffect(() => {
     const adTest = async () => {
       if (typeof localStorage === "undefined" || localStorage.getItem("adtested") === "true"){
@@ -27,9 +29,8 @@ export default function AntiAdblock() {
         detected = true;
       }
       if (detected) {
-        const modal = document.getElementById("my_modal_2");
-        if (modal) {
-          (modal as HTMLDialogElement).showModal();
+        if (modalRef.current) {
+          modalRef.current.showModal();
         }
       }
       localStorage.setItem("adtested", "true");
@@ -37,7 +38,7 @@ export default function AntiAdblock() {
     adTest();
   });
   return (
-    <dialog id="my_modal_2" className="modal">
+    <dialog ref={modalRef} className="modal">
       <div className="modal-box flex flex-col space-y-4">
         <FaCheckCircle size={100} color="green" className="self-center" />
         <h3 className="font-bold text-lg self-center">広告ブロッカーを検出しました！</h3>

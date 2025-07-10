@@ -35,7 +35,7 @@ export default function ListNavigator(
         useSlug: useSlug ? "true" : "false"
       });
       const response = await fetch("/api/list-navigator?" + searchParams);
-      const navigatorInfo = await response.json() as listNavigatorInfo;
+      const navigatorInfo: listNavigatorInfo = await response.json();
       if (navigatorInfo == null) {
         router.push("?");
         return;
