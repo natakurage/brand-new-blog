@@ -31,26 +31,25 @@ export interface GlobalSettings {
   appleTouchIcon: string;
 }
 
-export interface BlogItem {
+export interface BlogData {
+  typeUrl: string;
   id: string;
   title: string;
   slug: string;
+}
+
+export interface BlogItem extends BlogData {
   content: string;
   createdAt: string;
   updatedAt: string;
   tags?: Tag[];
   licenseSelect?: LicenseType;
   license?: string;
-  typeUrl: string;
 }
 
-export interface ItemList<T extends BlogItem> {
-  id: string;
-  title: string;
-  slug: string;
+export interface ItemList<T extends BlogItem> extends BlogData {
   items: T[];
   description?: string;
-  typeUrl: string;
 }
 
 export interface BlogPost extends BlogItem {

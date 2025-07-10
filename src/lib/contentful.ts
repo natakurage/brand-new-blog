@@ -2,14 +2,14 @@ import { unstable_cache } from "next/cache";
 import { ContentfulClientApi, EntriesQueries, Entry, EntrySkeletonType, LocaleCode } from "contentful";
 import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton } from "../../@types/contentful";
 import { getClient } from "./client";
-import { BlogItem, BlogPost, ItemList, PostList, Album, Song } from "./models";
+import { BlogData, BlogItem, BlogPost, ItemList, PostList, Album, Song } from "./models";
 
 type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
 
 abstract class ContentfulManager<
   EntrySkeleton extends EntrySkeletonType,
   Locales extends LocaleCode,
-  DataType
+  DataType extends BlogData,
 > {
   readonly abstract contentType: string;
   abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<DataType>;
