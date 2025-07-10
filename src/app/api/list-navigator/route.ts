@@ -1,5 +1,5 @@
-import { isItemListManagerMapKeys, ItemListManagerMap } from "@/lib/contentful";
-import { listNavigatorInfo } from "@/lib/models";
+import { ItemListManagerMap, isItemListManagerMapKey } from "@/lib/contentful";
+import { BlogData, listNavigatorInfo } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 
 const responseWithError = (error: string, status: number) => {
@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
   // check params
   if (!key || !currentSlug || !managerType) return responseWithError("Missing parameters", 400);
   // check manager type
-  if (!isItemListManagerMapKeys(managerType)) return responseWithError("Invalid manager type", 400);
-  const manager = ItemListManagerMap.get(managerType);
+  if (!isItemListManagerMapKey(managerType)) return responseWithError("Invalid manager type", 400);
+  const manager = new ItemListManagerMap[managerType]();
   if (!manager) return responseWithError("Type not found", 400);
   // get list
   const list = useSlug === "true" ? await manager.getBySlug(key) : await manager.get(key);
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   // get info
   const { title, items } = list;
   // check index
-  const currentId = items.findIndex((item) => item.slug === currentSlug);
+  const currentId = items.findIndex((item: BlogData) => item.slug === currentSlug);
   if (currentId === -1) return responseWithError("Item not found", 404);
   const prev = items[currentId - 1] ?? null;
   const next = items[currentId + 1] ?? null;

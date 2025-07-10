@@ -1,7 +1,7 @@
 "use client";
 
 import { listNavigatorInfo, listNavigatorItem } from "@/lib/models";
-import { ItemListManagerMapKeys } from "@/lib/contentful";
+import { ItemListManagerMap } from "@/lib/contentful";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,7 +13,7 @@ const withEllipsis = (str: string, len: number) => (
 
 export default function ListNavigator(
   { slug, managerType, useSlug = false }
-: { slug: string, managerType: ItemListManagerMapKeys, useSlug?: boolean }) {
+: { slug: string, managerType: keyof typeof ItemListManagerMap, useSlug?: boolean }) {
   const router = useRouter();
   const key = useSearchParams().get("key");
   

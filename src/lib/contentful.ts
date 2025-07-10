@@ -2,7 +2,7 @@ import { unstable_cache } from "next/cache";
 import { ContentfulClientApi, EntriesQueries, Entry, EntrySkeletonType, LocaleCode } from "contentful";
 import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton } from "../../@types/contentful";
 import { getClient } from "./client";
-import { BlogData, BlogItem, BlogPost, ItemList, PostList, Album, Song } from "./models";
+import { BlogData, BlogPost, PostList, Album, Song } from "./models";
 
 type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
 
@@ -210,36 +210,23 @@ export class AlbumManager extends BlogDataManager<
   }
 }
 
-type BlogItemManagerJa<
-  EntrySkeleton extends EntrySkeletonType,
-  ItemType extends BlogItem
-> = BlogDataManager<EntrySkeleton, "ja", ItemType>;
-
-type ItemListManagerJa<
-  EntrySkeleton extends EntrySkeletonType,
-  ItemType extends ItemList<BlogItem>
-> = BlogDataManager<EntrySkeleton, "ja", ItemType>;
-
-export type BlogItemManagerMapKeys = "BlogPost" | "Song";
-export type ItemListManagerMapKeys = "PostList" | "Album";
-export const isBlogItemManagerMapKeys = (key: string): key is BlogItemManagerMapKeys => {
-  return ["BlogPost", "Song"].includes(key);
+export const BlogItemManagerMap = {
+  BlogPost: BlogPostManager,
+  Song: SongManager
 };
-export const isItemListManagerMapKeys = (key: string): key is ItemListManagerMapKeys => {
-  return ["PostList", "Album"].includes(key);
+
+export const ItemListManagerMap = {
+  PostList: PostListManager,
+  Album: AlbumManager
 };
-type BlogItemManagerMapValue = BlogItemManagerJa<EntrySkeletonType, BlogItem>;
-type ItemListManagerMapValue = ItemListManagerJa<EntrySkeletonType, ItemList<BlogItem>>;
 
-export const BlogItemManagerMap: ReadonlyMap<BlogItemManagerMapKeys, BlogItemManagerMapValue> = new Map<BlogItemManagerMapKeys, BlogItemManagerMapValue>([
-  ["BlogPost", new BlogPostManager()],
-  ["Song", new SongManager()]
-]);
+export const isBlogItemManagerMapKey = (key: string): key is keyof typeof BlogItemManagerMap => {
+  return key in BlogItemManagerMap;
+};
 
-export const ItemListManagerMap: ReadonlyMap<ItemListManagerMapKeys, ItemListManagerMapValue> = new Map<ItemListManagerMapKeys, ItemListManagerMapValue>([
-  ["PostList", new PostListManager()],
-  ["Album", new AlbumManager()]
-]);
+export const isItemListManagerMapKey = (key: string): key is keyof typeof ItemListManagerMap => {
+  return key in ItemListManagerMap;
+};
 
 export async function getTagWithCache(tagId: string, client?: ContentfulClientApi<undefined>) {
   if (!client) {
