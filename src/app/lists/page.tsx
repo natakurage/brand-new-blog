@@ -1,5 +1,6 @@
 import ListList from "@/components/ListList";
-import { loadGlobalSettings, PostListManager } from "@/lib/contentful";
+import { loadGlobalSettings } from "@/lib/globalSettings";
+import { PostListManager } from "@/lib/contentful";
 
 export async function generateMetadata(){
   const data = await loadGlobalSettings();

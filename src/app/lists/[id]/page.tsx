@@ -1,5 +1,6 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings, PostListManager } from "@/lib/contentful";
+import { loadGlobalSettings } from "@/lib/globalSettings";
+import { PostListManager } from "@/lib/contentful";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata ({ params }: { params: { id: string } }) {

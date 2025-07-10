@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/models";
-import { BlogPostManager, loadGlobalSettings } from "@/lib/contentful";
+import { loadGlobalSettings } from "@/lib/globalSettings";
+import { BlogPostManager} from "@/lib/contentful";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
 import type { WithContext, BlogPosting } from "schema-dts";
