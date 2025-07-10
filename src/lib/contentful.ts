@@ -6,13 +6,23 @@ import { BlogData, BlogItem, BlogPost, ItemList, PostList, Album, Song } from ".
 
 type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
 
-abstract class ContentfulManager<
+abstract class BlogDataManager<
   EntrySkeleton extends EntrySkeletonType,
   Locales extends LocaleCode,
   DataType extends BlogData,
 > {
   readonly abstract contentType: string;
   abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<DataType>;
+
+  async get(id: string, preview = false) {
+    const client = getClient(preview);
+    try {
+      const entry = await client.getEntry<EntrySkeleton, Locales>(id);
+      return this.fromEntry(entry, client);
+    } catch {
+      return null;
+    }
+  }
 
   async query(
     {
@@ -57,15 +67,6 @@ abstract class ContentfulManager<
     }
     return items.items[0];
   }
-}
-
-export abstract class BlogItemManager<
-  EntrySkeleton extends EntrySkeletonType,
-  Locales extends LocaleCode,
-  ItemType extends BlogItem
-> extends ContentfulManager<EntrySkeleton, Locales, ItemType> {
-  readonly abstract contentType: string;
-  abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<ItemType>;
 
   async getAllSlugs() {
     const client = getClient(false);
@@ -77,26 +78,7 @@ export abstract class BlogItemManager<
   }
 }
 
-export abstract class ItemListManager<
-  EntrySkeleton extends EntrySkeletonType,
-  Locales extends LocaleCode,
-  ListType extends ItemList<BlogItem>
-> extends ContentfulManager<EntrySkeleton, Locales, ListType> {
-  readonly abstract contentType: string;
-  abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<ListType>;
-
-  async get(id: string, preview = false) {
-    const client = getClient(preview);
-    try {
-      const entry = await client.getEntry<EntrySkeleton, Locales>(id);
-      return this.fromEntry(entry, client);
-    } catch {
-      return null;
-    }
-  }
-}
-
-export class BlogPostManager extends BlogItemManager<
+export class BlogPostManager extends BlogDataManager<
   TypeBlogPostSkeleton,
   "ja",
   BlogPost
@@ -142,7 +124,7 @@ export class BlogPostManager extends BlogItemManager<
   }
 }
 
-export class SongManager extends BlogItemManager<
+export class SongManager extends BlogDataManager<
   TypeSongSkeleton,
   "ja",
   Song
@@ -173,7 +155,7 @@ export class SongManager extends BlogItemManager<
   }
 }
 
-export class PostListManager extends ItemListManager<
+export class PostListManager extends BlogDataManager<
   TypePostListSkeleton,
   "ja",
   PostList
@@ -197,7 +179,7 @@ export class PostListManager extends ItemListManager<
   }
 }
 
-export class AlbumManager extends ItemListManager<
+export class AlbumManager extends BlogDataManager<
   TypeMusicAlbumSkeleton,
   "ja",
   Album
@@ -228,15 +210,15 @@ export class AlbumManager extends ItemListManager<
   }
 }
 
-export type BlogItemManagerJa<
+type BlogItemManagerJa<
   EntrySkeleton extends EntrySkeletonType,
   ItemType extends BlogItem
-> = BlogItemManager<EntrySkeleton, "ja", ItemType>;
+> = BlogDataManager<EntrySkeleton, "ja", ItemType>;
 
-export type ItemListManagerJa<
+type ItemListManagerJa<
   EntrySkeleton extends EntrySkeletonType,
   ItemType extends ItemList<BlogItem>
-> = ItemListManager<EntrySkeleton, "ja", ItemType>;
+> = BlogDataManager<EntrySkeleton, "ja", ItemType>;
 
 export type BlogItemManagerMapKeys = "BlogPost" | "Song";
 export type ItemListManagerMapKeys = "PostList" | "Album";
