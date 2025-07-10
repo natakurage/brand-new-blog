@@ -1,25 +1,8 @@
-import { ContentfulClientApi, createClient, EntriesQueries, Entry, EntrySkeletonType, LocaleCode } from "contentful";
-import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton, TypeGlobalSettingsSkeleton, TypeLinkListSkeleton } from "../../@types/contentful";
-import { GlobalSettings, LinkItem, BlogItem, BlogPost, ItemList, PostList, Album, Song } from "./models";
 import { unstable_cache } from "next/cache";
-
-const space = process.env.CONTENTFUL_SPACE_ID;
-const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN;
-const previewAccessToken = process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN;
-
-if (!space || !accessToken || !previewAccessToken) {
-  throw new Error("Missing Contentful credentials.");
-}
-
-const normalClient = createClient({
-  space, accessToken,
-});
-
-const previewClient = createClient({
-  space, accessToken: previewAccessToken, host: "preview.contentful.com",
-});
-
-const getClient = (preview: boolean) => preview ? previewClient : normalClient;
+import { ContentfulClientApi, EntriesQueries, Entry, EntrySkeletonType, LocaleCode } from "contentful";
+import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton, TypeGlobalSettingsSkeleton, TypeLinkListSkeleton } from "../../@types/contentful";
+import { getClient } from "./client";
+import { GlobalSettings, LinkItem, BlogItem, BlogPost, ItemList, PostList, Album, Song } from "./models";
 
 export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSettings"], {
   tags: ["globalSettings"],
@@ -93,32 +76,34 @@ export async function fetchGlobalSettings(): Promise<GlobalSettings> {
 
 type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
 
-export abstract class BlogItemManager<
+abstract class ContentfulManager<
   EntrySkeleton extends EntrySkeletonType,
   Locales extends LocaleCode,
-  ItemType extends BlogItem
+  DataType
 > {
   readonly abstract contentType: string;
-  abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<ItemType>;
+  abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<DataType>;
 
   async query(
     {
-      preview = false,
       limit = 10,
       page = 0,
+      preview = false,
+      include,
       filter = {}
-    } :
-    {
-      preview?: boolean,
+    } : {
       limit?: number,
       page?: number,
+      preview?: boolean,
+      include?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
       filter?: Filter<EntrySkeleton>
-    },
+    }
   ) {
     const client = getClient(preview);
     const entries = await client.getEntries<EntrySkeleton, Locales>({
       content_type: this.contentType,
       limit,
+      include,
       skip: page * limit,
       ...filter
     });
@@ -135,16 +120,22 @@ export abstract class BlogItemManager<
     };
   }
 
-  async getBySlug(
-    slug: string,
-    preview = false
-  ) {
+  async getBySlug(slug: string, preview = false) {
     const items = await this.query({ filter: { "fields.slug": slug }, preview, limit: 1 });
     if (items.items.length === 0) {
       return null;
     }
     return items.items[0];
   }
+}
+
+export abstract class BlogItemManager<
+  EntrySkeleton extends EntrySkeletonType,
+  Locales extends LocaleCode,
+  ItemType extends BlogItem
+> extends ContentfulManager<EntrySkeleton, Locales, ItemType> {
+  readonly abstract contentType: string;
+  abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<ItemType>;
 
   async getAllSlugs() {
     const client = getClient(false);
@@ -160,68 +151,18 @@ export abstract class ItemListManager<
   EntrySkeleton extends EntrySkeletonType,
   Locales extends LocaleCode,
   ListType extends ItemList<BlogItem>
-> {
+> extends ContentfulManager<EntrySkeleton, Locales, ListType> {
   readonly abstract contentType: string;
   abstract fromEntry(entry: Entry<EntrySkeleton, undefined, Locales>, client: ContentfulClientApi<undefined>): Promise<ListType>;
 
-  async get(
-    id: string,
-    preview = false
-  ) {
+  async get(id: string, preview = false) {
     const client = getClient(preview);
-    let entry = null;
     try {
-      entry = await client.getEntry<EntrySkeleton, Locales>(id);
+      const entry = await client.getEntry<EntrySkeleton, Locales>(id);
+      return this.fromEntry(entry, client);
     } catch {
       return null;
     }
-    return this.fromEntry(entry, client);
-  }
-
-  async query(
-    {
-      limit = 10,
-      page = 0,
-      preview = false,
-      includeItems = false,
-      filter = {}
-    } : {
-      limit?: number,
-      page?: number,
-      preview?: boolean,
-      includeItems?: boolean,
-      filter?: Filter<EntrySkeleton>
-    }
-  ) {
-    const client = getClient(preview);
-    const entries = await client.getEntries<EntrySkeleton, Locales>({
-      content_type: this.contentType,
-      limit,
-      include: includeItems ? undefined : 0,
-      skip: page * limit,
-      ...filter
-    });
-    return {
-      lists: await Promise.all(entries.items.map((item) => {
-        return this.fromEntry(item, client);
-      })),
-      total: entries.total,
-      errors: entries.errors,
-      includes: entries.includes,
-      limit: entries.limit,
-      skip: entries.skip
-    };
-  }
-
-  async getBySlug(
-    slug: string,
-    preview = false
-  ) {
-    const lists = await this.query({ filter: { "fields.slug": slug }, preview, limit: 1, includeItems: true });
-    if (lists.lists.length === 0) {
-      return null;
-    }
-    return lists.lists[0];
   }
 }
 
