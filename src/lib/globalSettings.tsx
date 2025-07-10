@@ -33,12 +33,13 @@ export async function fetchGlobalSettings(): Promise<GlobalSettings> {
   const navbarPagesEntry = llEntries.items.find(item => item.fields.id === "navbarPages");
   const footerPagesEntry = llEntries.items.find(item => item.fields.id === "footerPages");
 
-  const toHrefItem = (id: string) => {
+  const toHrefItem = (id: string) : LinkItem => {
     const item = llIncludes.find(item => item.sys.id === id);
-    return {
-      name: item?.fields.name,
-      href: item?.fields.href
-    } as LinkItem;
+    const _name = item?.fields.name;
+    const _href = item?.fields.href;
+    const name = (typeof _name === "string") ? _name : (_name?.toString() ?? "");
+    const href = (typeof _href === "string") ? _href : (_href?.toString() ?? "");
+    return { name, href };
   };
 
   const avatarUrl = includesAssets.find(asset => asset.sys.id === avatarId)?.fields.file?.url;

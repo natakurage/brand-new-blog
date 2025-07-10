@@ -1,4 +1,4 @@
-import { ItemListManagerMap, ItemListManagerMapKeys } from "@/lib/contentful";
+import { isItemListManagerMapKeys, ItemListManagerMap } from "@/lib/contentful";
 import { listNavigatorInfo } from "@/lib/models";
 import { NextRequest } from "next/server";
 
@@ -11,7 +11,8 @@ export async function GET(request: NextRequest) {
   // check params
   if (!key || !currentSlug || !managerType) return new Response(null, { status: 400 });
   // check manager type
-  const manager = ItemListManagerMap.get(managerType as ItemListManagerMapKeys);
+  if (!isItemListManagerMapKeys(managerType)) return new Response(null, { status: 400 });
+  const manager = ItemListManagerMap.get(managerType);
   if (!manager) return new Response(null, { status: 400 });
   // get list
   const list = useSlug === "true" ? await manager.getBySlug(key) : await manager.get(key);
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
   if (currentId === -1) return new Response(null, { status: 404 });
   const prev = items[currentId - 1] ?? null;
   const next = items[currentId + 1] ?? null;
-  return new Response(JSON.stringify({
+  const navigatorInfo: listNavigatorInfo = {
     listTitle: title,
     typeUrl: list.typeUrl,
     prev: prev == null ? null : {
@@ -36,5 +37,6 @@ export async function GET(request: NextRequest) {
       slug: next.slug,
       typeUrl: next.typeUrl
     }
-  } as listNavigatorInfo), { status: 200 });
+  };
+  return new Response(JSON.stringify(navigatorInfo), { status: 200 });
 }

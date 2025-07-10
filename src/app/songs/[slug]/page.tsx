@@ -118,8 +118,8 @@ export default async function SongPage(
   ([
     ["作成年", new Date(song.createdAt).getFullYear().toString()],
     ["URL", shareUrl],
-    ["ライセンス", song.license],
-  ] as [string, string][]).forEach(([k, v]) => licenseInfo.set(k, v));
+    ["ライセンス", song.license || "不明なライセンス"],
+  ]).forEach(([k, v]) => licenseInfo.set(k, v));
   const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
   const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${licenseText}`;
 

@@ -240,6 +240,12 @@ export type ItemListManagerJa<
 
 export type BlogItemManagerMapKeys = "BlogPost" | "Song";
 export type ItemListManagerMapKeys = "PostList" | "Album";
+export const isBlogItemManagerMapKeys = (key: string): key is BlogItemManagerMapKeys => {
+  return ["BlogPost", "Song"].includes(key);
+};
+export const isItemListManagerMapKeys = (key: string): key is ItemListManagerMapKeys => {
+  return ["PostList", "Album"].includes(key);
+};
 type BlogItemManagerMapValue = BlogItemManagerJa<EntrySkeletonType, BlogItem>;
 type ItemListManagerMapValue = ItemListManagerJa<EntrySkeletonType, ItemList<BlogItem>>;
 

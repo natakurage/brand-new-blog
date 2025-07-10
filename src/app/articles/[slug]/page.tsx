@@ -132,8 +132,8 @@ export default async function ArticlePage(
     ["著者", data.author],
     ["作成年", new Date(post.createdAt).getFullYear().toString()],
     ["URL", shareUrl],
-    ["ライセンス", post.license],
-  ] as [string, string][]);
+    ["ライセンス", post.license || "不明なライセンス"],
+  ]);
   const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
   const shareFullText = `# ${post.title}\n\n ${post.content}\n\n---\n\n${licenseText}`;
   return (
