@@ -57,7 +57,7 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   };
 }
 
-export const revalidate = 60 * 60;
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   const slugs = await new SongManager().getAllSlugs();
