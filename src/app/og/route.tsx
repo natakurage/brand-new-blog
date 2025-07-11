@@ -2,7 +2,7 @@ import { loadGlobalSettings } from '@/lib/globalSettings';
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   const data = await loadGlobalSettings();
