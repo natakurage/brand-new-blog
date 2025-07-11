@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import { BlogItem } from "@/lib/models";
 import { BlogPostManager, SongManager } from "./contentful";
+import { loadGlobalSettings } from "@/lib/globalSettings";
 import removeMd from "remove-markdown";
 
 export interface Metadata {
@@ -31,6 +32,7 @@ export async function fetchMetadata(url: string) {
       flag = false;
     }
     if (flag) {
+      const data = await loadGlobalSettings();
       const metadata: Metadata = {
         metadata: {
           website: absUrl.href,
@@ -39,7 +41,7 @@ export async function fetchMetadata(url: string) {
           banner: undefined,
           themeColor: undefined,
         },
-        favicons: ["/favicons/favicon.ico"]
+        favicons: [data.favicon]
       };
       if (!post) {
         return metadata;
