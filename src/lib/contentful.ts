@@ -76,6 +76,15 @@ abstract class BlogDataManager<
     });
     return entries.items.map((item) => item.fields.slug);
   }
+
+  async getAllIds() {
+    const client = getClient(false);
+    const entries = await client.getEntries<EntrySkeleton, Locales>({
+      content_type: this.contentType,
+      select: ["sys.id"],
+    });
+    return entries.items.map((item) => item.sys.id);
+  }
 }
 
 export class BlogPostManager extends BlogDataManager<
@@ -234,6 +243,6 @@ export async function getTagWithCache(tagId: string, client?: ContentfulClientAp
   }
   return unstable_cache(() => client.getTag(tagId), ["tag", tagId], {
     tags: ["tag"],
-    revalidate: 60 * 60, // 1 hour
+    revalidate: 60 * 60 // 1 hour
   })();
 }

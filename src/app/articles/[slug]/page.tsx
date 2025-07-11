@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/models";
 import { loadGlobalSettings } from "@/lib/globalSettings";
@@ -18,11 +19,15 @@ import Credit from "@/components/Credit";
 import Script from "next/script";
 import { ccDeedUrls } from "@/lib/licenses";
 
+const getPost = cache((slug: string, isEnabled: boolean) => (
+  new BlogPostManager().getBySlug(slug, isEnabled)
+));
+
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const post = await new BlogPostManager().getBySlug(slug, isEnabled);
+  const post = await getPost(slug, isEnabled);
   if (!post) {
     notFound();
   }
@@ -94,12 +99,12 @@ export default async function ArticlePage(
   const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const manager = new BlogPostManager();
-  const post = await manager.getBySlug(slug, isEnabled);
+  const post = await getPost(slug, isEnabled);
   if (!post) {
     notFound();
   }
 
+  const manager = new BlogPostManager();
   const [
     { items: relatedPosts },
     { items: newPosts },

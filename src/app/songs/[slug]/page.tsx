@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdMusicNote } from "react-icons/md";
@@ -23,11 +24,15 @@ import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/licenses";
 
+const getSong = cache((slug: string, isEnabled: boolean) => (
+  new SongManager().getBySlug(slug, isEnabled)
+));
+
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const song = await new SongManager().getBySlug(slug, isEnabled);
+  const song = await getSong(slug, isEnabled);
   if (!song) {
     notFound();
   }
@@ -52,7 +57,7 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   };
 }
 
-export const revalidate = 60;
+export const revalidate = 60 * 60;
 
 export async function generateStaticParams() {
   const slugs = await new SongManager().getAllSlugs();
@@ -92,7 +97,7 @@ export default async function SongPage(
   const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
-  const song = await new SongManager().getBySlug(slug, isEnabled);
+  const song = await getSong(slug, isEnabled);
   if (!song) {
     notFound();
   }

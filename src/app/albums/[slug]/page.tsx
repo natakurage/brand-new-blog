@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Album } from "@/lib/models";
 import { loadGlobalSettings } from "@/lib/globalSettings";
 import { AlbumManager } from "@/lib/contentful";
@@ -7,16 +8,27 @@ import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/licenses";
 
+const getAlbum = cache((slug: string) => (
+  new AlbumManager().getBySlug(slug, false)
+));
+
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const data = await loadGlobalSettings();
   const { slug } = params;
-  const album = await new AlbumManager().getBySlug(slug, false);
+  const album = await getAlbum(slug);
   if (!album) { 
     notFound();
   }
   return {
     title: `アルバム "${album.title}"` + " - " + data.siteName,
   };
+}
+
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const slugs = await new AlbumManager().getAllSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 function JsonLD({ album }: { album: Album }) {
@@ -61,7 +73,7 @@ export default async function AlbumPage(
   const { slug } = params;
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
-  const album = await new AlbumManager().getBySlug(slug, false);
+  const album = await getAlbum(slug);
   if (!album) { 
     notFound();
   }
