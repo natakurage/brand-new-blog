@@ -1,5 +1,5 @@
-import { loadGlobalSettings } from "@/lib/globalSettings";
-import { BlogPostManager } from "@/lib/contentful";
+import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
+import { BlogPostManager } from "@/lib/contentful/managers";
 import removeMd from "remove-markdown";
 
 export async function GET(request: Request) {

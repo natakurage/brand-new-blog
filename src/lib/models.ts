@@ -1,8 +1,12 @@
-import { Tag } from "contentful";
 import type { LicenseType } from "./licenses";
 
 export interface LinkItem {
   href: string;
+  name: string;
+}
+
+export interface Tag {
+  slug: string;
   name: string;
 }
 

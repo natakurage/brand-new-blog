@@ -1,7 +1,7 @@
 "use client";
 
 import { listNavigatorInfo, listNavigatorItem } from "@/lib/models";
-import { ItemListManagerMap } from "@/lib/contentful";
+import { ItemListManagerMap } from "@/lib/contentful/managers";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

@@ -1,7 +1,7 @@
 import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
-import { loadGlobalSettings } from "@/lib/globalSettings";
+import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
 import NextTopLoader from "nextjs-toploader";
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";

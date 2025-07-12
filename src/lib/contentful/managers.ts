@@ -1,8 +1,8 @@
 import { unstable_cache } from "next/cache";
 import { ContentfulClientApi, EntriesQueries, Entry, EntrySkeletonType, LocaleCode } from "contentful";
-import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton } from "../../@types/contentful";
+import { TypeBlogPost, TypeBlogPostSkeleton, TypeMusicAlbum, TypeMusicAlbumSkeleton, TypePostList, TypePostListSkeleton, TypeSong, TypeSongSkeleton } from "../../../@types/contentful";
 import { getClient } from "./client";
-import { BlogData, BlogPost, PostList, Album, Song } from "./models";
+import { Tag, BlogData, BlogPost, PostList, Album, Song } from "@/lib/models";
 
 type Filter<EntrySkeleton extends EntrySkeletonType> = Omit<EntriesQueries<EntrySkeleton, undefined>, "content_type" | "limit" | "skip">;
 
@@ -115,18 +115,18 @@ export class BlogPostManager extends BlogDataManager<
   async getRelatedPosts(
     {
       slug,
-      tagIds = [],
+      tagSlugs = [],
       limit = 6
     } : {
       slug: string,
-      tagIds?: string[],
+      tagSlugs?: string[],
       limit?: number
     }
   ) {
     return this.query({
       limit,
       filter: {
-        "metadata.tags.sys.id[in]": tagIds,
+        "metadata.tags.sys.id[in]": tagSlugs,
         "fields.slug[ne]": slug,
       },
     });
@@ -237,24 +237,33 @@ export const isItemListManagerMapKey = (key: string): key is keyof typeof ItemLi
   return key in ItemListManagerMap;
 };
 
-export async function getAllTags(preview = false, client?: ContentfulClientApi<undefined>) {
+export async function getAllTags(preview = false, client?: ContentfulClientApi<undefined>) : Promise<Tag[]> {
   if (!client) {
     client = getClient(preview);
   }
   return unstable_cache(async () => {
     const tagCollection = await client.getTags();
-    return tagCollection.items;
+    return tagCollection.items.map((tag) => ({
+      slug: tag.sys.id,
+      name: tag.name
+    }));
   }, ["tags"], {
     tags: ["tag"],
     revalidate: 60 * 60 * 24 // 1 day
   })();
 }
 
-export async function getTagWithCache(tagId: string, client?: ContentfulClientApi<undefined>) {
+export async function getTagWithCache(tagSlug: string, client?: ContentfulClientApi<undefined>) : Promise<Tag> {
   if (!client) {
     client = getClient(false);
   }
-  return unstable_cache(() => client.getTag(tagId), ["tag", tagId], {
+  return unstable_cache(async () => {
+    const tag = await client.getTag(tagSlug);
+    return {
+      slug: tag.sys.id,
+      name: tag.name
+    };
+  }, ["tag", tagSlug], {
     tags: ["tag"],
     revalidate: 60 * 60 * 24 // 1 day
   })();

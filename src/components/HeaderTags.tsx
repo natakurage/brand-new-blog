@@ -1,4 +1,4 @@
-import { Tag } from "contentful";
+import { Tag } from "@/lib/models";
 import Link from "next/link";
 
 export default function HeaderTags({ tags }: { tags: Tag[] }) {
@@ -6,7 +6,7 @@ export default function HeaderTags({ tags }: { tags: Tag[] }) {
     <div className="space-x-2">
     {
       tags.map((tag) => (
-        <Link key={tag.sys.id} href={`/tags/${tag.sys.id}`}>
+        <Link key={tag.slug} href={`/tags/${tag.slug}`}>
           <span className="badge badge-neutral link link-hover">
             # {tag.name}
           </span>

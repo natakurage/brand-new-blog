@@ -1,4 +1,4 @@
-import { loadGlobalSettings } from '@/lib/globalSettings';
+import { loadGlobalSettings } from '@/lib/contentful/globalSettings';
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 

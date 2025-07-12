@@ -1,4 +1,4 @@
-import { loadGlobalSettings } from "@/lib/globalSettings";
+import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
 import Link from "next/link";
 import { FaXTwitter, FaGithub, FaBluesky, FaYoutube } from "react-icons/fa6";
 import { IoIosGlobe } from "react-icons/io";

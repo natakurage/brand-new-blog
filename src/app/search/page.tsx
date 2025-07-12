@@ -1,6 +1,6 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/globalSettings";
-import { BlogPostManager } from "@/lib/contentful";
+import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
+import { BlogPostManager } from "@/lib/contentful/managers";
 
 export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {
   const { q } = searchParams;

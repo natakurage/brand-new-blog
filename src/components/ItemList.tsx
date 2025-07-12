@@ -25,8 +25,8 @@ export default function ItemList(
             {
               item.tags?.map((tag) => (
                 <Link
-                  key={tag.sys.id}
-                  href={`/tags/${tag.sys.id}`}
+                  key={tag.slug}
+                  href={`/tags/${tag.slug}`}
                   className="badge badge-neutral link link-hover relative z-10"
                 >
                   # {tag.name}

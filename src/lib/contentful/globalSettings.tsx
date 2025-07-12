@@ -1,7 +1,7 @@
 import { getClient } from "./client";
 import { unstable_cache } from "next/cache";
-import { GlobalSettings, LinkItem } from "./models";
-import { TypeGlobalSettingsSkeleton, TypeLinkListSkeleton } from "../../@types/contentful";
+import { GlobalSettings, LinkItem } from "@/lib/models";
+import { TypeGlobalSettingsSkeleton, TypeLinkListSkeleton } from "../../../@types/contentful";
 
 export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSettings"], {
   tags: ["globalSettings"],

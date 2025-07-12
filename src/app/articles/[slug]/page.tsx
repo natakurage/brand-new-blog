@@ -1,8 +1,8 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/globalSettings";
-import { BlogPostManager} from "@/lib/contentful";
+import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
+import { BlogPostManager} from "@/lib/contentful/managers";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
 import type { WithContext, BlogPosting } from "schema-dts";
@@ -112,7 +112,7 @@ export default async function ArticlePage(
   ] = await Promise.all([
     manager.getRelatedPosts({
       slug: post.slug,
-      tagIds: post.tags?.map((tag) => tag.sys.id),
+      tagSlugs: post.tags?.map((tag) => tag.slug),
     }),
     manager.query({
       limit: 6,
