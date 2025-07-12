@@ -237,12 +237,25 @@ export const isItemListManagerMapKey = (key: string): key is keyof typeof ItemLi
   return key in ItemListManagerMap;
 };
 
+export async function getAllTags(preview = false, client?: ContentfulClientApi<undefined>) {
+  if (!client) {
+    client = getClient(preview);
+  }
+  return unstable_cache(async () => {
+    const tagCollection = await client.getTags();
+    return tagCollection.items;
+  }, ["tags"], {
+    tags: ["tag"],
+    revalidate: 60 * 60 * 24 // 1 day
+  })();
+}
+
 export async function getTagWithCache(tagId: string, client?: ContentfulClientApi<undefined>) {
   if (!client) {
     client = getClient(false);
   }
   return unstable_cache(() => client.getTag(tagId), ["tag", tagId], {
     tags: ["tag"],
-    revalidate: 60 * 60 // 1 hour
+    revalidate: 60 * 60 * 24 // 1 day
   })();
 }

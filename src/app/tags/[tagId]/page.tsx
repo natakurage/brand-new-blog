@@ -1,7 +1,6 @@
 import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/globalSettings";
-import { BlogPostManager, getTagWithCache } from "@/lib/contentful";
-
+import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/contentful";
 
 export async function generateMetadata ({ params }: { params: { tagId: string } }) {
   const { tagId } = params;
@@ -10,6 +9,13 @@ export async function generateMetadata ({ params }: { params: { tagId: string } 
   return {
     title: `タグ #${tag.name} がつけられた記事` + " - " + data.siteName,
   };
+}
+
+export const revalidate = 60 * 60 * 24; // 1 day
+
+export async function generateStaticParams() {
+  const tags = await getAllTags();
+  return tags.map((tag) => ({ tagId: tag.sys.id }));
 }
 
 export default async function TagPage({ params, searchParams }: { params: { tagId: string }, searchParams: { page?: string } }) {
