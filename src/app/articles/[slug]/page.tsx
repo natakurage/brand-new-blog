@@ -52,8 +52,6 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   };
 }
 
-export const revalidate = 60;
-
 export async function generateStaticParams() {
   const slugs = await new BlogPostManager().getAllSlugs();
   return slugs.map((slug) => ({ slug, key: undefined }));
