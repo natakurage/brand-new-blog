@@ -1,6 +1,6 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
-import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/contentful/managers";
+import { loadGlobalSettings } from "@/lib/cms";
+import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;

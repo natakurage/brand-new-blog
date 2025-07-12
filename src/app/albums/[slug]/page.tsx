@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { Album } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
-import { AlbumManager } from "@/lib/contentful/managers";
+import { loadGlobalSettings } from "@/lib/cms";
+import { AlbumManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";
 import Script from "next/script";

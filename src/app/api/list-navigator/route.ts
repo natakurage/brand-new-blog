@@ -1,4 +1,4 @@
-import { ItemListManagerMap, isItemListManagerMapKey } from "@/lib/contentful/managers";
+import { ItemListManagerMap, isItemListManagerMapKey } from "@/lib/cms";
 import { BlogData, listNavigatorInfo } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 

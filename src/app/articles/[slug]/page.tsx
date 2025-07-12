@@ -1,8 +1,8 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
-import { BlogPostManager} from "@/lib/contentful/managers";
+import { loadGlobalSettings } from "@/lib/cms";
+import { BlogPostManager} from "@/lib/cms";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
 import type { WithContext, BlogPosting } from "schema-dts";

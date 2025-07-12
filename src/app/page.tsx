@@ -1,6 +1,6 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/contentful/globalSettings";
-import { BlogPostManager } from "@/lib/contentful/managers";
+import { loadGlobalSettings } from "@/lib/cms";
+import { BlogPostManager } from "@/lib/cms";
 import Script from "next/script";
 import type {  WebSite, WithContext } from "schema-dts";
 
