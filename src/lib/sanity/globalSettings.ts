@@ -7,6 +7,7 @@ import type {
   LinkList as SanityLinkList
 } from "../../../@types/sanity/sanity.types";
 import { ResolveReferences } from "./types";
+import { groq } from "next-sanity";
 
 type SanityGlobalSettingsResolved = ResolveReferences<
   SanityGlobalSettings,
@@ -33,7 +34,7 @@ export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSe
 export async function fetchGlobalSettings(): Promise<GlobalSettings> {
   const client = getClient(false);
   
-  const q = `*[_type == "globalSettings"][0]{
+  const q = groq`*[_type == "globalSettings"][0]{
     ...,
     "avatar": avatar.asset->url,
     "topLogo": topLogo.asset->url,
@@ -45,7 +46,7 @@ export async function fetchGlobalSettings(): Promise<GlobalSettings> {
   }`;
   const gs = await client.fetch<SanityGlobalSettingsResolved>(q);
 
-  const q2 = `*[_type == "linkList" && id.current in ["socials", "navbarPages", "footerPages"]]{ ..., "item": item[]-> }`;
+  const q2 = groq`*[_type == "linkList" && id.current in ["socials", "navbarPages", "footerPages"]]{ ..., "item": item[]-> }`;
   const linkLists = await client.fetch<SanityLinkListResolved[]>(q2);
   const socials = linkLists.find(item => item.id.current === "socials");
   const navbarPages = linkLists.find(item => item.id.current === "navbarPages");

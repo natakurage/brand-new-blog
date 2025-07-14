@@ -14,7 +14,7 @@ export default async function SearchPage({ searchParams }: { searchParams: { q: 
   const { q, page = 1 } = searchParams;
   const pageNum = Number(page);
   const { items: posts, total, limit } = await new BlogPostManager().fullTextSearch(
-    q.split(" ").filter(Boolean),
+    q,
     false,
     {
       limit: 10,

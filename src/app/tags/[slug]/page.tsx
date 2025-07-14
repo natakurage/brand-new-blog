@@ -1,10 +1,14 @@
 import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata ({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const tag = await getTagWithCache(slug);
+  if (!tag) {
+    notFound();
+  }
   const data = await loadGlobalSettings();
   return {
     title: `タグ #${tag.name} がつけられた記事` + " - " + data.siteName,
@@ -23,6 +27,9 @@ export default async function TagPage({ params, searchParams }: { params: { slug
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
   const tag = await getTagWithCache(slug);
+  if (!tag) {
+    notFound();
+  }
   const { items: posts, total, limit } = await new BlogPostManager().getByTag(
     tag.slug,
     false,
