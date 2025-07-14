@@ -11,12 +11,14 @@
     "contentful-generate-types": "cf-content-types-generator contentful-export.json --out @types/contentful --v10 --response"
   },
   "dependencies": {
+    "@sanity/client": "^7.6.0",
     "@vercel/og": "^0.6.8",
     "cheerio": "^1.0.0",
     "contentful": "^11.1.4",
     "contentful-management": "^11.40.5",
     "hls.js": "^1.6.5",
     "next": "^14.2.23",
+    "next-sanity": "^9.12.2",
     "next-themes": "^0.4.4",
     "nextjs-toploader": "^3.7.15",
     "react": "^18",

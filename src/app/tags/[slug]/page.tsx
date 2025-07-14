@@ -23,10 +23,14 @@ export default async function TagPage({ params, searchParams }: { params: { slug
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
   const tag = await getTagWithCache(slug);
-  const { items: posts, total, limit } = await new BlogPostManager().query({
-    filter: {"metadata.tags.sys.id[all]": tag.slug},
-    page: pageNum - 1,
-  });
+  const { items: posts, total, limit } = await new BlogPostManager().getByTag(
+    tag.slug,
+    false,
+    {
+      limit: 10,
+      page: pageNum - 1,
+    }
+  );
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">タグ #{tag.name} がつけられた記事</h1>

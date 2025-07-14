@@ -114,14 +114,15 @@ export default async function ArticlePage(
       slug: post.slug,
       tagSlugs: post.tags?.map((tag) => tag.slug),
     }),
-    manager.query({
+    manager.getNewest({
       limit: 6,
-      filter: { "fields.slug[nin]": [post.slug] },
+      excludes: [post.slug],
     }),
-    manager.query({
-      limit: 6,
-      filter: { "fields.slug[in]": [data.recommendedPosts] },
-    })
+    manager.getBySlugs(
+      data.recommendedPosts,
+      isEnabled,
+      { limit: 6 }
+    )
   ]);
 
   const origin = process.env.NEXT_PUBLIC_ORIGIN;

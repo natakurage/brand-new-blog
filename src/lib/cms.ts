@@ -1,2 +1,2 @@
-export * from "@/lib/contentful";
-// export * from "@/lib/sanity";
+// export * from "@/lib/contentful";
+export * from "@/lib/sanity";

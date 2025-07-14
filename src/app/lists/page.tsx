@@ -12,7 +12,10 @@ export async function generateMetadata(){
 export default async function ListPage({ searchParams }: { searchParams: { page?: string } }) {
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { items, limit } = await new PostListManager().query({});
+  const { items, limit } = await new PostListManager().getNewest({
+    page: pageNum - 1,
+    limit: 10,
+  });
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">リスト一覧</h1>

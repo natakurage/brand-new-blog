@@ -41,9 +41,10 @@ async function JsonLD() {
 export default async function Home({ searchParams }: { searchParams: { page?: string } }) {
   const { page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { items: posts, total, limit } = await new BlogPostManager().query({
+  const manager = new BlogPostManager();
+  const { items: posts, total, limit } = await manager.getNewest({
     page: pageNum - 1,
-    filter: { order: "-sys.createdAt" },
+    limit: 10,
   });
   return (
     <>

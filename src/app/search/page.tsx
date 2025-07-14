@@ -13,10 +13,14 @@ export async function generateMetadata ({ searchParams }: { searchParams: { q: s
 export default async function SearchPage({ searchParams }: { searchParams: { q: string, page?: string } }) {
   const { q, page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { items: posts, total, limit } = await new BlogPostManager().query({
-    filter: { query: q },
-    page: pageNum - 1
-  });
+  const { items: posts, total, limit } = await new BlogPostManager().fullTextSearch(
+    q.split(" ").filter(Boolean),
+    false,
+    {
+      limit: 10,
+      page: pageNum - 1
+    }
+  );
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">&ldquo;{q}&rdquo;の検索結果</h1>

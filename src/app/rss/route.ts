@@ -10,7 +10,10 @@ export async function GET(request: Request) {
     return new Response(null, { status: 404 });
   }
 
-  const { items: posts } = await new BlogPostManager().query({});
+  const { items: posts } = await new BlogPostManager().getNewest({
+    page: 0,
+    limit: 10
+  });
 
   const items = posts.map(post => `<item>
       <title><![CDATA[${post.title}]]></title>
