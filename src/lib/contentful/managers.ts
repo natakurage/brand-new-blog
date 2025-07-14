@@ -68,6 +68,15 @@ abstract class BlogDataManager<
     return items.items[0];
   }
 
+  async getBySlugs(slugs: string[], preview = false, { limit, page }: { limit?: number, page?: number }) {
+    return this.query({
+      filter: { "fields.slug[in]": slugs },
+      preview,
+      limit,
+      page
+    });
+  }
+
   async getAllSlugs() {
     const client = getClient(false);
     const entries = await client.getEntries<EntrySkeleton, Locales>({
@@ -84,6 +93,23 @@ abstract class BlogDataManager<
       select: ["sys.id"],
     });
     return entries.items.map((item) => item.sys.id);
+  }
+
+  async getByTag(tagSlug: string, preview = false, { limit, page }: { limit?: number, page?: number }) {
+    return this.query({
+      filter: { "metadata.tags.sys.id[all]": tagSlug },
+      limit,
+      page,
+      preview
+    });
+  }
+
+  async getNewest({ page, limit, excludes }: { page?: number, limit?: number, excludes?: string[] }) {
+    return this.query({
+      page,
+      limit,
+      filter: excludes ? { "fields.slug[ne]": excludes } : {},
+    });
   }
 }
 
@@ -129,6 +155,15 @@ export class BlogPostManager extends BlogDataManager<
         "metadata.tags.sys.id[in]": tagSlugs,
         "fields.slug[ne]": slug,
       },
+    });
+  }
+
+  async fullTextSearch(query: string, preview = false, { limit, page }: { limit?: number, page?: number } = {}) {
+    return this.query({
+      filter: { query },
+      limit,
+      page,
+      preview
     });
   }
 }
