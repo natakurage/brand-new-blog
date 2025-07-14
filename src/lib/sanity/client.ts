@@ -20,6 +20,7 @@ const previewClient = createClient({
   dataset,
   useCdn: false,
   token: viewerToken,
+  perspective: "drafts",
   ignoreBrowserTokenWarning: true,
   apiVersion: "2025-02-19",
 });

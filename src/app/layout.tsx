@@ -8,6 +8,8 @@ import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
+import { VisualEditing } from "next-sanity";
+import { draftMode } from "next/headers";
 
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
@@ -55,6 +57,13 @@ export default async function RootLayout({
           <div className="flex justify-center gap-10 md:mx-4 my-8">
             <div className="max-w-2xl p-3 w-full">
               {children}
+              {
+                draftMode().isEnabled && (
+                  <>
+                    <VisualEditing />
+                  </>
+                )
+              }
             </div>
             {
               data.useSidebar && 
