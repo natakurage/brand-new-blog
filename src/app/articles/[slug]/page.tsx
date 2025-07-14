@@ -9,7 +9,6 @@ import type { WithContext, BlogPosting } from "schema-dts";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import ListNavigator from "@/components/ListNavigator";
 import ShareButtons from "@/components/ShareButtons";
-import PreviewWarning from "@/components/PreviewWarning";
 import ArticleBody from "@/components/ArticleBody";
 import removeMd from "remove-markdown";
 import HeaderTime from "@/components/HeaderTime";
@@ -146,7 +145,6 @@ export default async function ArticlePage(
     <>
       <JsonLD post={post} />
       <main>
-        { isEnabled && <PreviewWarning /> }
         <header className="space-y-5">
           <h1 className="text-4xl font-bold">{post.title}</h1>
           <HeaderTags tags={post.tags || []} />

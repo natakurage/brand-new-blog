@@ -10,6 +10,7 @@ import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
 import { VisualEditing } from "next-sanity";
 import { draftMode } from "next/headers";
+import PreviewWarning from "@/components/PreviewWarning";
 
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
@@ -56,14 +57,9 @@ export default async function RootLayout({
           />
           <div className="flex justify-center gap-10 md:mx-4 my-8">
             <div className="max-w-2xl p-3 w-full">
+              {draftMode().isEnabled && <PreviewWarning />}
               {children}
-              {
-                draftMode().isEnabled && (
-                  <>
-                    <VisualEditing />
-                  </>
-                )
-              }
+              {draftMode().isEnabled && <VisualEditing />}
             </div>
             {
               data.useSidebar && 

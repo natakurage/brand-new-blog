@@ -13,7 +13,6 @@ import React, { Suspense } from "react";
 import ListNavigator from "@/components/ListNavigator";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
-import PreviewWarning from "@/components/PreviewWarning";
 import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
 import ArticleBody from "@/components/ArticleBody";
 import HLSAudioPlayer from "@/components/HLSAudioPlayer";
@@ -132,7 +131,6 @@ export default async function SongPage(
     <>
       <JsonLD song={song} />
       <main>
-        { isEnabled && <PreviewWarning /> }
         <header className="space-y-5">
           <h1 className="text-4xl font-bold">{song.title}</h1>
           <div>by {song.artist.join(", ")}</div>
