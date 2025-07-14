@@ -58,9 +58,6 @@ export interface ItemList<T extends BlogItem> extends BlogData {
 
 export interface BlogPost extends BlogItem {
   typeUrl: "articles",
-  id: string,
-  title: string,
-  slug: string,
   content: string,
   createdAt: string,
   updatedAt: string,
@@ -72,9 +69,6 @@ export interface BlogPost extends BlogItem {
 
 export interface Song extends BlogItem {
   typeUrl: "songs";
-  id: string;
-  title: string;
-  slug: string;
   content: string;
   createdAt: string;
   updatedAt: string;
@@ -91,20 +85,10 @@ export interface Song extends BlogItem {
 
 export interface PostList extends ItemList<BlogPost> {
   typeUrl: "lists";
-  id: string,
-  title: string,
-  slug: string,
-  items: BlogPost[],
-  description?: string
 }
 
 export interface Album extends ItemList<Song> {
   typeUrl: "albums";
-  id: string;
-  title: string;
-  slug: string;
-  items: Song[];
-  description?: string;
   releaseDate?: string;
   artist?: string[];
   credit?: string[];

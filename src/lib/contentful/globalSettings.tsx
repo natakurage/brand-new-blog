@@ -24,14 +24,18 @@ export async function fetchGlobalSettings(): Promise<GlobalSettings> {
   const faviconId = fields.favicon?.sys.id;
   const appleTouchIconId = fields.appleTouchIcon?.sys.id;
 
+  const socialsKey = "socials";
+  const navbarPagesKey = "navbar-pages";
+  const footerPagesKey = "footer-pages";
+
   const llEntries = await client.getEntries<TypeLinkListSkeleton>({
     content_type: "linkList",
-    "fields.id[in]": ["socials", "navbarPages", "footerPages"],
+    "fields.id[in]": [socialsKey, navbarPagesKey, footerPagesKey],
   });
   const llIncludes = llEntries.includes?.Entry ?? [];
-  const socialsEntry = llEntries.items.find(item => item.fields.id === "socials");
-  const navbarPagesEntry = llEntries.items.find(item => item.fields.id === "navbarPages");
-  const footerPagesEntry = llEntries.items.find(item => item.fields.id === "footerPages");
+  const socialsEntry = llEntries.items.find(item => item.fields.id === socialsKey);
+  const navbarPagesEntry = llEntries.items.find(item => item.fields.id === navbarPagesKey);
+  const footerPagesEntry = llEntries.items.find(item => item.fields.id === footerPagesKey);
 
   const toHrefItem = (id: string) : LinkItem => {
     const item = llIncludes.find(item => item.sys.id === id);

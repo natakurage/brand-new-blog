@@ -42,6 +42,7 @@ const TransformTag = (tag: SanityTag): Tag => ({
 
 abstract class BlogDataManager<DataType extends BlogData> {
   readonly abstract contentType: string;
+  readonly abstract additionalResolves: string[];
   abstract fromEntry(entry: SanityDocument<Record<string, unknown>>): Promise<DataType>;
 
   async get(id: string, preview = false) {
@@ -60,14 +61,12 @@ abstract class BlogDataManager<DataType extends BlogData> {
       limit = 10,
       page = 0,
       preview = false,
-      filter = [],
-      additionalResolves = []
+      filter = []
     } : {
       limit?: number,
       page?: number,
       preview?: boolean,
-      filter?: string[],
-      additionalResolves?: string[]
+      filter?: string[]
     }
   ) {
     const client = getClient(preview);
@@ -77,8 +76,8 @@ abstract class BlogDataManager<DataType extends BlogData> {
         return groq`${acc} && ${curr}`;
       }, baseCondition)
       : baseCondition;
-    const additionalResolvesStr = additionalResolves.length > 0
-      ? `, ${additionalResolves.join(", ")}`
+    const additionalResolvesStr = this.additionalResolves.length > 0
+      ? this.additionalResolves.join(", ")
       : "";
     const q = groq`{
       "items": *[${fullCondition}]{ ..., "tags": tags[]->, ${additionalResolvesStr} } | order(_createdAt desc) [${page * limit}...${(page + 1) * limit}],
@@ -132,7 +131,7 @@ abstract class BlogDataManager<DataType extends BlogData> {
 
   async getByTag(tagSlug: string, preview = false, { limit, page }: { limit?: number, page?: number }) {
     return this.query({
-      filter: [groq`tags.slug.current == "${tagSlug}"`],
+      filter: [groq`"${tagSlug}" in tags[]->slug.current`],
       limit,
       page,
       preview
@@ -151,6 +150,7 @@ abstract class BlogDataManager<DataType extends BlogData> {
 
 export class BlogPostManager extends BlogDataManager<BlogPost> {
   contentType = "blogPost";
+  additionalResolves = [];
   override async fromEntry(entry: SanityBlogPostResolved): Promise<BlogPost> {
     const { _id, title, slug, body, license, showToc, licenseSelect, tags, _createdAt, _updatedAt } = entry;
     return {
@@ -183,7 +183,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
     return this.query({
       limit,
       filter: [
-        groq`tags.slug.current in [${tagList}]`,
+        groq`count((tags[]->slug.current)[@ in [${tagList}]]) > 0`,
         groq`slug.current != ${slug}`,
       ],
     });
@@ -193,7 +193,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
     const queries = query.split(" ").filter(Boolean);
     const queryList = queries.map(q => `"${q}"`).join(", ");
     return this.query({
-      filter: [groq`body match [${queryList}] || title match [${queryList}]`],
+      filter: [groq`(body match [${queryList}] || title match [${queryList}])`],
       limit,
       page,
       preview
@@ -203,6 +203,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
 
 export class SongManager extends BlogDataManager<Song> {
   contentType = "song";
+  additionalResolves = [];
   override async fromEntry(entry: SanitySongResolved): Promise<Song> {
     const {
       _id, title, slug, description, artist, releaseDate, credit,
@@ -232,6 +233,7 @@ export class SongManager extends BlogDataManager<Song> {
 
 export class PostListManager extends BlogDataManager<PostList> {
   contentType = "postList";
+  additionalResolves = [groq`posts[]->{ ..., "tags": tags[]-> }`];
   override async fromEntry(entry: SanityPostListResolved): Promise<PostList> {
     const { _id, title, slug, description, posts } = entry;
     const items = await Promise.all(
@@ -250,6 +252,7 @@ export class PostListManager extends BlogDataManager<PostList> {
 
 export class AlbumManager extends BlogDataManager<Album> {
   contentType = "musicAlbum";
+  additionalResolves = [groq`tracks[]->{ ..., "tags": tags[]-> }`];
   override async fromEntry(entry: SanityMusicAlbumResolved): Promise<Album> {
     const { _id, title, slug, description, releaseDate, artist, credit, licenseSelect, license, tags } = entry;
     const items = await Promise.all(
