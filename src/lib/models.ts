@@ -40,13 +40,13 @@ export interface BlogData {
   id: string;
   title: string;
   slug: string;
+  tags?: Tag[];
 }
 
 export interface BlogItem extends BlogData {
   content: string;
   createdAt: string;
   updatedAt: string;
-  tags?: Tag[];
   licenseSelect?: LicenseType;
   license?: string;
 }
@@ -61,7 +61,6 @@ export interface BlogPost extends BlogItem {
   content: string,
   createdAt: string,
   updatedAt: string,
-  tags?: Tag[],
   licenseSelect?: LicenseType,
   license?: string,
   showToc?: boolean
@@ -76,7 +75,6 @@ export interface Song extends BlogItem {
   credit?: string[];
   lyrics?: string;
   releaseDate?: string;
-  tags?: Tag[];
   licenseSelect?: LicenseType;
   license?: string;
   url?: string[];
@@ -92,7 +90,6 @@ export interface Album extends ItemList<Song> {
   releaseDate?: string;
   artist?: string[];
   credit?: string[];
-  tags?: Tag[];
   licenseSelect?: LicenseType;
   license?: string;
 }

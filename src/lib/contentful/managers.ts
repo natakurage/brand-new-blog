@@ -111,6 +111,8 @@ abstract class BlogDataManager<
       filter: excludes ? { "fields.slug[ne]": excludes } : {},
     });
   }
+
+  defaultFetcher = this.getBySlug;
 }
 
 export class BlogPostManager extends BlogDataManager<
@@ -221,6 +223,8 @@ export class PostListManager extends BlogDataManager<
       description
     };
   }
+
+  defaultFetcher = this.get;
 }
 
 export class AlbumManager extends BlogDataManager<
@@ -253,24 +257,6 @@ export class AlbumManager extends BlogDataManager<
     };
   }
 }
-
-export const BlogItemManagerMap = {
-  BlogPost: BlogPostManager,
-  Song: SongManager
-};
-
-export const ItemListManagerMap = {
-  PostList: PostListManager,
-  Album: AlbumManager
-};
-
-export const isBlogItemManagerMapKey = (key: string): key is keyof typeof BlogItemManagerMap => {
-  return key in BlogItemManagerMap;
-};
-
-export const isItemListManagerMapKey = (key: string): key is keyof typeof ItemListManagerMap => {
-  return key in ItemListManagerMap;
-};
 
 export async function getAllTags(preview = false, client?: ContentfulClientApi<undefined>) : Promise<Tag[]> {
   if (!client) {

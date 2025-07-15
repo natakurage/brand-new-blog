@@ -1,7 +1,7 @@
 "use client";
 
 import { listNavigatorInfo, listNavigatorItem } from "@/lib/models";
-import { ItemListManagerMap } from "@/lib/cms";
+import { ItemListManagerMap } from "@/lib/cmsUtils";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

@@ -162,6 +162,8 @@ abstract class BlogDataManager<DataType extends BlogData> {
       params: { excludeList },
     });
   }
+
+  defaultFetcher = this.getBySlug;
 }
 
 export class BlogPostManager extends BlogDataManager<BlogPost> {
@@ -265,6 +267,8 @@ export class PostListManager extends BlogDataManager<PostList> {
       description
     };
   }
+
+  defaultFetcher = this.get;
 }
 
 export class AlbumManager extends BlogDataManager<Album> {
@@ -291,24 +295,6 @@ export class AlbumManager extends BlogDataManager<Album> {
     };
   }
 }
-
-export const BlogItemManagerMap = {
-  BlogPost: BlogPostManager,
-  Song: SongManager
-};
-
-export const ItemListManagerMap = {
-  PostList: PostListManager,
-  Album: AlbumManager
-};
-
-export const isBlogItemManagerMapKey = (key: string): key is keyof typeof BlogItemManagerMap => {
-  return key in BlogItemManagerMap;
-};
-
-export const isItemListManagerMapKey = (key: string): key is keyof typeof ItemListManagerMap => {
-  return key in ItemListManagerMap;
-};
 
 export async function getAllTags(preview = false, client?: SanityClient) : Promise<Tag[]> {
   if (!client) {
