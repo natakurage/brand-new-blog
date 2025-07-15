@@ -65,7 +65,7 @@ export default async function RootLayout({
             { data.useSidebar && <SideBar pages={data.navbarPages} /> }
           </div>
           <Footer />
-          { data.adblock && <AntiAdblock /> }
+          { data.adblock && !isEnabled && <AntiAdblock /> }
         </ThemeProvider>
       </body>
     </html>
