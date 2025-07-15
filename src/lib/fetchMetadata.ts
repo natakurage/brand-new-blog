@@ -23,7 +23,6 @@ export async function fetchMetadata(url: string) {
     let post: BlogItem | null = null;
     if (type === "articles") {
       post = await new BlogPostManager().getBySlug(slug, false);
-      console.log("post", post);
     }
     else if (type === "songs") {
       post = await new SongManager().getBySlug(slug, false);
