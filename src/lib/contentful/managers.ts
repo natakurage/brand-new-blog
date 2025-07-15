@@ -284,7 +284,7 @@ export async function getAllTags(preview = false, client?: ContentfulClientApi<u
     }));
   }, ["tags"], {
     tags: ["tag"],
-    revalidate: 60 * 60 * 24 // 1 day
+    revalidate: 86400 // 1 day
   })();
 }
 
@@ -300,6 +300,6 @@ export async function getTagWithCache(tagSlug: string, client?: ContentfulClient
     };
   }, ["tag", tagSlug], {
     tags: ["tag"],
-    revalidate: 60 * 60 * 24 // 1 day
+    revalidate: 86400 // 1 day
   })();
 }

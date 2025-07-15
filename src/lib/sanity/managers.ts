@@ -320,7 +320,7 @@ export async function getAllTags(preview = false, client?: SanityClient) : Promi
     return tagCollection.map(TransformTag);
   }, ["tags"], {
     tags: ["tag"],
-    revalidate: 60 * 60 * 24 // 1 day
+    revalidate: 86400 // 1 day
   })();
 }
 
@@ -335,6 +335,6 @@ export async function getTagWithCache(tagSlug: string, client?: SanityClient) : 
     return TransformTag(tag);
   }, ["tag", tagSlug], {
     tags: ["tag"],
-    revalidate: 60 * 60 * 24 // 1 day
+    revalidate: 86400 // 1 day
   })();
 }
