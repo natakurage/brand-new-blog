@@ -10,6 +10,7 @@ import React from "react";
 import Image from "next/image";
 import LinkProcessor from "./LinkProcessor";
 import "katex/dist/katex.min.css";
+import { cms } from "@/lib/cms";
 
 export default function ArticleBody({ content, showToc = false }: { content: string, showToc?: boolean }) {
   return (
@@ -63,11 +64,15 @@ export default function ArticleBody({ content, showToc = false }: { content: str
                 React.Children.map(children, (child) => {
                   if (React.isValidElement(child)) {
                     if (child.type === "img") {
-                      const { src, alt } = child.props;
+                      const { alt } = child.props;
+                      let { src } = child.props;
+                      if (!src.startsWith("https") && cms === "contentful") {
+                        src = `https:${src}`;
+                      }
                       return (
                         <Image
                           key={src}
-                          src={`https:${src}`}
+                          src={src}
                           alt={alt ? alt : "Article Image"}
                           fill
                           sizes="100%"
