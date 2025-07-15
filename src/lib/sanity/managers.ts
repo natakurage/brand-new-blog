@@ -253,7 +253,6 @@ export class PostListManager extends BlogDataManager<PostList> {
   additionalResolves = [groq`posts[]->{ ..., "tags": tags[]-> }`];
   override async fromEntry(entry: SanityPostListResolved): Promise<PostList> {
     const { _id, title, slug, description, posts } = entry;
-    console.log("PostListManager fromEntry", entry);
     const items = await Promise.all(
       posts.map((post) => new BlogPostManager().fromEntry(post))
     );
