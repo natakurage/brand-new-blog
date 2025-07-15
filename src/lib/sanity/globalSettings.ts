@@ -50,8 +50,12 @@ export async function fetchGlobalSettings(): Promise<GlobalSettings> {
   const navbarPagesKey = "navbar-pages";
   const footerPagesKey = "footer-pages";
 
-  const q2 = groq`*[_type == "linkList" && id.current in ["${socialsKey}", "${navbarPagesKey}", "${footerPagesKey}"]]{ ..., "item": item[]-> }`;
-  const linkLists = await client.fetch<SanityLinkListResolved[]>(q2);
+  const q2 = groq`*[_type == "linkList" && id.current in [$socialsKey, $navbarPagesKey, $footerPagesKey]]{ ..., "item": item[]-> }`;
+  const linkLists = await client.fetch<SanityLinkListResolved[]>(q2, {
+    socialsKey,
+    navbarPagesKey,
+    footerPagesKey,
+  });
   const socials = linkLists.find(item => item.id.current === socialsKey);
   const navbarPages = linkLists.find(item => item.id.current === navbarPagesKey);
   const footerPages = linkLists.find(item => item.id.current === footerPagesKey);

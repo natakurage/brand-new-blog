@@ -61,29 +61,38 @@ abstract class BlogDataManager<DataType extends BlogData> {
       limit = 10,
       page = 0,
       preview = false,
-      filter = []
+      filter = [],
+      params,
     } : {
       limit?: number,
       page?: number,
       preview?: boolean,
-      filter?: string[]
+      filter?: string[],
+      params?: Record<string, unknown>
     }
   ) {
     const client = getClient(preview);
-    const baseCondition = groq`_type == "${this.contentType}"`;
-    const fullCondition = filter.length > 0
-      ? filter.reduce((acc, curr) => {
-        return groq`${acc} && ${curr}`;
-      }, baseCondition)
-      : baseCondition;
+    const additionalCondition = filter.length > 0 ? groq`${filter.join(" && ")}` : groq`true`;
     const additionalResolvesStr = this.additionalResolves.length > 0
       ? this.additionalResolves.join(", ")
       : "";
     const q = groq`{
-      "items": *[${fullCondition}]{ ..., "tags": tags[]->, ${additionalResolvesStr} } | order(_createdAt desc) [${page * limit}...${(page + 1) * limit}],
-      "total": count(*[${fullCondition}])
+      "items": *[_type == $contentType && ${additionalCondition}]{ ..., "tags": tags[]->, ${additionalResolvesStr} } | order(_createdAt desc) [$start...$end],
+      "total": count(*[_type == $contentType && ${additionalCondition}])
     }`;
-    const result = await client.fetch<{ items: SanityBlogPostResolved[], total: number }>(q);
+    const parameters = {
+      contentType: this.contentType,
+      start: page * limit,
+      end: (page + 1) * limit,
+    };
+    const paramsWithDefaults = params ? { ...parameters, ...params } : parameters;
+    if (process.env.NODE_ENV === "development") {
+      console.log("Sanity Query:", q);
+      console.log("Parameters:", paramsWithDefaults);
+    }
+    const result = await client.fetch<{ items: SanityBlogPostResolved[], total: number }>(q,
+      paramsWithDefaults
+    );
     return {
       items: await Promise.all(
         result.items.map((item) => (
@@ -98,7 +107,12 @@ abstract class BlogDataManager<DataType extends BlogData> {
   }
 
   async getBySlug(slug: string, preview = false) {
-    const items = await this.query({ filter: [groq`slug.current == "${slug}"`], preview, limit: 1 });
+    const items = await this.query({
+      filter: [groq`slug.current == $slug`],
+      params: { slug },
+      preview,
+      limit: 1
+    });
     if (items.items.length === 0) {
       return null;
     }
@@ -106,9 +120,9 @@ abstract class BlogDataManager<DataType extends BlogData> {
   }
 
   async getBySlugs(slugs: string[], preview = false, { limit, page }: { limit?: number, page?: number }) {
-    const slugsList = slugs.map(s => `"${s}"`).join(", ");
     return this.query({
-      filter: [groq`slug.current in [${slugsList}]`],
+      filter: [groq`slug.current in $slugs`],
+      params: { slugs },
       preview,
       limit,
       page
@@ -117,21 +131,22 @@ abstract class BlogDataManager<DataType extends BlogData> {
 
   async getAllSlugs() {
     const client = getClient(false);
-    const q = groq`*[_type == "${this.contentType}"].slug.current`;
-    const slugs = await client.fetch<string[]>(q);
+    const q = groq`*[_type == $contentType].slug.current`;
+    const slugs = await client.fetch<string[]>(q, { contentType: this.contentType });
     return slugs.filter(Boolean);
   }
 
   async getAllIds() {
     const client = getClient(false);
-    const q = groq`*[_type == "${this.contentType}"]._id`;
-    const ids = await client.fetch<string[]>(q);
+    const q = groq`*[_type == $contentType]._id`;
+    const ids = await client.fetch<string[]>(q, { contentType: this.contentType });
     return ids.filter(Boolean);
   }
 
   async getByTag(tagSlug: string, preview = false, { limit, page }: { limit?: number, page?: number }) {
     return this.query({
-      filter: [groq`"${tagSlug}" in tags[]->slug.current`],
+      filter: [groq`$tagSlug in tags[]->slug.current`],
+      params: { tagSlug },
       limit,
       page,
       preview
@@ -139,11 +154,12 @@ abstract class BlogDataManager<DataType extends BlogData> {
   }
 
   async getNewest({ page, limit, excludes }: { page?: number, limit?: number, excludes?: string[] }) {
-    const excludeList = excludes ? excludes.map(s => `"${s}"`).join(", ") : "";
+    const excludeList = excludes ?? [];
     return this.query({
       page,
       limit,
-      filter: excludes ? [groq`!(slug.current in [${excludeList}])`] : []
+      filter: excludes ? [groq`!(slug.current in $excludeList)`] : [],
+      params: { excludeList },
     });
   }
 }
@@ -179,21 +195,22 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
       limit?: number
     }
   ) {
-    const tagList = tagSlugs.map(s => `"${s}"`).join(", ");
+    const tagSlugsNotEmpty = tagSlugs.filter(Boolean);
     return this.query({
       limit,
       filter: [
-        groq`count((tags[]->slug.current)[@ in [${tagList}]]) > 0`,
-        groq`slug.current != ${slug}`,
+        groq`count((tags[]->slug.current)[@ in $tagSlugs]) > 0`,
+        groq`slug.current != $slug`,
       ],
+      params: { tagSlugs: tagSlugsNotEmpty, slug },
     });
   }
 
   async fullTextSearch(query: string, preview = false, { limit, page }: { limit?: number, page?: number } = {}) {
     const queries = query.split(" ").filter(Boolean);
-    const queryList = queries.map(q => `"${q}"`).join(", ");
     return this.query({
-      filter: [groq`(body match [${queryList}] || title match [${queryList}])`],
+      filter: [groq`(body match $queries || title match $queries)`],
+      params: { queries },
       limit,
       page,
       preview
@@ -312,8 +329,8 @@ export async function getTagWithCache(tagSlug: string, client?: SanityClient) : 
     client = getClient(false);
   }
   return unstable_cache(async () => {
-    const q = groq`*[_type == "tag" && slug.current == "${tagSlug}"][0]`;
-    const tag = await client.fetch<SanityTag | null>(q);
+    const q = groq`*[_type == "tag" && slug.current == $tagSlug][0]`;
+    const tag = await client.fetch<SanityTag | null>(q, { tagSlug });
     if (!tag) return null;
     return TransformTag(tag);
   }, ["tag", tagSlug], {
