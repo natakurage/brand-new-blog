@@ -3,14 +3,12 @@ import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { loadGlobalSettings } from "@/lib/cms";
 import NextTopLoader from "nextjs-toploader";
-import Link from "next/link";
-import SearchBar from "@/components/SearchBar";
-import { MdRssFeed } from "react-icons/md";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
 import { VisualEditing } from "next-sanity";
 import { draftMode } from "next/headers";
 import PreviewWarning from "@/components/PreviewWarning";
+import SideBar from "@/components/SideBar";
 
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
@@ -41,6 +39,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isEnabled } = draftMode();
+  const isDevelopment = process.env.NODE_ENV === "development";
   const data = await loadGlobalSettings();
   return (
     <html suppressHydrationWarning>
@@ -54,38 +54,18 @@ export default async function RootLayout({
             siteName={data.siteName}
             useSidebar={data.useSidebar}
             navbarPages={data.navbarPages}
+            isDevelopment={isDevelopment}
           />
           <div className="flex justify-center gap-10 md:mx-4 my-8">
             <div className="max-w-2xl p-3 w-full">
-              {draftMode().isEnabled && <PreviewWarning />}
+              {isEnabled && <PreviewWarning />}
               {children}
-              {draftMode().isEnabled && <VisualEditing />}
+              {isEnabled && <VisualEditing />}
             </div>
-            {
-              data.useSidebar && 
-              <aside className="hidden md:block max-w-72">
-                <ul className="menu p-3 overflow-y-auto w-full bg-base-100 text-base-content bg-opacity-100">
-                {
-                    data.navbarPages?.map(({ name, href }) => (
-                      <li key={name}>
-                        <Link href={href} >{name}</Link>
-                      </li>
-                    ))
-                  }
-                  <li><SearchBar /></li>
-                  <li className="flex flex-row">
-                    <Link href="/rss">
-                      <MdRssFeed size={24} />
-                    </Link>
-                  </li>
-                </ul>
-              </aside>
-            }
+            { data.useSidebar && <SideBar pages={data.navbarPages} /> }
           </div>
           <Footer />
-          {
-            data.adblock && <AntiAdblock />
-          }
+          { data.adblock && <AntiAdblock /> }
         </ThemeProvider>
       </body>
     </html>

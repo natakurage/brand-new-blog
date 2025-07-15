@@ -13,11 +13,13 @@ export function NavBar({
   siteName,
   useSidebar,
   navbarPages,
+  isDevelopment
 }: {
   topLogo?: string;
   siteName: string;
   useSidebar: boolean;
   navbarPages: { name: string; href: string }[];
+  isDevelopment: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -35,6 +37,7 @@ export function NavBar({
             <Image src={topLogo} alt="site logo" width={48} height={48} />
           )}
           <span className="hidden sm:block">{siteName}</span>
+          {isDevelopment && <span className="badge badge-secondary ml-2">DEV MODE</span>}
         </Link>
       </div>
       {
