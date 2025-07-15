@@ -11,7 +11,7 @@ if (!projectId || !dataset || !viewerToken) {
 const normalClient = createClient({
   projectId,
   dataset,
-  useCdn: true,
+  useCdn: false,
   token: viewerToken,
   perspective: "published",
   apiVersion: "2025-02-19",
