@@ -48,7 +48,9 @@ abstract class BlogDataManager<DataType extends BlogData> {
   async get(id: string, preview = false) {
     const client = getClient(preview);
     try {
-      const entry = await client.getDocument(id);
+      const additionalResolvesStr = this.additionalResolves.join(", ");
+      const q = groq`*[_id == $id][0]{ ..., "tags": tags[]->, ${additionalResolvesStr} }`;
+      const entry = await client.fetch<SanityDocument>(q, { id });
       if (!entry) return null;
       return this.fromEntry(entry);
     } catch {
@@ -72,10 +74,8 @@ abstract class BlogDataManager<DataType extends BlogData> {
     }
   ) {
     const client = getClient(preview);
-    const additionalCondition = filter.length > 0 ? groq`${filter.join(" && ")}` : groq`true`;
-    const additionalResolvesStr = this.additionalResolves.length > 0
-      ? this.additionalResolves.join(", ")
-      : "";
+    const additionalCondition = filter.length > 0 ? filter.join(" && ") : groq`true`;
+    const additionalResolvesStr = this.additionalResolves.join(", ");
     const q = groq`{
       "items": *[_type == $contentType && ${additionalCondition}]{ ..., "tags": tags[]->, ${additionalResolvesStr} } | order(_createdAt desc) [$start...$end],
       "total": count(*[_type == $contentType && ${additionalCondition}])
@@ -253,6 +253,7 @@ export class PostListManager extends BlogDataManager<PostList> {
   additionalResolves = [groq`posts[]->{ ..., "tags": tags[]-> }`];
   override async fromEntry(entry: SanityPostListResolved): Promise<PostList> {
     const { _id, title, slug, description, posts } = entry;
+    console.log("PostListManager fromEntry", entry);
     const items = await Promise.all(
       posts.map((post) => new BlogPostManager().fromEntry(post))
     );
