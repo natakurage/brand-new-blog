@@ -90,7 +90,7 @@ abstract class BlogDataManager<DataType extends BlogData> {
       console.log("Sanity Query:", q);
       console.log("Parameters:", paramsWithDefaults);
     }
-    const result = await client.fetch<{ items: SanityBlogPostResolved[], total: number }>(q,
+    const result = await client.fetch<{ items: SanityDocument[], total: number }>(q,
       paramsWithDefaults
     );
     return {
