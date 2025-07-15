@@ -39,25 +39,26 @@ export async function POST(req: NextRequest) {
   if (!path) {
     return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
   }
-  revalidatePath(path);
+  const pathsToRevalidate = [path];
   const manager = new BlogDataManagerMap[cmsToType[contentType]]();
   const items = await manager.defaultFetcher(contentType === 'postList' ? entityId : slug, false);
   if (items) {
     // Revalidate all tags associated with the item
     items.tags?.forEach((tag) => {
-      revalidatePath(`/tags/${tag.slug}`);
+      pathsToRevalidate.push(`/tags/${tag.slug}`);
     });
     // Revalidate paths for related items
     // Performs minimal type checks here
     if ("posts" in items && Array.isArray(items.posts)) {
       items.posts.forEach((post) => {
-        revalidatePath(`/articles/${post.slug}`);
+        pathsToRevalidate.push(`/articles/${post.slug}`);
       });
     } else if ("tracks" in items && Array.isArray(items.tracks)) {
       items.tracks.forEach((track) => {
-        revalidatePath(`/songs/${track.slug}`);
+        pathsToRevalidate.push(`/songs/${track.slug}`);
       });
     }
   }
-  return NextResponse.json({ revalidated: true });
+  pathsToRevalidate.forEach((p) => revalidatePath(p));
+  return NextResponse.json({ revalidatedPaths: pathsToRevalidate });
 }
