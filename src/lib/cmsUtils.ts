@@ -32,3 +32,14 @@ export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSe
   tags: ["globalSettings"],
   revalidate: 86400, // 1 day
 });
+
+export const cmsToType = {
+  blogPost: 'BlogPost',
+  song: 'Song',
+  postList: 'PostList',
+  musicAlbum: 'Album'
+} as const;
+
+export const isValidContentType = (type: string): type is keyof typeof cmsToType => {
+  return type in cmsToType;
+};

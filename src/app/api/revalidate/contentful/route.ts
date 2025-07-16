@@ -1,24 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { BlogDataManagerMap } from '@/lib/cmsUtils';
-
-const cmsToType = {
-  blogPost: 'BlogPost',
-  song: 'Song',
-  postList: 'PostList',
-  musicAlbum: 'Album'
-} as const;
-
-const isValidContentType = (type: string): type is keyof typeof cmsToType => {
-  return type in cmsToType;
-};
-
-const paths = {
-  blogPost: "/articles/[slug]",
-  song: "/songs/[slug]",
-  postList: "/lists/[id]",
-  musicAlbum: "/albums/[slug]"
-} as const;
+import { PostListManager, AlbumManager } from '@/lib/cms';
+import { BlogDataManagerMap, cmsToType, isValidContentType } from '@/lib/cmsUtils';
+import { Tag, BlogData, getPath } from '@/lib/models';
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-revalidate-secret');
@@ -35,30 +19,31 @@ export async function POST(req: NextRequest) {
   if (!isValidContentType(contentType)) {
     return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
   }
-  const path = paths[contentType]?.replace('[slug]', slug).replace('[id]', entityId);
-  if (!path) {
-    return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
-  }
-  const pathsToRevalidate = [path];
   const manager = new BlogDataManagerMap[cmsToType[contentType]]();
-  const items = await manager.defaultFetcher(contentType === 'postList' ? entityId : slug, false);
-  if (items) {
+  const blogData = await manager.defaultFetcher(contentType === 'postList' ? entityId : slug, false);
+  if (!blogData) {
+    return NextResponse.json({ error: 'Blog data not found' }, { status: 404 });
+  }
+  const itemsToRevalidate: (BlogData | Tag)[] = [blogData];
+  if (blogData) {
     // Revalidate all tags associated with the item
-    items.tags?.forEach((tag) => {
-      pathsToRevalidate.push(`/tags/${tag.slug}`);
+    blogData.tags?.forEach((tag) => {
+      itemsToRevalidate.push(tag);
     });
     // Revalidate paths for related items
     // Performs minimal type checks here
-    if ("posts" in items && Array.isArray(items.posts)) {
-      items.posts.forEach((post) => {
-        pathsToRevalidate.push(`/articles/${post.slug}`);
+    if (cmsToType[contentType] === "BlogPost") {
+      const lists = await new PostListManager().getListsByPost(blogData.slug);
+      lists.forEach((list) => {
+        itemsToRevalidate.push(list);
       });
-    } else if ("tracks" in items && Array.isArray(items.tracks)) {
-      items.tracks.forEach((track) => {
-        pathsToRevalidate.push(`/songs/${track.slug}`);
+    } else if (cmsToType[contentType] === "Song") {
+      const albums = await new AlbumManager().getAlbumsBySong(blogData.slug);
+      albums.forEach((album) => {
+        itemsToRevalidate.push(album);
       });
     }
   }
-  pathsToRevalidate.forEach((p) => revalidatePath(p));
-  return NextResponse.json({ revalidatedPaths: pathsToRevalidate });
+  itemsToRevalidate.forEach((p) => revalidatePath(getPath(p)));
+  return NextResponse.json({ revalidatedPaths: itemsToRevalidate.map(getPath) });
 }

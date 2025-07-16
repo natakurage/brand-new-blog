@@ -36,6 +36,7 @@ type SanityMusicAlbumResolved = ResolveReferences<
 >;
 
 const TransformTag = (tag: SanityTag): Tag => ({
+  typeUrl: "tags",
   slug: tag.slug.current,
   name: tag.name,
 });
@@ -268,6 +269,16 @@ export class PostListManager extends BlogDataManager<PostList> {
     };
   }
 
+  async getListsByPost(postSlug: string) {
+    const client = getClient(false);
+    const q = groq`*[_type == "postList" && $postSlug in posts[]->slug.current]{
+      ...,
+      "posts": posts[]->{ ..., "tags": tags[]-> }
+    }`;
+    const lists = await client.fetch<SanityPostListResolved[]>(q, { postSlug });
+    return Promise.all(lists.map((list) => new PostListManager().fromEntry(list)));
+  }
+
   defaultFetcher = this.get;
 }
 
@@ -293,6 +304,16 @@ export class AlbumManager extends BlogDataManager<Album> {
       licenseSelect,
       license
     };
+  }
+
+  async getAlbumsBySong(songSlug: string) {
+    const client = getClient(false);
+    const q = groq`*[_type == "musicAlbum" && $songSlug in tracks[]->slug.current]{
+      ...,
+      "tracks": tracks[]->{ ..., "tags": tags[]-> }
+    }`;
+    const lists = await client.fetch<SanityMusicAlbumResolved[]>(q, { songSlug });
+    return Promise.all(lists.map((list) => new AlbumManager().fromEntry(list)));
   }
 }
 

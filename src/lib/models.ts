@@ -6,6 +6,7 @@ export interface LinkItem {
 }
 
 export interface Tag {
+  typeUrl: "tags";
   slug: string;
   name: string;
 }
@@ -106,3 +107,8 @@ export interface listNavigatorInfo {
   prev: null | listNavigatorItem;
   next: null | listNavigatorItem;
 }
+
+export const getPath = (item: BlogData | Tag): string => {
+  const slug = item.typeUrl == "lists" ? item.id : item.slug;
+  return `/${item.typeUrl}/${slug}`;
+};

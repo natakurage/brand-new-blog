@@ -265,6 +265,7 @@ export async function getAllTags(preview = false, client?: ContentfulClientApi<u
   return unstable_cache(async () => {
     const tagCollection = await client.getTags();
     return tagCollection.items.map((tag) => ({
+      typeUrl: ("tags" as const),
       slug: tag.sys.id,
       name: tag.name
     }));
@@ -281,6 +282,7 @@ export async function getTagWithCache(tagSlug: string, client?: ContentfulClient
   return unstable_cache(async () => {
     const tag = await client.getTag(tagSlug);
     return {
+      typeUrl: ("tags" as const),
       slug: tag.sys.id,
       name: tag.name
     };
