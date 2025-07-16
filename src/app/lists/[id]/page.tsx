@@ -1,6 +1,6 @@
 import { cache } from "react";
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { PostListManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 

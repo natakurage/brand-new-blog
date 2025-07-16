@@ -1,5 +1,5 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
 import { notFound } from "next/navigation";
 

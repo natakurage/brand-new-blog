@@ -1,4 +1,4 @@
-import { loadGlobalSettings } from '@/lib/cms';
+import { loadGlobalSettings } from '@/lib/cmsUtils';
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 

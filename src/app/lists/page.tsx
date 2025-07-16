@@ -1,5 +1,5 @@
 import ListList from "@/components/ListList";
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { PostListManager } from "@/lib/cms";
 
 export async function generateMetadata(){

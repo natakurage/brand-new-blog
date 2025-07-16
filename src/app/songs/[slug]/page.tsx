@@ -5,7 +5,7 @@ import { MdMusicNote } from "react-icons/md";
 import Link from "next/link";
 import Script from "next/script";
 import { Song } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { SongManager } from "@/lib/cms";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";

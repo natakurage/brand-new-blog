@@ -1,5 +1,5 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { BlogPostManager } from "@/lib/cms";
 import Script from "next/script";
 import type {  WebSite, WithContext } from "schema-dts";

@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { Album } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { AlbumManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";

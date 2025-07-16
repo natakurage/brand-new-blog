@@ -1,5 +1,4 @@
 import { getClient } from "./client";
-import { unstable_cache } from "next/cache";
 import { GlobalSettings } from "@/lib/models";
 import type {
   GlobalSettings as SanityGlobalSettings,
@@ -25,11 +24,6 @@ type SanityGlobalSettingsResolved = ResolveReferences<
 type SanityLinkListResolved = ResolveReferences<SanityLinkList, {
   item: SanityLinkItem[]
 }>;
-
-export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSettings"], {
-  tags: ["globalSettings"],
-  revalidate: 60 * 60, // 1 hour
-});
 
 export async function fetchGlobalSettings(): Promise<GlobalSettings> {
   const client = getClient(false);

@@ -1,4 +1,4 @@
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { BlogPostManager } from "@/lib/cms";
 import removeMd from "remove-markdown";
 

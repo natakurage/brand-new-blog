@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/cms";
+import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { BlogPostManager} from "@/lib/cms";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
