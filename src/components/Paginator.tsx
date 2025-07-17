@@ -1,13 +1,22 @@
 import Link from "next/link";
 import { MdFirstPage, MdLastPage } from "react-icons/md";
 
-export default function Paginator({ page, maxPages, numPages = 5 }: { page: number, maxPages: number, numPages?: number }) {
+interface PaginatorProps {
+  basePath: string;
+  page: number;
+  maxPages: number;
+  numPages?: number;
+  useQueryParam?: boolean;
+}
+
+export default function Paginator({ basePath, page, maxPages, numPages = 5, useQueryParam = false } : PaginatorProps) {
+  const separator = basePath.includes("?") ? "&" : "?";
   return (
     <div className="join flex justify-center">
       {
         page !== 1 && <Link
           className="join-item btn"
-          href={"?"}
+          href={useQueryParam ? `${basePath}` : `${basePath}/page/1`}
         >
           <MdFirstPage size={24} />
         </Link>
@@ -16,7 +25,7 @@ export default function Paginator({ page, maxPages, numPages = 5 }: { page: numb
         Array.from({ length: numPages }).map((_, i) => {
           const current = page + i - 2;
           if (current <= 0 || current > maxPages) return null;
-          const href = current === 1 ? "?" : "?page=" + current;
+          const href = useQueryParam ? `${basePath}${separator}page=${current}` : `${basePath}/page/${current}`;
 
           return <Link
             key={current}
@@ -30,7 +39,7 @@ export default function Paginator({ page, maxPages, numPages = 5 }: { page: numb
       {
         page !== maxPages && <Link
         className="join-item btn"
-        href={"?page=" + maxPages}
+        href={useQueryParam ? `${basePath}${separator}page=${maxPages}` : `${basePath}/page/${maxPages}`}
       >
         <MdLastPage size={24} />
       </Link>

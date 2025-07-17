@@ -8,16 +8,15 @@ const getList = cache((id: string) => (
   new PostListManager().get(id, false)
 ));
 
-export async function generateMetadata ({ params }: { params: { id: string } }) {
+export async function generateMetadata ({ params }: { params: { id: string, page: string } }) {
   const data = await loadGlobalSettings();
   const { id } = params;
   const list = await getList(id);
   if (!list) { 
     notFound();
   }
-  return {
-    title: `記事リスト "${list.title}"` + " - " + data.siteName,
-  };
+  const title = `記事リスト ${data.siteName}` + (params.page === "1" ? "" : `: Page ${params.page}`);
+  return { title };
 }
 
 export const revalidate = 86400; // 1 day
@@ -27,12 +26,9 @@ export async function generateStaticParams() {
   return ids.map((id) => ({ id }));
 }
 
-export default async function ListsPage(
-  { params, searchParams }
-  : { params: { id: string }, searchParams: { page?: string } }
+export default async function ListsPage( { params } : { params: { id: string, page: string } }
 ) {
-  const { id } = params;
-  const { page = 1 } = searchParams;
+  const { id, page } = params;
   const pageNum = Number(page);
   const list = await getList(id);
   if (!list) { 
@@ -44,6 +40,7 @@ export default async function ListsPage(
       <h1 className="text-3xl font-bold">記事リスト &ldquo;{list.title}&rdquo;</h1>
       <p className="text-sm">{list.description}</p>
       <ItemList
+        basePath={`/articles/${list.id}`}
         items={posts}
         total={posts.length}
         page={pageNum}

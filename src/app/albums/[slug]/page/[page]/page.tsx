@@ -12,16 +12,15 @@ const getAlbum = cache((slug: string) => (
   new AlbumManager().getBySlug(slug, false)
 ));
 
-export async function generateMetadata ({ params }: { params: { slug: string } }) {
+export async function generateMetadata ({ params }: { params: { slug: string, page: string } }) {
   const data = await loadGlobalSettings();
   const { slug } = params;
   const album = await getAlbum(slug);
   if (!album) { 
     notFound();
   }
-  return {
-    title: `アルバム "${album.title}"` + " - " + data.siteName,
-  };
+  const title = `アルバム ${data.siteName}` + (params.page === "1" ? "" : `: Page ${params.page}`);
+  return { title };
 }
 
 export const revalidate = 86400; // 1 day
@@ -66,12 +65,9 @@ function JsonLD({ album }: { album: Album }) {
   );
 }
 
-export default async function AlbumPage(
-  { params, searchParams }
-  : { params: { slug: string }, searchParams: { page?: string } }
+export default async function AlbumPage({ params } : { params: { slug: string, page: string } }
 ) {
-  const { slug } = params;
-  const { page = 1 } = searchParams;
+  const { slug, page } = params;
   const pageNum = Number(page);
   const album = await getAlbum(slug);
   if (!album) { 
@@ -86,6 +82,7 @@ export default async function AlbumPage(
         <div>{album.artist?.join(", ")}</div>
         <p className="text-sm">{album.description}</p>
         <ItemList
+          basePath={"/songs"}
           items={songs}
           total={songs.length}
           page={pageNum}

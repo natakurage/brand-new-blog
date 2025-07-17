@@ -2,9 +2,18 @@ import { BlogItem, ItemList } from "@/lib/models";
 import Link from "next/link";
 import Paginator from "./Paginator";
 
+interface ListListProps<T extends BlogItem> {
+  lists: ItemList<T>[];
+  total: number;
+  page: number;
+  limit: number;
+  basePath: string;
+  useQueryParams?: boolean;
+}
+
 export default function ListList<T extends BlogItem>(
-  { lists, total, page, limit }:
-  { lists: ItemList<T>[], total: number, page: number, limit: number }
+  { basePath, lists, total, page, limit, useQueryParams = false }:
+  ListListProps<T>
 ) {
   const maxPages = Math.ceil(total / limit);
   return (
@@ -22,8 +31,13 @@ export default function ListList<T extends BlogItem>(
             <Link href={`/${list.typeUrl}/${list.id}`} className="absolute w-full h-full top-0 left-0 z-1" />
           </li>
         ))}
-      </ul>
-      <Paginator page={page} maxPages={maxPages} />
+      </ul>,
+      <Paginator
+        basePath={basePath}
+        page={page}
+        maxPages={maxPages}
+        useQueryParam={useQueryParams}
+      />
     </div>
   );
 }

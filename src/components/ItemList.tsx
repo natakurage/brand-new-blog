@@ -4,9 +4,19 @@ import { MdAccessTime } from "react-icons/md";
 import Paginator from "./Paginator";
 import removeMd from "remove-markdown";
 
+interface ItemListProps {
+  items: BlogItem[];
+  total: number;
+  page: number;
+  limit: number;
+  suffix?: string;
+  showDate?: boolean;
+  basePath: string;
+  useQueryParam?: boolean;
+}
+
 export default function ItemList(
-  { items, total, page, limit, suffix, showDate = true }:
-  { items: (BlogItem | null)[], total: number, page: number, limit: number, suffix?: string, showDate?: boolean }
+  { basePath, items, total, page, limit, suffix, showDate = true, useQueryParam = false }: ItemListProps
 ) {
   const maxPages = Math.ceil(total / limit);
   return (
@@ -44,7 +54,12 @@ export default function ItemList(
           </li>
         ))}
       </ul>
-      <Paginator page={page} maxPages={maxPages} />
+      <Paginator
+        basePath={basePath}
+        page={page}
+        maxPages={maxPages}
+        useQueryParam={useQueryParam}
+      />
     </div>
   );
 }

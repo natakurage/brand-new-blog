@@ -27,7 +27,14 @@ export default async function SearchPage({ searchParams }: { searchParams: { q: 
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ItemList items={posts} total={total} page={pageNum} limit={limit} />
+          : <ItemList
+              basePath={`/search?q=${q}`}
+              items={posts}
+              total={total}
+              page={pageNum}
+              limit={limit}
+              useQueryParam={true}
+            />
       }
     </div>
   );

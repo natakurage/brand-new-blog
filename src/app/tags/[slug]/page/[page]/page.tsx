@@ -3,16 +3,15 @@ import { loadGlobalSettings } from "@/lib/cmsUtils";
 import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata ({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export async function generateMetadata ({ params }: { params: { slug: string, page: number } }) {
+  const { slug, page } = params;
   const tag = await getTagWithCache(slug);
   if (!tag) {
     notFound();
   }
   const data = await loadGlobalSettings();
-  return {
-    title: `タグ #${tag.name} がつけられた記事` + " - " + data.siteName,
-  };
+  const title = `タグ #${tag.name} がつけられた記事` + " - " + data.siteName + (page === 1 ? "" : `: Page ${page}`);
+  return { title };
 }
 
 export const revalidate = 86400; // 1 day
@@ -22,9 +21,8 @@ export async function generateStaticParams() {
   return tags.map((tag) => ({ slug: tag.slug }));
 }
 
-export default async function TagPage({ params, searchParams }: { params: { slug: string }, searchParams: { page?: string } }) {
-  const { slug } = params;
-  const { page = 1 } = searchParams;
+export default async function TagPage({ params }: { params: { slug: string, page: string } }) {
+  const { slug, page } = params;
   const pageNum = Number(page);
   const tag = await getTagWithCache(slug);
   if (!tag) {
@@ -38,13 +36,16 @@ export default async function TagPage({ params, searchParams }: { params: { slug
       page: pageNum - 1,
     }
   );
+  if (posts.length === 0) {
+    return notFound();
+  }
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">タグ #{tag.name} がつけられた記事</h1>
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ItemList items={posts} total={total} page={pageNum} limit={limit} />
+          : <ItemList basePath={`/tags/${tag.slug}`} items={posts} total={total} page={pageNum} limit={limit} />
       }
     </div>
   );

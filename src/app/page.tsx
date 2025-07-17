@@ -38,9 +38,8 @@ async function JsonLD() {
   );
 }
 
-export default async function Home({ searchParams }: { searchParams: { page?: string } }) {
-  const { page = 1 } = searchParams;
-  const pageNum = Number(page);
+export default async function Home() {
+  const pageNum = 1;
   const manager = new BlogPostManager();
   const { items: posts, total, limit } = await manager.getNewest({
     page: pageNum - 1,
@@ -49,7 +48,7 @@ export default async function Home({ searchParams }: { searchParams: { page?: st
   return (
     <>
       <JsonLD />
-      <ItemList items={posts} page={pageNum} total={total} limit={limit} />
+      <ItemList basePath="/articles" items={posts} page={pageNum} total={total} limit={limit} />
     </>
   );
 }
