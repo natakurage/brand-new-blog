@@ -269,8 +269,8 @@ export class PostListManager extends BlogDataManager<PostList> {
     };
   }
 
-  async getListsByPost(postSlug: string) {
-    const client = getClient(false);
+  async getListsByPost(postSlug: string, preview = false) {
+    const client = getClient(preview);
     const q = groq`*[_type == "postList" && $postSlug in posts[]->slug.current]{
       ...,
       "posts": posts[]->{ ..., "tags": tags[]-> }
@@ -306,8 +306,8 @@ export class AlbumManager extends BlogDataManager<Album> {
     };
   }
 
-  async getAlbumsBySong(songSlug: string) {
-    const client = getClient(false);
+  async getAlbumsBySong(songSlug: string, preview = false) {
+    const client = getClient(preview);
     const q = groq`*[_type == "musicAlbum" && $songSlug in tracks[]->slug.current]{
       ...,
       "tracks": tracks[]->{ ..., "tags": tags[]-> }

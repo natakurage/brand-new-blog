@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
   }
   const manager = new BlogDataManagerMap[cmsToType[contentType]]();
-  const blogData = await manager.defaultFetcher(contentType === 'postList' ? entityId : slug, false);
+  const blogData = await manager.defaultFetcher(contentType === 'postList' ? entityId : slug, true);
   if (!blogData) {
     return NextResponse.json({ error: 'Blog data not found' }, { status: 404 });
   }
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     // Revalidate paths for related items
     // Performs minimal type checks here
     if (cmsToType[contentType] === "BlogPost") {
-      const lists = await new PostListManager().getListsByPost(blogData.slug);
+      const lists = await new PostListManager().getListsByPost(blogData.slug, true);
       lists.forEach((list) => {
         itemsToRevalidate.push(list);
       });
