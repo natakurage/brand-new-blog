@@ -21,7 +21,7 @@ export async function generateMetadata ({ params }: { params: { id: string, page
 
 export async function generateStaticParams() {
   const ids = await new PostListManager().getAllIds();
-  return ids.map((id) => ({ id }));
+  return ids.map((id) => ({ id, page: "1" }));
 }
 
 export default async function ListsPage( { params } : { params: { id: string, page: string } }

@@ -25,7 +25,7 @@ export async function generateMetadata ({ params }: { params: { slug: string, pa
 
 export async function generateStaticParams() {
   const slugs = await new AlbumManager().getAllSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return slugs.map((slug) => ({ slug, page: "1" }));
 }
 
 function JsonLD({ album }: { album: Album }) {
