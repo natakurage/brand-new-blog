@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { PostListManager, AlbumManager } from '@/lib/cms';
 import { BlogDataManagerMap, cmsToType, isValidContentType } from '@/lib/cmsUtils';
-import { Tag, BlogData, getPath } from '@/lib/models';
+import { Tag, BlogData, getPath, PostList, Album } from '@/lib/models';
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-revalidate-secret');
@@ -24,26 +24,40 @@ export async function POST(req: NextRequest) {
   if (!blogData) {
     return NextResponse.json({ error: 'Blog data not found' }, { status: 404 });
   }
-  const itemsToRevalidate: (BlogData | Tag)[] = [blogData];
+  // Revalidate itself and collection
+  const itemsToRevalidate: (BlogData | Tag)[] = [blogData]; // maybe unnecessary, but just in case
+  const tagsToRevalidate = [`${contentType}:slug:${blogData.slug}`, `${contentType}-collection`];
   if (blogData) {
+    // Revalidate Tag collection
+    if (blogData.tags && blogData.tags.length > 0) {
+      tagsToRevalidate.push("tags-collection");
+    }
     // Revalidate all tags associated with the item
     blogData.tags?.forEach((tag) => {
       itemsToRevalidate.push(tag);
+      tagsToRevalidate.push(`tags:slug:${tag.slug}`);
     });
-    // Revalidate paths for related items
-    // Performs minimal type checks here
+    // Revalidate ListItems that contain the item
+    let items: (PostList | Album)[] = [];
     if (cmsToType[contentType] === "BlogPost") {
-      const lists = await new PostListManager().getListsByPost(blogData.slug, true);
-      lists.forEach((list) => {
-        itemsToRevalidate.push(list);
-      });
+      items = await new PostListManager().getListsByPost(blogData.slug, true);
     } else if (cmsToType[contentType] === "Song") {
-      const albums = await new AlbumManager().getAlbumsBySong(blogData.slug);
-      albums.forEach((album) => {
-        itemsToRevalidate.push(album);
+      items = await new AlbumManager().getAlbumsBySong(blogData.slug, true);
+    }
+    if (items) {
+      if (items.length > 0) {
+        tagsToRevalidate.push(`${contentType}-collection`);
+      }
+      items.forEach((list) => {
+        itemsToRevalidate.push(list);
+        tagsToRevalidate.push(`${contentType}:slug:${list.slug}`);
       });
     }
   }
   itemsToRevalidate.forEach((p) => revalidatePath(getPath(p)));
-  return NextResponse.json({ revalidatedPaths: itemsToRevalidate.map(getPath) });
+  tagsToRevalidate.forEach((tag) => revalidateTag(tag));
+  return NextResponse.json({
+    revalidatedPaths: itemsToRevalidate.map(getPath),
+    revalidatedTags: tagsToRevalidate,
+  });
 }

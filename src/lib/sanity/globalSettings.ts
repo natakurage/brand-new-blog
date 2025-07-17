@@ -49,6 +49,12 @@ export async function loadGlobalSettings(): Promise<GlobalSettings> {
     socialsKey,
     navbarPagesKey,
     footerPagesKey,
+  }, 
+  {
+    next: {
+      tags: ["globalSettings"],
+      revalidate: 86400, // 1 day
+    }
   });
   const socials = linkLists.find(item => item.id.current === socialsKey);
   const navbarPages = linkLists.find(item => item.id.current === navbarPagesKey);

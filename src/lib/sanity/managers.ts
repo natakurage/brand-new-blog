@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import { getClient } from "./client";
 import { Tag, BlogData, BlogPost, PostList, Album, Song } from "@/lib/models";
 import { SanityClient, SanityDocument, groq } from "next-sanity";
@@ -46,12 +45,17 @@ abstract class BlogDataManager<DataType extends BlogData> {
   readonly abstract additionalResolves: string[];
   abstract fromEntry(entry: SanityDocument<Record<string, unknown>>): Promise<DataType>;
 
-  async get(id: string, preview = false) {
+  async get(id: string, preview = false, revalidate = 86400) {
     const client = getClient(preview);
     try {
       const additionalResolvesStr = this.additionalResolves.join(", ");
       const q = groq`*[_id == $id][0]{ ..., "tags": tags[]->, ${additionalResolvesStr} }`;
-      const entry = await client.fetch<SanityDocument>(q, { id });
+      const entry = await client.fetch<SanityDocument>(q, { id }, {
+        next: {
+          tags: [this.contentType, `${this.contentType}:id:${id}`],
+          revalidate
+        }
+      });
       if (!entry) return null;
       return this.fromEntry(entry);
     } catch {
@@ -66,12 +70,16 @@ abstract class BlogDataManager<DataType extends BlogData> {
       preview = false,
       filter = [],
       params,
+      tags = [],
+      revalidate = 86400, // 1 day
     } : {
       limit?: number,
       page?: number,
       preview?: boolean,
       filter?: string[],
-      params?: Record<string, unknown>
+      params?: Record<string, unknown>,
+      tags?: string[],
+      revalidate?: number
     }
   ) {
     const client = getClient(preview);
@@ -92,7 +100,10 @@ abstract class BlogDataManager<DataType extends BlogData> {
       console.log("Parameters:", paramsWithDefaults);
     }
     const result = await client.fetch<{ items: SanityDocument[], total: number }>(q,
-      paramsWithDefaults
+      paramsWithDefaults, { next: {
+        tags: [this.contentType, ...tags],
+        revalidate
+      }}
     );
     return {
       items: await Promise.all(
@@ -112,7 +123,9 @@ abstract class BlogDataManager<DataType extends BlogData> {
       filter: [groq`slug.current == $slug`],
       params: { slug },
       preview,
-      limit: 1
+      limit: 1,
+      tags: [`${this.contentType}:slug:${slug}`],
+      revalidate: 86400, // 1 day
     });
     if (items.items.length === 0) {
       return null;
@@ -126,21 +139,27 @@ abstract class BlogDataManager<DataType extends BlogData> {
       params: { slugs },
       preview,
       limit,
-      page
+      page,
+      tags: slugs.map(slug => `${this.contentType}:slug:${slug}`),
+      revalidate: 86400, // 1 day
     });
   }
 
   async getAllSlugs() {
     const client = getClient(false);
     const q = groq`*[_type == $contentType].slug.current`;
-    const slugs = await client.fetch<string[]>(q, { contentType: this.contentType });
+    const slugs = await client.fetch<string[]>(q, { contentType: this.contentType }, {
+      next: { revalidate: 10 }
+    });
     return slugs.filter(Boolean);
   }
 
   async getAllIds() {
     const client = getClient(false);
     const q = groq`*[_type == $contentType]._id`;
-    const ids = await client.fetch<string[]>(q, { contentType: this.contentType });
+    const ids = await client.fetch<string[]>(q, { contentType: this.contentType }, {
+      next: { revalidate: 10 }
+    });
     return ids.filter(Boolean);
   }
 
@@ -150,17 +169,22 @@ abstract class BlogDataManager<DataType extends BlogData> {
       params: { tagSlug },
       limit,
       page,
-      preview
+      preview,
+      tags: [`${this.contentType}:tag:${tagSlug}`],
+      revalidate: 86400, // 1 day
     });
   }
 
-  async getNewest({ page, limit, excludes }: { page?: number, limit?: number, excludes?: string[] }) {
-    const excludeList = excludes ?? [];
+  async getNewest({ page, limit, excludes = [] }: { page?: number, limit?: number, excludes?: string[] }) {
+    // excludesがあれば、そのslugの記事と同時にrevalidate、なければ全体をrevalidate
+    const tags = excludes.length > 0 ? excludes.map(slug => `${this.contentType}:slug:${slug}`) : [`${this.contentType}-collection`];
     return this.query({
       page,
       limit,
-      filter: excludes ? [groq`!(slug.current in $excludeList)`] : [],
-      params: { excludeList },
+      filter: excludes.length > 0 ? [groq`!(slug.current in $excludes)`] : [],
+      params: { excludes },
+      tags,
+      revalidate: 86400, // 1 day
     });
   }
 
@@ -206,6 +230,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
         groq`slug.current != $slug`,
       ],
       params: { tagSlugs: tagSlugsNotEmpty, slug },
+      revalidate: 86400, // 1 day
     });
   }
 
@@ -216,7 +241,8 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
       params: { queries },
       limit,
       page,
-      preview
+      preview,
+      revalidate: 10
     });
   }
 }
@@ -275,7 +301,9 @@ export class PostListManager extends BlogDataManager<PostList> {
       ...,
       "posts": posts[]->{ ..., "tags": tags[]-> }
     }`;
-    const lists = await client.fetch<SanityPostListResolved[]>(q, { postSlug });
+    const lists = await client.fetch<SanityPostListResolved[]>(q, { postSlug }, {
+      next: { revalidate: 10 }
+    });
     return Promise.all(lists.map((list) => new PostListManager().fromEntry(list)));
   }
 
@@ -312,7 +340,9 @@ export class AlbumManager extends BlogDataManager<Album> {
       ...,
       "tracks": tracks[]->{ ..., "tags": tags[]-> }
     }`;
-    const lists = await client.fetch<SanityMusicAlbumResolved[]>(q, { songSlug });
+    const lists = await client.fetch<SanityMusicAlbumResolved[]>(q, { songSlug }, {
+      next: { revalidate: 10 }
+    });
     return Promise.all(lists.map((list) => new AlbumManager().fromEntry(list)));
   }
 }
@@ -321,27 +351,24 @@ export async function getAllTags(preview = false, client?: SanityClient) : Promi
   if (!client) {
     client = getClient(preview);
   }
-  return unstable_cache(async () => {
-    const q = groq`*[_type == "tag"]`;
-    const tagCollection = await client.fetch<SanityTag[]>(q);
-    return tagCollection.map(TransformTag);
-  }, ["tags"], {
-    tags: ["tag"],
+  const q = groq`*[_type == "tag"]`;
+  const tagCollection = await client.fetch<SanityTag[]>(q, {
+    tags: ["tags", "tags-collection"],
     revalidate: 86400 // 1 day
-  })();
+  });
+  return tagCollection.map(TransformTag);
 }
 
 export async function getTagWithCache(tagSlug: string, client?: SanityClient) : Promise<Tag | null> {
   if (!client) {
     client = getClient(false);
   }
-  return unstable_cache(async () => {
-    const q = groq`*[_type == "tag" && slug.current == $tagSlug][0]`;
-    const tag = await client.fetch<SanityTag | null>(q, { tagSlug });
-    if (!tag) return null;
-    return TransformTag(tag);
-  }, ["tag", tagSlug], {
-    tags: ["tag"],
-    revalidate: 86400 // 1 day
-  })();
+  const q = groq`*[_type == "tag" && slug.current == $tagSlug][0]`;
+  const tag = await client.fetch<SanityTag | null>(q, { tagSlug }, {
+    next: {
+      tags: ["tags", `tags:slug:${tagSlug}`],
+      revalidate: 86400 // 1 day
+    }
+  });
+  return tag ? TransformTag(tag) : null;
 }
