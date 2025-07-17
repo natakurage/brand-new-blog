@@ -21,13 +21,15 @@ export async function POST(req: NextRequest) {
   }
   const manager = new BlogDataManagerMap[cmsToType[contentType]]();
   const blogData = await manager.defaultFetcher(contentType === 'postList' ? entityId : slug, true);
-  if (!blogData) {
-    return NextResponse.json({ error: 'Blog data not found' }, { status: 404 });
-  }
   // Revalidate itself and collection
-  const itemsToRevalidate: (BlogData | Tag)[] = [blogData]; // maybe unnecessary, but just in case
-  const tagsToRevalidate = [`${contentType}:slug:${blogData.slug}`, `${contentType}-collection`];
+  const tagsToRevalidate = [
+    `${contentType}:id:${entityId}`,
+    `${contentType}:slug:${slug}`,
+    `${contentType}-collection`
+  ];
+  const pathsToRevalidate: string[] = [];
   if (blogData) {
+    const itemsToRevalidate: (BlogData | Tag)[] = [blogData]; // maybe unnecessary, but just in case
     // Revalidate Tag collection
     if (blogData.tags && blogData.tags.length > 0) {
       tagsToRevalidate.push("tags-collection");
@@ -53,11 +55,12 @@ export async function POST(req: NextRequest) {
         tagsToRevalidate.push(`${contentType}:slug:${list.slug}`);
       });
     }
+    pathsToRevalidate.push(...itemsToRevalidate.map(getPath));
   }
-  itemsToRevalidate.forEach((p) => revalidatePath(getPath(p)));
+  pathsToRevalidate.forEach((p) => revalidatePath(p));
   tagsToRevalidate.forEach((tag) => revalidateTag(tag));
   return NextResponse.json({
-    revalidatedPaths: itemsToRevalidate.map(getPath),
+    revalidatedPaths: pathsToRevalidate,
     revalidatedTags: tagsToRevalidate,
   });
 }
