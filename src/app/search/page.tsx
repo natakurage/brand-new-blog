@@ -1,5 +1,5 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager } from "@/lib/cms";
 
 export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {

@@ -1,7 +1,7 @@
 import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import NextTopLoader from "nextjs-toploader";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";

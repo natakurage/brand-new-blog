@@ -1,6 +1,12 @@
+import { unstable_cache } from 'next/cache';
 import { getClient } from "./client";
 import { GlobalSettings, LinkItem } from "@/lib/models";
 import { TypeGlobalSettingsSkeleton, TypeLinkListSkeleton } from "../../../@types/contentful";
+
+export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSettings"], {
+  tags: ["globalSettings"],
+  revalidate: 86400, // 1 day
+});
 
 export async function fetchGlobalSettings(): Promise<GlobalSettings> {
   const client = getClient(false);

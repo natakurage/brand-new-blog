@@ -1,5 +1,5 @@
 import ListList from "@/components/ListList";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import { AlbumManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 

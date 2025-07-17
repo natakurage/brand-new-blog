@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { Album } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import { AlbumManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";
@@ -22,8 +22,6 @@ export async function generateMetadata ({ params }: { params: { slug: string, pa
   const title = `アルバム ${data.siteName}` + (params.page === "1" ? "" : `: Page ${params.page}`);
   return { title };
 }
-
-export const revalidate = 86400; // 1 day
 
 export async function generateStaticParams() {
   const slugs = await new AlbumManager().getAllSlugs();

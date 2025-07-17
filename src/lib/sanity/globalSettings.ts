@@ -25,7 +25,7 @@ type SanityLinkListResolved = ResolveReferences<SanityLinkList, {
   item: SanityLinkItem[]
 }>;
 
-export async function fetchGlobalSettings(): Promise<GlobalSettings> {
+export async function loadGlobalSettings(): Promise<GlobalSettings> {
   const client = getClient(false);
   
   const q = groq`*[_type == "globalSettings"][0]{

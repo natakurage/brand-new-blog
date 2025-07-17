@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager} from "@/lib/cms";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
@@ -50,8 +50,6 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
     }
   };
 }
-
-export const revalidate = 86400; // 1 day
 
 export async function generateStaticParams() {
   const slugs = await new BlogPostManager().getAllSlugs();

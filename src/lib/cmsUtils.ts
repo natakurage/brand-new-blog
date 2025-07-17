@@ -1,5 +1,4 @@
-import { BlogPostManager, SongManager, PostListManager, AlbumManager, fetchGlobalSettings } from './cms';
-import { unstable_cache } from 'next/cache';
+import { BlogPostManager, SongManager, PostListManager, AlbumManager } from './cms';
 
 export const BlogItemManagerMap = {
   BlogPost: BlogPostManager,
@@ -27,11 +26,6 @@ export const isItemListManagerMapKey = (key: string): key is keyof typeof ItemLi
 export const isBlogDataManagerMapKey = (key: string): key is keyof typeof BlogDataManagerMap => {
   return key in BlogDataManagerMap;
 };
-
-export const loadGlobalSettings = unstable_cache(fetchGlobalSettings, ["globalSettings"], {
-  tags: ["globalSettings"],
-  revalidate: 86400, // 1 day
-});
 
 export const cmsToType = {
   blogPost: 'BlogPost',

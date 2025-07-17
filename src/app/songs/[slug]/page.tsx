@@ -5,7 +5,7 @@ import { MdMusicNote } from "react-icons/md";
 import Link from "next/link";
 import Script from "next/script";
 import { Song } from "@/lib/models";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import { SongManager } from "@/lib/cms";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
@@ -55,8 +55,6 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
     }
   };
 }
-
-export const revalidate = 86400; // 1 day
 
 export async function generateStaticParams() {
   const slugs = await new SongManager().getAllSlugs();

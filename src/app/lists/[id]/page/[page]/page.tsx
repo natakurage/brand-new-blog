@@ -1,6 +1,6 @@
 import { cache } from "react";
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import { PostListManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 
@@ -18,8 +18,6 @@ export async function generateMetadata ({ params }: { params: { id: string, page
   const title = `記事リスト ${data.siteName}` + (params.page === "1" ? "" : `: Page ${params.page}`);
   return { title };
 }
-
-export const revalidate = 86400; // 1 day
 
 export async function generateStaticParams() {
   const ids = await new PostListManager().getAllIds();

@@ -1,4 +1,4 @@
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import Link from "next/link";
 import { FaXTwitter, FaGithub, FaBluesky, FaYoutube } from "react-icons/fa6";
 import { IoIosGlobe } from "react-icons/io";

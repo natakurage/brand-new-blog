@@ -1,5 +1,5 @@
 import DisablePreview from "@/components/DisablePreview";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import Link from "next/link";
 import { MdWarning } from "react-icons/md";
 

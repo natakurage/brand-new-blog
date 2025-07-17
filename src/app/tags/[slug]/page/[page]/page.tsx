@@ -1,5 +1,5 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cmsUtils";
+import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
 import { notFound } from "next/navigation";
 
@@ -13,8 +13,6 @@ export async function generateMetadata ({ params }: { params: { slug: string, pa
   const title = `タグ #${tag.name} がつけられた記事` + " - " + data.siteName + (page === 1 ? "" : `: Page ${page}`);
   return { title };
 }
-
-export const revalidate = 86400; // 1 day
 
 export async function generateStaticParams() {
   const tags = await getAllTags();
