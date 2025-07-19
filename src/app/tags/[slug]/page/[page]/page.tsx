@@ -16,7 +16,7 @@ export async function generateMetadata ({ params }: { params: { slug: string, pa
 
 export async function generateStaticParams() {
   const tags = await getAllTags();
-  return tags.map((tag) => ({ slug: tag.slug }));
+  return tags.map((tag) => ({ slug: tag.slug, page: "1" }));
 }
 
 export default async function TagPage({ params }: { params: { slug: string, page: string } }) {
