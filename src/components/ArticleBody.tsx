@@ -11,6 +11,7 @@ import Image from "next/image";
 import LinkProcessor from "./LinkProcessor";
 import "katex/dist/katex.min.css";
 import { cms } from "@/lib/cms";
+import CopyCodeButton from "./CopyCodeButton";
 
 export default function ArticleBody({ content, showToc = false }: { content: string, showToc?: boolean }) {
   return (
@@ -101,15 +102,21 @@ export default function ArticleBody({ content, showToc = false }: { content: str
             return <pre>{children}</pre>;
           }
           const className = children.props.className;
-          const codeContent = children.props.children;
+          const codeContent = String(children.props.children).replace(/\n+$/, "");
           const language = className?.replace("language-", "");
           return (
-            <SyntaxHighlighter
-              language={language}
-              style={dracula}
-            >
-              {String(codeContent).replace(/\n$/, "")}
-            </SyntaxHighlighter>
+            <div className="relative">
+              <div className="absolute badge badge-neutral -top-3">{language}</div>
+              <div className="absolute right-1 top-3">
+                <CopyCodeButton
+                  code={codeContent}
+                  className="btn btn-ghost btn-sm opacity-50"
+                />
+              </div>
+              <SyntaxHighlighter language={language} style={dracula}>
+                {codeContent}
+              </SyntaxHighlighter>
+            </div>
           );
         }
       }}
