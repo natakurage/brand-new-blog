@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
-import { BlogPost } from "@/lib/models";
+import { BlogPost, getShareInfo } from "@/lib/models";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager} from "@/lib/cms";
 import { draftMode } from "next/headers";
@@ -122,20 +122,14 @@ export default async function ArticlePage(
     )
   ]);
 
-  const origin = process.env.NEXT_PUBLIC_ORIGIN;
-  if (!origin) {
-    throw new Error("Missing NEXT_PUBLIC_ORIGIN");
-  }
-  
-  const shareText = `${post.title} - ${data.siteName}`;
-  const shareUrl = `${origin}/articles/${post.slug}`;
+  const shareInfo = await getShareInfo(post);
 
   const licenseInfo = new Map<string, string>([
     ["タイトル", post.title],
     ["著者", data.author],
     ["作成年", new Date(post.createdAt).getFullYear().toString()],
-    ["URL", shareUrl],
-    ["ライセンス", post.license || "不明なライセンス"],
+    ["URL", shareInfo.url],
+    ["ライセンス", post.licenseSelect ?? post.license ?? "不明なライセンス"],
   ]);
   const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
   const shareFullText = `# ${post.title}\n\n ${post.content}\n\n---\n\n${licenseText}`;
@@ -158,11 +152,11 @@ export default async function ArticlePage(
           <Suspense fallback={<div>Loading...</div>}>
             <ListNavigator slug={slug} managerType="PostList" />
           </Suspense>
-          <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
+          <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
           <Credit
             title={post.title}
             author={data.author}
-            url={shareUrl}
+            url={shareInfo.url}
             year={new Date(post.createdAt).getFullYear()}
             licenseSelect={post.licenseSelect}
             workType="記事"

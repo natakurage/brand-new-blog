@@ -4,7 +4,7 @@ import Markdown from "react-markdown";
 import { MdMusicNote } from "react-icons/md";
 import Link from "next/link";
 import Script from "next/script";
-import { Song } from "@/lib/models";
+import { getShareInfo, Song } from "@/lib/models";
 import { loadGlobalSettings } from "@/lib/cms";
 import { SongManager } from "@/lib/cms";
 import { draftMode } from "next/headers";
@@ -91,7 +91,6 @@ function JsonLD({ song }: { song: Song }) {
 export default async function SongPage(
   { params } : { params: { slug: string } }
 ) {
-  const data = await loadGlobalSettings();
   const { isEnabled } = draftMode();
   const { slug } = params;
   const song = await getSong(slug, isEnabled);
@@ -101,13 +100,7 @@ export default async function SongPage(
 
   const modifiedLyrics = song.lyrics?.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n');
 
-  const origin = process.env.NEXT_PUBLIC_ORIGIN;
-  if (!origin) {
-    throw new Error("Missing NEXT_PUBLIC_ORIGIN");
-  }
-
-  const shareText = `${song.title} - ${data.siteName}`;
-  const shareUrl = `${origin}/songs/${song.slug}`;
+  const shareInfo = await getShareInfo(song);
 
   const licenseInfo = new Map<string, string>([
     ["タイトル", song.title],
@@ -119,8 +112,8 @@ export default async function SongPage(
   });
   ([
     ["作成年", new Date(song.createdAt).getFullYear().toString()],
-    ["URL", shareUrl],
-    ["ライセンス", song.license || "不明なライセンス"],
+    ["URL", shareInfo.url],
+    ["ライセンス", song.licenseSelect ?? song.license ?? "不明なライセンス"],
   ]).forEach(([k, v]) => licenseInfo.set(k, v));
   const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
   const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${licenseText}`;
@@ -186,12 +179,12 @@ export default async function SongPage(
           <Suspense fallback={<div>Loading...</div>}>
             <ListNavigator slug={slug} managerType="Album" useSlug />
           </Suspense>
-          <ShareButtons shareText={shareText} shareUrl={shareUrl} fullText={shareFullText} />
+          <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
           <Credit
             workType="曲"
             title={song.title}
             artists={song.artist}
-            url={shareUrl}
+            url={shareInfo.url}
             year={new Date(song.createdAt).getFullYear()}
             additionalInfo={song.credit}
             licenseSelect={song.licenseSelect}
