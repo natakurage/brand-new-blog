@@ -43,7 +43,7 @@ export default async function RootLayout({
   const isDevelopment = process.env.NODE_ENV === "development";
   const data = await loadGlobalSettings();
   return (
-    <html suppressHydrationWarning>
+    <html lang="ja" suppressHydrationWarning>
       <body>
         <ThemeProvider>
           <NextTopLoader
