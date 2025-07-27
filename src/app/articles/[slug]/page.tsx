@@ -136,53 +136,53 @@ export default async function ArticlePage(
   return (
     <>
       <JsonLD post={post} />
-      <main>
-        <header className="space-y-5">
-          <h1 className="text-4xl font-bold">{post.title}</h1>
-          <HeaderTags tags={post.tags || []} />
-          <div className="text-sm flex flex-wrap">
-            <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
-            <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} className="ms-auto" />
-          </div>
-        </header>
-        <article className="my-12 sm:my-24">
-          <ArticleBody content={post.content} showToc={post.showToc} />
+      <main className="space-y-5">
+        <article>
+          <header className="space-y-5">
+            <h1 className="text-4xl font-bold">{post.title}</h1>
+            <HeaderTags tags={post.tags || []} />
+            <div className="text-sm flex flex-wrap">
+              <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
+              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} className="ms-auto" />
+            </div>
+          </header>
+          <ArticleBody content={post.content} showToc={post.showToc} className="my-12 sm:my-24" />
+          <footer className="space-y-5">
+            <Suspense fallback={<div>Loading...</div>}>
+              <ListNavigator slug={slug} managerType="PostList" />
+            </Suspense>
+            <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
+            <Credit
+              title={post.title}
+              author={data.author}
+              url={shareInfo.url}
+              year={new Date(post.createdAt).getFullYear()}
+              licenseSelect={post.licenseSelect}
+              workType="記事"
+              license={post.license}
+            />
+          </footer>
         </article>
-        <footer className="space-y-5">
-          <Suspense fallback={<div>Loading...</div>}>
-            <ListNavigator slug={slug} managerType="PostList" />
-          </Suspense>
-          <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
-          <Credit
-            title={post.title}
-            author={data.author}
-            url={shareInfo.url}
-            year={new Date(post.createdAt).getFullYear()}
-            licenseSelect={post.licenseSelect}
-            workType="記事"
-            license={post.license}
-          />
-          <div className="space-y-4">
-          {
-            data.showRelatedPosts && relatedPosts.length > 0 && <>
-              <h2 className="text-2xl font-bold">関連記事</h2>
-              <RelatedPosts posts={relatedPosts} />
-            </>
-          }
-          {
-            data.showNewPosts && newPosts.length > 0 && <>
-              <h2 className="text-2xl font-bold">新着記事</h2>
-              <RelatedPosts posts={newPosts} />
-            </>
-          }
-          {
-            recommendedPosts.length > 0 && <>
-              <h2 className="text-2xl font-bold">おすすめ記事</h2>
-              <RelatedPosts posts={recommendedPosts} />
-            </>
-          }        
-          </div>
-        </footer>
+        <aside className="space-y-4" aria-label="こちらもおすすめ">
+        {
+          data.showRelatedPosts && relatedPosts.length > 0 && <section>
+            <h2 className="text-2xl font-bold">関連記事</h2>
+            <RelatedPosts posts={relatedPosts} />
+          </section>
+        }
+        {
+          data.showNewPosts && newPosts.length > 0 && <section>
+            <h2 className="text-2xl font-bold">新着記事</h2>
+            <RelatedPosts posts={newPosts} />
+          </section>
+        }
+        {
+          recommendedPosts.length > 0 && <section>
+            <h2 className="text-2xl font-bold">おすすめ記事</h2>
+            <RelatedPosts posts={recommendedPosts} />
+          </section>
+        }
+        </aside>
       </main>
     </>
   );

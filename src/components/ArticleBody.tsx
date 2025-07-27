@@ -13,10 +13,10 @@ import "katex/dist/katex.min.css";
 import { cms } from "@/lib/cms";
 import CopyCodeButton from "./CopyCodeButton";
 
-export default function ArticleBody({ content, showToc = false }: { content: string, showToc?: boolean }) {
+export default function ArticleBody({ content, showToc = false, className }: { content: string, showToc?: boolean, className?: string }) {
   return (
     <Markdown
-      className="prose max-w-none dark:!prose-invert break-words"
+      className={`prose max-w-none dark:!prose-invert break-words ${className}`}
       remarkPlugins={[remarkGfm, remarkMath]}
       rehypePlugins={[rehypeSlug, rehypeKatex, [rehypeToc, {
         headings: ["h2", "h3"],

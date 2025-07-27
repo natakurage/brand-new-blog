@@ -49,7 +49,7 @@ export default function ListNavigator(
   }, [key, router, slug, managerType, useSlug]);
   
   return (
-    <div>
+    <nav>
       <h2 className="text-sm text-center text-base-content">
         <Link href={`/${typeUrl}/${key}`} className="link link-hover">
           {title}
@@ -79,6 +79,6 @@ export default function ListNavigator(
         <button className="join-item invisible flex-1 flex-nowrap" />
         }
       </div>
-    </div>
+    </nav>
   );
 }

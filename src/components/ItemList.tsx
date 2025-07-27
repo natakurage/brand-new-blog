@@ -47,7 +47,7 @@ export default function ItemList(
             {
               showDate && <div className="flex flex-row gap-1 justify-end">
                 <MdAccessTime className="my-auto" />
-                <time>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+                <time dateTime={new Date(item.createdAt).toISOString()}>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
               </div>
             }
             <Link href={`/${item.typeUrl}/${item.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />

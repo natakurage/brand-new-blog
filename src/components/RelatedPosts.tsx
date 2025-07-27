@@ -34,7 +34,7 @@ export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
               </div>
               <div className="flex flex-row gap-1 justify-end">
                 <MdAccessTime className="my-auto" />
-                <time>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+                <time dateTime={new Date(post.createdAt).toISOString()}>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
               </div>
             </div>
             <Link href={`/articles/${post.slug}`} className="absolute w-full h-full top-0 left-0 z-1" />

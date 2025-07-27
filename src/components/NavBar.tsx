@@ -44,15 +44,9 @@ export function NavBar({
         mounted &&
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn">
-            {
-              theme === "light" && <MdLightMode size={24} />
-            }
-            {
-              theme === "dark" && <MdDarkMode size={24} />
-            }
-            {
-              theme === "system" && <MdComputer size={24} />
-            }
+            { theme === "light" && <MdLightMode size={24} /> }
+            { theme === "dark" && <MdDarkMode size={24} /> }
+            { theme === "system" && <MdComputer size={24} /> }
           </div>
           <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
             <li><a onClick={() => setTheme("light")}>Light</a></li>

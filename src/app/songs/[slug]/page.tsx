@@ -121,76 +121,76 @@ export default async function SongPage(
   return (
     <>
       <JsonLD song={song} />
-      <main>
-        <header className="space-y-5">
-          <h1 className="text-4xl font-bold">{song.title}</h1>
-          <div>by {song.artist.join(", ")}</div>
-          <HeaderTags tags={song.tags || []} />
-          <div className="text-sm flex flex-wrap">
-            <HeaderTime createdAt={song.createdAt} className="ms-auto" />
-          </div>
-        </header>
-        <article className="my-16 space-y-4">
-          {
-            song.url && <div>
-              {
-                // youtubeリンクがあれば埋め込む
-                song.url.find((url) => isYouTube(url)) &&
-                <YouTubePlayer vid={getYouTubeId(song.url.find((url) => isYouTube(url))!) || ""} />
-              }
-              <ul>
+      <main className="space-y-5">
+        <article className="space-y-5">
+          <header className="space-y-5">
+            <h1 className="text-4xl font-bold">{song.title}</h1>
+            <div>by {song.artist.join(", ")}</div>
+            <HeaderTags tags={song.tags || []} />
+            <div className="text-sm flex flex-wrap">
+              <HeaderTime createdAt={song.createdAt} className="ms-auto" />
+            </div>
+          </header>
+            {
+              song.url && <div>
                 {
-                  song.url.map((url) => (
-                    <li key={url} className="text-sm text-primary flex flex-row">
-                      <FaExternalLinkAlt />
-                      <Link href={url} target="_blank" rel="noopener noreferrer">
-                        {url}
-                      </Link>
-                    </li>
+                  // youtubeリンクがあれば埋め込む
+                  song.url.find((url) => isYouTube(url)) &&
+                  <YouTubePlayer vid={getYouTubeId(song.url.find((url) => isYouTube(url))!) || ""} />
+                }
+                <ul>
+                  {
+                    song.url.map((url) => (
+                      <li key={url} className="text-sm text-primary flex flex-row">
+                        <FaExternalLinkAlt />
+                        <Link href={url} target="_blank" rel="noopener noreferrer">
+                          {url}
+                        </Link>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            }
+            {
+              song.streamUrl && <section className="space-y-2">
+                <h2 className="text-2xl font-bold"><MdMusicNote className="my-auto inline" />ここで全部聴く</h2>
+                <HLSAudioPlayer url={song.streamUrl} />
+              </section>
+            }
+            <ArticleBody content={song.content} />
+            {
+              song.credit && <ul className="text-right">
+                {
+                  song.credit.map((credit, index) => (
+                    <li key={index}>{credit}</li>
                   ))
                 }
               </ul>
-            </div>
-          }
-          {
-            song.streamUrl && <div className="space-y-2">
-              <h2 className="text-2xl font-bold"><MdMusicNote className="my-auto inline" />ここで全部聴く</h2>
-              <HLSAudioPlayer url={song.streamUrl} />
-            </div>
-          }
-          <ArticleBody content={song.content} />
-          {
-            song.credit && <ul className="text-right">
-              {
-                song.credit.map((credit, index) => (
-                  <li key={index}>{credit}</li>
-                ))
-              }
-            </ul>
-          }
-          <h2 className="text-2xl font-bold">Lyrics</h2>
-          {
-            song.lyrics && <Markdown className="prose dark:!prose-invert break-words">
-              {modifiedLyrics}
-            </Markdown>
-          }
+            }
+            <h2 className="text-2xl font-bold">Lyrics</h2>
+            {
+              song.lyrics && <Markdown className="prose dark:!prose-invert break-words">
+                {modifiedLyrics}
+              </Markdown>
+            }
+          <footer className="space-y-5">
+            <Suspense fallback={<div>Loading...</div>}>
+              <ListNavigator slug={slug} managerType="Album" useSlug />
+            </Suspense>
+            <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
+            <Credit
+              workType="曲"
+              title={song.title}
+              artists={song.artist}
+              url={shareInfo.url}
+              year={new Date(song.createdAt).getFullYear()}
+              additionalInfo={song.credit}
+              licenseSelect={song.licenseSelect}
+              license={song.license}
+            />
+          </footer>
         </article>
-        <footer className="space-y-5">
-          <Suspense fallback={<div>Loading...</div>}>
-            <ListNavigator slug={slug} managerType="Album" useSlug />
-          </Suspense>
-          <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
-          <Credit
-            workType="曲"
-            title={song.title}
-            artists={song.artist}
-            url={shareInfo.url}
-            year={new Date(song.createdAt).getFullYear()}
-            additionalInfo={song.credit}
-            licenseSelect={song.licenseSelect}
-            license={song.license}
-          />
-        </footer>
       </main>
     </>
   );
