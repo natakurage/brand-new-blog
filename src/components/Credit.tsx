@@ -52,7 +52,7 @@ function CCLicenseNotice({ workType, title, author, artists, url, year, licenseS
 
 export default function Credit({ workType, title, author, artists, url, year, license, additionalInfo, licenseSelect }: CreditProps) {
   return (
-    <div className="border border-base-content border-dashed rounded p-3 space-y-2">
+    <section className="border border-base-content border-dashed rounded p-3 space-y-2">
       <h6 className="font-bold">Credit</h6>
       <ul>
         <li>タイトル: {title}</li>
@@ -82,6 +82,6 @@ export default function Credit({ workType, title, author, artists, url, year, li
           ? <Markdown className="prose dark:!prose-invert break-words">{license}</Markdown>
           : <p>ライセンスが不明です。</p>
       }
-    </div>
+    </section>
   );
 }

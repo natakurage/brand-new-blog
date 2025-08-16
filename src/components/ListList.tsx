@@ -24,14 +24,16 @@ export default function ListList<T extends BlogItem>(
             key={list.id}
             className="relative p-4 btn-ghost rounded-lg overflow-hidden"
           >
-            <h2 className="text-xl font-bold">
-              {list.title}
-            </h2>
-            {list.description && <p>{list.description.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>}
-            <Link href={`/${list.typeUrl}/${list.id}`} className="absolute w-full h-full top-0 left-0 z-1" />
+            <article>
+              <h2 className="text-xl font-bold">
+                {list.title}
+              </h2>
+              {list.description && <p>{list.description.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>}
+              <Link href={`/${list.typeUrl}/${list.id}`} className="absolute w-full h-full top-0 left-0 z-1" />
+            </article>
           </li>
         ))}
-      </ul>,
+      </ul>
       <Paginator
         basePath={basePath}
         page={page}

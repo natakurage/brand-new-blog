@@ -34,52 +34,55 @@ export default async function ShareButtons({ shareText, shareUrl, fullText }: { 
       name: "X",
       url: xShareURL,
       icon: <FaXTwitter size={24} />,
-      className: "bg-black text-white flex-1"
+      className: "bg-black text-white"
     },
     {
       name: "Bluesky",
       url: bskyShareURL,
       icon: <FaBluesky size={24} />,
-      className: "bg-[#0085FF] text-white flex-1"
+      className: "bg-[#0085FF] text-white"
     },
     {
       name: "Misskey",
       url: misskeyShareURL,
       icon: <SiMisskey size={24} />,
-      className: "bg-[#B4E900] text-gray-700 flex-1"
+      className: "bg-[#B4E900] text-gray-700"
     },
     {
       name: "はてなブックマーク",
       url: hatenaShareURL,
       icon: <SiHatenabookmark size={24} />,
-      className: "bg-[#00A4FF] text-white flex-1"
+      className: "bg-[#00A4FF] text-white"
     },
     {
       name: "LINE",
       url: lineShareURL,
       icon: <FaLine size={24} />,
-      className: "bg-[#00B900] text-white flex-1"
+      className: "bg-[#00B900] text-white"
     }
   ];
 
   return (
-    <div className="flex flex-wrap gap-2 justify-between">
+    <ul className="flex flex-wrap gap-2 justify-between">
       {socialButtons.map((button) => (
-        <Link
-          key={button.name}
-          href={button.url.toString()}
-          aria-label={`Share to ${button.name}`}
-          target="_blank"
-          className={`btn ${button.className}`}
-        >
-          {button.icon}
-        </Link>
+        <li key={button.name} className="flex-1">
+          <Link
+            href={button.url.toString()}
+            aria-label={`Share to ${button.name}`}
+            target="_blank"
+            className={`btn ${button.className} w-full`}
+          >
+            {button.icon}
+          </Link>
+        </li>
       ))}
-      <CopyButton
-        url={shareUrl}
-        fullText={fullText}
-        className="btn btn-neutral text-white flex-1"
-      />
-    </div>
+      <li>
+        <CopyButton
+          url={shareUrl}
+          fullText={fullText}
+          className="btn btn-neutral text-white flex-1"
+        />
+      </li>
+    </ul>
   );
 }

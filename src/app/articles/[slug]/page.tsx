@@ -12,7 +12,7 @@ import ShareButtons from "@/components/ShareButtons";
 import ArticleBody from "@/components/ArticleBody";
 import removeMd from "remove-markdown";
 import HeaderTime from "@/components/HeaderTime";
-import HeaderTags from "@/components/HeaderTags";
+import TagList from "@/components/TagList";
 import HeaderAuthor from "@/components/HeaderAuthor";
 import Credit from "@/components/Credit";
 import Script from "next/script";
@@ -140,7 +140,7 @@ export default async function ArticlePage(
         <article>
           <header className="space-y-5">
             <h1 className="text-4xl font-bold">{post.title}</h1>
-            <HeaderTags tags={post.tags || []} />
+            <TagList tags={post.tags || []} />
             <div className="text-sm flex flex-wrap">
               <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
               <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} className="ms-auto" />

@@ -18,7 +18,7 @@ import ArticleBody from "@/components/ArticleBody";
 import HLSAudioPlayer from "@/components/HLSAudioPlayer";
 import removeMd from "remove-markdown";
 import HeaderTime from "@/components/HeaderTime";
-import HeaderTags from "@/components/HeaderTags";
+import TagList from "@/components/TagList";
 import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/licenses";
@@ -126,7 +126,7 @@ export default async function SongPage(
           <header className="space-y-5">
             <h1 className="text-4xl font-bold">{song.title}</h1>
             <div>by {song.artist.join(", ")}</div>
-            <HeaderTags tags={song.tags || []} />
+            <TagList tags={song.tags || []} />
             <div className="text-sm flex flex-wrap">
               <HeaderTime createdAt={song.createdAt} className="ms-auto" />
             </div>

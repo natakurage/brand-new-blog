@@ -2,6 +2,7 @@ import { BlogPost } from "@/lib/models";
 import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
 import removeMd from "remove-markdown";
+import TagList from "./TagList";
 
 export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
   return (
@@ -11,7 +12,7 @@ export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
           key={post.slug}
           className="card shadow-lg hover:shadow-xl card-compact rounded-lg break-words"
         >
-          <div>
+          <article>
             <div className="card-body">
               <h2 className="card-title line-clamp-1 md:line-clamp-2">
                 {post.title}
@@ -19,26 +20,14 @@ export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {
               <p className="line-clamp-3">
                 {removeMd(post.content).slice(0, 100)}...
               </p>
-              <div className="flex gap-2 flex-wrap">
-              {
-                post.tags?.map((tag) => (
-                  <Link
-                    key={tag.slug}
-                    href={`/tags/${tag.slug}`}
-                    className="badge badge-neutral link link-hover relative z-10"
-                  >
-                    # {tag.name}
-                  </Link>
-                ))
-              }
-              </div>
+              <TagList tags={post.tags ?? []} className="z-10" />
               <div className="flex flex-row gap-1 justify-end">
                 <MdAccessTime className="my-auto" />
                 <time dateTime={new Date(post.createdAt).toISOString()}>{new Date(post.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
               </div>
             </div>
             <Link href={`/articles/${post.slug}`} className="absolute w-full h-full top-0 left-0 z-1" />
-          </div>
+          </article>
         </li>
       ))}
     </ul>

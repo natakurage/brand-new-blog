@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MdAccessTime } from "react-icons/md";
 import Paginator from "./Paginator";
 import removeMd from "remove-markdown";
+import TagList from "./TagList";
 
 interface ItemListProps {
   items: BlogItem[];
@@ -27,30 +28,20 @@ export default function ItemList(
             key={item.slug}
             className="relative p-4 btn-ghost shadow-lg hover:shadow-xl rounded-lg break-words"
           >
-            <h2 className="text-xl font-bold">
-              {item.title}
-            </h2>
-            <p>{removeMd(item.content).slice(0, 100)}...</p>
-            <div className="space-x-2">
-            {
-              item.tags?.map((tag) => (
-                <Link
-                  key={tag.slug}
-                  href={`/tags/${tag.slug}`}
-                  className="badge badge-neutral link link-hover relative z-10"
-                >
-                  # {tag.name}
-                </Link>
-              ))
-            }
-            </div>
-            {
-              showDate && <div className="flex flex-row gap-1 justify-end">
-                <MdAccessTime className="my-auto" />
-                <time dateTime={new Date(item.createdAt).toISOString()}>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
-              </div>
-            }
-            <Link href={`/${item.typeUrl}/${item.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
+            <article>
+              <h2 className="text-xl font-bold">
+                {item.title}
+              </h2>
+              <p>{removeMd(item.content).slice(0, 100)}...</p>
+              <TagList tags={item.tags ?? []} />
+              {
+                showDate && <div className="flex flex-row gap-1 justify-end">
+                  <MdAccessTime className="my-auto" />
+                  <time dateTime={new Date(item.createdAt).toISOString()}>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+                </div>
+              }
+              <Link href={`/${item.typeUrl}/${item.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
+            </article>
           </li>
         ))}
       </ul>
