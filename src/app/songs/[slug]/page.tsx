@@ -84,7 +84,7 @@ function DownloadLinkTable({ urls }: { urls: string[] }) {
       "url": flac_url,
       "sig_url": flac_sig_url
     }
-  ];
+  ].filter(format => format.url);
 
   return (
     <table className="table w-full text-center bg-base-100 text-base-content rounded-box border border-base-300">
@@ -108,9 +108,11 @@ function DownloadLinkTable({ urls }: { urls: string[] }) {
               </a>
             </td>
             <td>
-              [<a href={format.sig_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary">
+            {
+              format.sig_url ? <>[<a href={format.sig_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary">
                 Signature
-              </a>]
+              </a>]</> : "Missing"
+            }
             </td>
           </tr>
         ))
