@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
-import { MdMusicNote } from "react-icons/md";
+import { MdMusicNote, MdDownload } from "react-icons/md";
 import Link from "next/link";
 import Script from "next/script";
 import { getShareInfo, Song } from "@/lib/models";
@@ -11,7 +11,7 @@ import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import React, { Suspense } from "react";
 import ListNavigator from "@/components/ListNavigator";
-import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt, FaFileSignature } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
 import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
 import ArticleBody from "@/components/ArticleBody";
@@ -56,6 +56,70 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   };
 }
 
+function separate_urls(urls: string[]) {
+  const youtube_url = urls.find((url) => isYouTube(url));
+  const mp3_url = urls.find((url) => url.endsWith(".mp3"));
+  const flac_url = urls.find((url) => url.endsWith(".flac"));
+  const mp3_sig_url = urls.find((url) => url.endsWith(".mp3.sig"));
+  const flac_sig_url = urls.find((url) => url.endsWith(".flac.sig"));
+
+  const other_urls = urls.filter((url) => ![
+    youtube_url, mp3_url, flac_url, mp3_sig_url, flac_sig_url
+  ].includes(url));
+
+  return { youtube_url, mp3_url, flac_url, mp3_sig_url, flac_sig_url, other_urls };
+}
+
+function DownloadLinkTable({ urls }: { urls: string[] }) {
+  const { mp3_url, flac_url, mp3_sig_url, flac_sig_url } = separate_urls(urls);
+
+  const formats = [
+    {
+      "name": "MP3 (192kbps, 44100 Hz)",
+      "url": mp3_url,
+      "sig_url": mp3_sig_url
+    },
+    {
+      "name": "FLAC (24 bit, 44100 Hz)",
+      "url": flac_url,
+      "sig_url": flac_sig_url
+    }
+  ];
+
+  return (
+    <table className="table w-full text-center bg-base-100 text-base-content rounded-box border border-base-300">
+      <thead>
+        <tr>
+          <th>Format</th>
+          <th><MdDownload className="inline align-middle" />Download</th>
+          <th><FaFileSignature className="inline align-middle" />Signature</th>
+        </tr>
+      </thead>
+      <tbody>
+      {
+        formats.map(format => (
+          <tr key={format.name}>
+            <td className="text-lg font-bold">
+              {format.name}
+            </td>
+            <td className="p-0">
+              <a href={format.url} target="_blank" rel="noopener noreferrer" className="btn btn-accent w-full">
+                <MdDownload size={32} />
+              </a>
+            </td>
+            <td>
+              [<a href={format.sig_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary">
+                Signature
+              </a>]
+            </td>
+          </tr>
+        ))
+      }
+      </tbody>
+    </table>
+  );
+}
+
 export async function generateStaticParams() {
   const slugs = await new SongManager().getAllSlugs();
   return slugs.map((slug) => ({ slug, key: undefined }));
@@ -98,6 +162,9 @@ export default async function SongPage(
     notFound();
   }
 
+  const { youtube_url, mp3_url, flac_url, other_urls } = separate_urls(song.url ?? []);
+  const downloadable = !!(mp3_url || flac_url);
+
   const modifiedLyrics = song.lyrics?.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n');
 
   const shareInfo = await getShareInfo(song);
@@ -131,49 +198,52 @@ export default async function SongPage(
               <HeaderTime createdAt={song.createdAt} className="ms-auto" />
             </div>
           </header>
+          { youtube_url && <YouTubePlayer vid={getYouTubeId(youtube_url) || ""} /> }
+          <ul>
             {
-              song.url && <div>
-                {
-                  // youtubeリンクがあれば埋め込む
-                  song.url.find((url) => isYouTube(url)) &&
-                  <YouTubePlayer vid={getYouTubeId(song.url.find((url) => isYouTube(url))!) || ""} />
-                }
-                <ul>
-                  {
-                    song.url.map((url) => (
-                      <li key={url} className="text-sm text-primary flex flex-row">
-                        <FaExternalLinkAlt />
-                        <Link href={url} target="_blank" rel="noopener noreferrer">
-                          {url}
-                        </Link>
-                      </li>
-                    ))
-                  }
-                </ul>
-              </div>
+              other_urls.map((url) => (
+                <li key={url} className="text-sm text-primary flex flex-row">
+                  <FaExternalLinkAlt />
+                  <Link href={url} target="_blank" rel="noopener noreferrer">
+                    {url}
+                  </Link>
+                </li>
+              ))
             }
-            {
-              song.streamUrl && <section className="space-y-2">
-                <h2 className="text-2xl font-bold"><MdMusicNote className="my-auto inline" />ここで全部聴く</h2>
-                <HLSAudioPlayer url={song.streamUrl} />
-              </section>
-            }
-            <ArticleBody content={song.content} />
-            {
-              song.credit && <ul className="text-right">
-                {
-                  song.credit.map((credit, index) => (
-                    <li key={index}>{credit}</li>
-                  ))
-                }
-              </ul>
-            }
-            <h2 className="text-2xl font-bold">Lyrics</h2>
-            {
-              song.lyrics && <Markdown className="prose dark:!prose-invert break-words">
-                {modifiedLyrics}
-              </Markdown>
-            }
+          </ul>
+          {
+            song.streamUrl && <section className="space-y-2">
+              <h2 className="text-2xl font-bold"><MdMusicNote className="my-auto inline" />ここで全部聴く</h2>
+              <HLSAudioPlayer url={song.streamUrl} />
+            </section>
+          }
+          {
+            downloadable && <section className="space-y-2">
+              <h2 className="text-2xl font-bold">
+                <MdDownload className="inline align-middle" />
+                Download
+              </h2>
+              <DownloadLinkTable urls={song.url ?? []} />
+            </section>
+          }
+          <ArticleBody content={song.content} />
+          {
+            song.credit && <ul className="text-right">
+              {
+                song.credit.map((credit, index) => (
+                  <li key={index}>{credit}</li>
+                ))
+              }
+            </ul>
+          }
+          {
+            song.lyrics && <section className="space-y-2">
+              <h2 className="text-2xl font-bold">Lyrics</h2>
+                <Markdown className="prose dark:!prose-invert break-words">
+                  {modifiedLyrics}
+                </Markdown>
+            </section>
+          }
           <footer className="space-y-5">
             <Suspense fallback={<div>Loading...</div>}>
               <ListNavigator slug={slug} managerType="Album" useSlug />
