@@ -1,8 +1,9 @@
 import { loadGlobalSettings } from "@/lib/cms";
 import Link from "next/link";
-import { FaXTwitter, FaGithub, FaBluesky, FaYoutube } from "react-icons/fa6";
+import { FaXTwitter, FaGithub, FaBluesky, FaYoutube, FaKey } from "react-icons/fa6";
 import { IoIosGlobe } from "react-icons/io";
 import AvatarIcon from "./AvatarIcon";
+import { GiOstrich } from "react-icons/gi";
 
 function SocialIcon({ site, href }: { site: string; href: string }) {
   const icons = new Map([
@@ -11,6 +12,8 @@ function SocialIcon({ site, href }: { site: string; href: string }) {
     ["GitHub", <FaGithub key={"GitHub"} size={24} />],
     ["Bluesky", <FaBluesky key={"Bluesky"} size={24} />],
     ["YouTube", <FaYoutube key={"YouTube"} size={24} />],
+    ["Keyoxide", <FaKey key={"Keyoxide"} size={24} />],
+    ["Nostr (njump.me)", <GiOstrich key={"Nostr"} size={24} />],
   ]);
   return (
     icons.has(site) && <Link
@@ -57,7 +60,7 @@ export async function Footer() {
       </nav>
       <nav>
         <h6 className="footer-title">Social</h6>
-        <div className="grid grid-flow-col gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           {
             data.socials.map(({ name, href }) => (
               <SocialIcon key={name} site={name} href={href} />
