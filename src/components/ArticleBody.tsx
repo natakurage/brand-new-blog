@@ -118,7 +118,32 @@ export default function ArticleBody({ content, showToc = false, className }: { c
               </SyntaxHighlighter>
             </div>
           );
-        }
+        },
+        blockquote: ({ children }) => {
+          const childrenArray = React.Children.toArray(children);
+          const content: React.ReactNode[] = [];
+          let source = null;
+          childrenArray.forEach((child) => {
+            if (React.isValidElement(child) && child.props.node.tagName === "p") {
+              const text = child.props.children;
+              if (typeof text === "string" && text.trim().startsWith("--")) {
+                source = text.replace(/^--/, "").trim();
+              } else {
+                content.push(child);
+              }
+            }
+          });
+          return (
+            <figure>
+              <blockquote>
+                {content}
+              </blockquote>
+              <figcaption className="italic text-right">
+                {source}
+              </figcaption>
+            </figure>
+          );
+        },
       }}
     >
       {content}
