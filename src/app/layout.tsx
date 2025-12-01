@@ -47,7 +47,7 @@ export default async function RootLayout({
       <body>
         <ThemeProvider>
           <NextTopLoader
-            color="#FF50DF"
+            color="#ED5126"
           />
           <NavBar
             topLogo={data.topLogo}

@@ -37,7 +37,7 @@ export function NavBar({
             <Image src={topLogo} alt="site logo" width={48} height={48} />
           )}
           <span className="hidden sm:block">{siteName}</span>
-          {isDevelopment && <span className="badge badge-secondary ml-2">DEV MODE</span>}
+          {isDevelopment && <span className="badge badge-accent ml-2">DEV MODE</span>}
         </Link>
       </div>
       {

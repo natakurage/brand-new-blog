@@ -4,7 +4,6 @@
 
 :root {
   color-scheme: light;
-  @apply bg-base-200;
 }
 
 :root[data-theme="dark"] {

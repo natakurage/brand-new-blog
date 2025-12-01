@@ -18,7 +18,7 @@ export default function AvatarIcon({ donate, donateURL, avatar, className }: {
   return (
     <div className="tooltip" data-tip={donate}>
       <div className="avatar">
-        <div className={`ring-accent hover:ring-secondary ring-offset-base-100 rounded-full ring ring-offset-0 ${className}`}>
+        <div className={`ring-primary hover:ring-secondary ring-offset-base-100 rounded-full ring ring-offset-0 ${className}`}>
           {
             donateURL ? (
               <Link
