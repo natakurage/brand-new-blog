@@ -143,7 +143,7 @@ export default async function ArticlePage(
             <TagList tags={post.tags || []} />
             <div className="text-sm flex flex-wrap">
               <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
-              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} className="ms-auto" />
+              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} length={removeMd(post.content).length} className="ms-auto" />
             </div>
           </header>
           <ArticleBody content={post.content} showToc={post.showToc} className="my-12 sm:my-24" />

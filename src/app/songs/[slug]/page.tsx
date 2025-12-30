@@ -197,7 +197,7 @@ export default async function SongPage(
             <div>by {song.artist.join(", ")}</div>
             <TagList tags={song.tags || []} />
             <div className="text-sm flex flex-wrap">
-              <HeaderTime createdAt={song.createdAt} className="ms-auto" />
+              <HeaderTime createdAt={song.createdAt} length={removeMd(song.content).length} className="ms-auto" />
             </div>
           </header>
           { youtube_url && <YouTubePlayer vid={getYouTubeId(youtube_url) || ""} /> }
