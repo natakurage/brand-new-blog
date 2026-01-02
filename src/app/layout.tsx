@@ -5,7 +5,7 @@ import { loadGlobalSettings } from "@/lib/cms";
 import NextTopLoader from "nextjs-toploader";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
-import { VisualEditing } from "next-sanity";
+import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
 import PreviewWarning from "@/components/PreviewWarning";
 import SideBar from "@/components/SideBar";
