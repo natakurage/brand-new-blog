@@ -11,7 +11,7 @@ import type {
 import { ResolveReferences } from "./types";
 
 type SanityBlogPostResolved = ResolveReferences<
-  SanityBlogPost, { tags?: SanityTag[]; }
+  SanityBlogPost, { tags?: SanityTag[], image?: string; }
 >;
 
 type SanitySongResolved = ResolveReferences<
@@ -193,14 +193,15 @@ abstract class BlogDataManager<DataType extends BlogData> {
 
 export class BlogPostManager extends BlogDataManager<BlogPost> {
   contentType = "blogPost";
-  additionalResolves = [];
+  additionalResolves = [groq`"image": image.asset->url`];
   override async fromEntry(entry: SanityBlogPostResolved): Promise<BlogPost> {
-    const { _id, title, slug, body, license, showToc, licenseSelect, tags, _createdAt, _updatedAt } = entry;
+    const { _id, title, slug, image, body, license, showToc, licenseSelect, tags, _createdAt, _updatedAt } = entry;
     return {
       typeUrl: "articles",
       id: _id,
       title,
       slug: slug.current,
+      mainImage: image,
       content: body,
       createdAt: _createdAt,
       updatedAt: _updatedAt,

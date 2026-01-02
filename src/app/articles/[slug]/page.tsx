@@ -17,6 +17,7 @@ import HeaderAuthor from "@/components/HeaderAuthor";
 import Credit from "@/components/Credit";
 import Script from "next/script";
 import { ccDeedUrls } from "@/lib/licenses";
+import Image from "next/image";
 
 const getPost = cache((slug: string, isEnabled: boolean) => (
   new BlogPostManager().getBySlug(slug, isEnabled)
@@ -33,6 +34,8 @@ export async function generateMetadata ({ params }: { params: { slug: string } }
   const title = post.title + " - " + data.siteName;
   const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
+  if (post.mainImage)
+    ogpImageUrl.searchParams.set("bgImage", post.mainImage);
   return {
     title: (isEnabled ? "(プレビュー)" : "") + title,
     openGraph: {
@@ -60,6 +63,8 @@ async function JsonLD({ post }: { post: BlogPost }) {
   const data = await loadGlobalSettings();
   const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
   ogpImageUrl.searchParams.set("title", post.title);
+  if (post.mainImage)
+    ogpImageUrl.searchParams.set("bgImage", post.mainImage);
   const jsonLd: WithContext<BlogPosting> = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -138,6 +143,18 @@ export default async function ArticlePage(
       <JsonLD post={post} />
       <main className="space-y-5">
         <article>
+          {
+            post.mainImage && (
+              <Image
+                src={post.mainImage}
+                alt={post.title}
+                width={800}
+                height={400}
+                priority
+                className="w-full h-auto mb-20"
+              />
+            )
+          }
           <header className="space-y-5">
             <h1 className="text-4xl font-bold">{post.title}</h1>
             <TagList tags={post.tags || []} />

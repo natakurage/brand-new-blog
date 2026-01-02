@@ -8,33 +8,23 @@ export async function GET(request: NextRequest) {
   const data = await loadGlobalSettings();
   const { searchParams } = new URL(request.url);
   const title = searchParams.get('title') || 'Default Title';
+  const bgImageUrl = searchParams.get('bgImage') || null;
   const absIconUrl = new URL(data.avatar ?? "", request.url).href;
 
   return new ImageResponse(
     (
-      <div
-        style={{
-          fontSize: 60,
-          color: '#dddddd',
-          background: '#196355',
-          padding: '50px',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          fontFamily: '"Noto Sans JP"',
-        }}
-      >
-        <div style={{
-          background: '#111111',
-          width: '100%',
-          height: '100%',
-          borderRadius: 20,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <div tw="mb-8 mx-4">{title}</div>
+      <div tw="w-full h-full p-16 text-6xl text-white bg-[#ED5126] flex">
+        <div tw="w-full h-full bg-[#020C15] flex flex-col rounded-3xl items-center justify-center relative">
+          {
+            /* eslint-disable-next-line @next/next/no-img-element */
+            bgImageUrl && <img
+              src={bgImageUrl}
+              alt="Background"
+              tw="absolute inset-0 w-full h-full rounded-3xl"
+              style={{ filter: "brightness(0.7) blur(5px)", objectFit: "cover" }}
+            />
+          }
+          <div tw="mb-8 mx-4 text-center">{title}</div>
           <div tw="flex">
             {
               /* eslint-disable-next-line @next/next/no-img-element */

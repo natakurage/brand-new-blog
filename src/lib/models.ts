@@ -60,6 +60,7 @@ export interface ItemList<T extends BlogItem> extends BlogData {
 
 export interface BlogPost extends BlogItem {
   typeUrl: "articles",
+  mainImage?: string;
   content: string,
   createdAt: string,
   updatedAt: string,

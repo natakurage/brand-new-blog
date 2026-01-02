@@ -43,6 +43,8 @@ export async function fetchMetadata(url: string) {
     }
     const bunnerImgUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
     bunnerImgUrl.searchParams.set("title", post.title);
+    if ("mainImage" in post && post.mainImage && typeof post.mainImage === "string")
+      bunnerImgUrl.searchParams.set("bgImage", post.mainImage);
     metadata.metadata.title = post.title;
     metadata.metadata.description = removeMd(post.content).slice(0, 100);
     metadata.metadata.banner = bunnerImgUrl.href;
