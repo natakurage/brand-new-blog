@@ -1,4 +1,4 @@
 export * from "./managers";
 export * from "./globalSettings";
 export * from "./client";
-export const cms: "contentful" | "sanity" = "sanity";
+export const cms = "sanity";

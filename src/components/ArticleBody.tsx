@@ -10,7 +10,6 @@ import React from "react";
 import Image from "next/image";
 import LinkProcessor from "./LinkProcessor";
 import "katex/dist/katex.min.css";
-import { cms } from "@/lib/cms";
 import CopyCodeButton from "./CopyCodeButton";
 
 export default function ArticleBody({ content, showToc = false, className }: { content: string, showToc?: boolean, className?: string }) {
@@ -65,11 +64,7 @@ export default function ArticleBody({ content, showToc = false, className }: { c
                 React.Children.map(children, (child) => {
                   if (React.isValidElement(child)) {
                     if (child.type === "img") {
-                      const { alt } = child.props;
-                      let { src } = child.props;
-                      if (!src.startsWith("https") && cms === "contentful") {
-                        src = `https:${src}`;
-                      }
+                      const { alt, src } = child.props;
                       return (
                         <Image
                           key={src}

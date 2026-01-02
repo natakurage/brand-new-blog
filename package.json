@@ -6,16 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "contentful-export": "contentful space export --config export-config.json",
-    "contentful-generate-types": "cf-content-types-generator contentful-export.json --out @types/contentful --v10 --response"
+    "lint": "next lint"
   },
   "dependencies": {
     "@sanity/client": "^7.6.0",
     "@vercel/og": "^0.6.8",
     "cheerio": "^1.0.0",
-    "contentful": "^11.1.4",
-    "contentful-management": "^11.40.5",
     "hls.js": "^1.6.5",
     "next": "^14.2.23",
     "next-sanity": "^9.12.2",
@@ -41,8 +37,6 @@
     "@types/react-dom": "^18",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/rss": "^0.0.32",
-    "cf-content-types-generator": "^2.15.5",
-    "contentful-cli": "^3.7.3",
     "daisyui": "^4.12.13",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
