@@ -7,6 +7,9 @@ export async function generateMetadata ({ searchParams }: { searchParams: { q: s
   const data = await loadGlobalSettings();
   return {
     title: `"${q}"の検索結果` + " - " + data.siteName,
+    robots: {
+      index: false
+    }
   };
 }
 
