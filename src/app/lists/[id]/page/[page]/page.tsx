@@ -32,15 +32,16 @@ export default async function ListsPage( { params } : { params: { id: string, pa
   if (!list) { 
     notFound();
   }
-  const posts = list.items;
+  const length = list.items.length;
+  const posts = list.items.slice((pageNum - 1) * 10, pageNum * 10);
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">記事リスト &ldquo;{list.title}&rdquo;</h1>
       <p className="text-sm">{list.description}</p>
       <ItemList
-        basePath={`/articles/${list.id}`}
+        basePath={`/lists/${list.id}`}
         items={posts}
-        total={posts.length}
+        total={length}
         page={pageNum}
         limit={10}
         suffix={`?key=${list.id}`}
