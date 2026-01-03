@@ -8,7 +8,7 @@ import { constants } from "@/lib/cmsUtils";
 
 export default function ListItem({ item, suffix, showLength = true, showDate = true }: { item: BlogItem; suffix?: string; showLength?: boolean; showDate?: boolean }) {
   return (
-    <article className="relative p-4 btn-ghost shadow-lg hover:shadow-xl rounded-lg wrap-break-word">
+    <article className="relative p-4 shadow-lg hover:bg-base-content/20 hover:shadow-xl rounded-lg wrap-break-word">
       <h2 className="text-xl font-bold">
         {item.title}
       </h2>

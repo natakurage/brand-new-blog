@@ -21,6 +21,13 @@
   --color-accent: #02DEE5;
   --color-neutral: #1A3752;
   --color-base-100: #0F1A29;
+  --color-base-200: color-mix(in oklch, var(--color-base-100), black 7%);
+  --color-base-300: color-mix(in oklch, var(--color-base-100), black 14%);
+  --color-primary-content: color-mix(in oklch, var(--color-primary), black 75%);
+  --color-secondary-content: color-mix(in oklch, var(--color-secondary), white 75%);
+  --color-accent-content: color-mix(in oklch, var(--color-accent), black 75%);
+  --color-neutral-content: color-mix(in oklch, var(--color-neutral), white 75%);
+  --color-base-content: color-mix(in oklch, var(--color-base-100), white 75%);
 };
 
 :root {
