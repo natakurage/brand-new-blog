@@ -30,7 +30,7 @@ function SocialIcon({ site, href }: { site: string; href: string }) {
 export async function Footer() {
   const data = await loadGlobalSettings();
   return (
-    <footer className="footer bg-neutral text-neutral-content p-10">
+    <footer className="footer md:footer-horizontal bg-neutral text-neutral-content p-10">
       <aside>
         <div className="flex flex-wrap gap-4">
           <AvatarIcon

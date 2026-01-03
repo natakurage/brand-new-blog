@@ -45,7 +45,7 @@ export function NavBar({
             { theme === "dark" && <MdDarkMode size={24} /> }
             { theme === "system" && <MdComputer size={24} /> }
           </div>
-          <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+          <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow">
             <li><a onClick={() => setTheme("light")}>Light</a></li>
             <li><a onClick={() => setTheme("dark")}>Dark</a></li>
             <li><a onClick={() => setTheme("system")}>System Default</a></li>

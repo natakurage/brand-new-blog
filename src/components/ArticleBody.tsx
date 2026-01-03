@@ -20,7 +20,7 @@ function isElementOfType<T extends ElementType>(node: React.ReactNode, tagName: 
 export default function ArticleBody({ content, showToc = false, className }: { content: string, showToc?: boolean, className?: string }) {
   return (
     <Markdown
-      className={`prose max-w-none dark:!prose-invert break-words ${className}`}
+      className={`prose max-w-none dark:prose-invert! wrap-break-word ${className}`}
       remarkPlugins={[remarkGfm, remarkMath]}
       rehypePlugins={[rehypeSlug, rehypeKatex, [rehypeToc, {
         headings: ["h2", "h3"],
@@ -70,7 +70,7 @@ export default function ArticleBody({ content, showToc = false, className }: { c
                 alt={alt || "Article image"}
                 fill
                 sizes="100%"
-                className="object-contain !relative !w-auto mx-auto"
+                className="object-contain relative! w-auto! mx-auto"
               />
               {
                 title && <figcaption className="italic text-center">{title}</figcaption>

@@ -16,8 +16,8 @@ export default function SearchBar({ onSubmit }: { onSubmit?: () => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label className="input input-bordered flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="flex">
+      <label className="input w-full flex items-center gap-2">
         <input
           type="text"
           className="grow w-full overflow-x-auto"
