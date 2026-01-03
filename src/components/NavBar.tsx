@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { GiHamburgerMenu } from "react-icons/gi";
 import SearchBar from "./SearchBar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MdComputer, MdDarkMode, MdLightMode, MdRssFeed } from "react-icons/md";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useMounted } from "@/app/hooks/useMounted";
 
 export function NavBar({
   topLogo,
@@ -23,11 +24,7 @@ export function NavBar({
 }) {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   return (
     <div className="navbar sticky top-0 z-50 backdrop-blur-lg">

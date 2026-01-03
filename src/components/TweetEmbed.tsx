@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useTheme } from 'next-themes';
+import { useMounted } from '@/app/hooks/useMounted';
 
 export default function TweetEmbed({ url }: { url: string }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const mounted = useMounted();
 
   useEffect(() => {
     if (document.getElementById('twitter-wjs')) return;
@@ -12,16 +15,17 @@ export default function TweetEmbed({ url }: { url: string }) {
     script.async = true;
     script.id = 'twitter-wjs';
     document.body.appendChild(script);
-
-    setIsDarkMode(document.documentElement.dataset.theme === 'dark');
     
     return () => {
-      document.body.removeChild(script);
+      const scriptElement = document.getElementById('twitter-wjs');
+      if (scriptElement) {
+        document.body.removeChild(scriptElement);
+      }
     };
   }, []);
 
   return (
-    <blockquote className="twitter-tweet" data-theme={isDarkMode ? "dark" : "light"}>
+    <blockquote className="twitter-tweet" data-theme={mounted && resolvedTheme === 'dark' ? "dark" : "light"}>
       <a href={url}>{url}</a>
     </blockquote>
   );
