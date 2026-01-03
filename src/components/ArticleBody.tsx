@@ -50,14 +50,6 @@ export default function ArticleBody({ content, showToc = false, className }: { c
         }
       }]]}
       components={{
-        a: ({ node, href, children, ...props }) => {
-          const child = node?.children[0];
-          if (href == null || child?.type === "text" && child.value !== href) {
-            return <a href={href} {...props}>{children}</a>;
-          }
-          // 生のリンクのみLinkProcessorを使用
-          return <LinkProcessor href={href}>{children}</LinkProcessor>;
-        },
         img: ({ src, alt, title }) => {
           if (typeof src !== "string") {
             return <span>Invalid image</span>;
@@ -79,13 +71,21 @@ export default function ArticleBody({ content, showToc = false, className }: { c
           );
         },
         p: ({ node, children, ...props }) => {
-          // 単独の<a>を含む<p>の場合は<p>で囲まない
+          // 単独の<a>を含む<p>の場合
           const child = node?.children[0];
           if (node?.children.length === 1 && isElement(child, "a")) {
-            return <>{children}</>;
+            const href = child.properties?.href?.toString();
+            const _child = child.children[0];
+            if (_child.type === "text") {
+              if (href != null) {
+                return <LinkProcessor href={href}>{_child.value}</LinkProcessor>;
+              }
+              return <a>{_child.value}</a>;
+            }
+            return <a></a>;
           }
           const childrenContainsImg = node?.children.some((child => isElement(child, "img")));
-          // 画像が含まれている場合も<p>で囲まない
+          // 画像が含まれている場合<p>で囲まない
           if (childrenContainsImg) {
             return <>{children}</>;
           };
