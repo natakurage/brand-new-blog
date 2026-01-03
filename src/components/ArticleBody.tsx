@@ -6,14 +6,15 @@ import remarkMath from "remark-math";
 import rehypeToc from "rehype-toc";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import React from "react";
+import { ElementType, isValidElement, ReactElement, ComponentProps, Children } from "react";
 import Image from "next/image";
+import { isElement } from "hast-util-is-element";
 import LinkProcessor from "./LinkProcessor";
 import "katex/dist/katex.min.css";
 import CopyCodeButton from "./CopyCodeButton";
 
-function isElementOfType<T extends React.ElementType>(node: React.ReactNode, tagName: T): node is React.ReactElement<React.ComponentProps<T>, T> {
-  return React.isValidElement(node) && node.type === tagName;
+function isElementOfType<T extends ElementType>(node: React.ReactNode, tagName: T): node is ReactElement<ComponentProps<T>, T> {
+  return isValidElement(node) && node.type === tagName;
 }
 
 export default function ArticleBody({ content, showToc = false, className }: { content: string, showToc?: boolean, className?: string }) {
@@ -49,49 +50,46 @@ export default function ArticleBody({ content, showToc = false, className }: { c
         }
       }]]}
       components={{
-        p: ({ children }) => {
-          // nullならnullを返す
-          if (children == null) return null;
-          // 単独の<a>を含む<p>の場合
-          if (React.Children.count(children) === 1 && isElementOfType(children, "a")) {
-            const href = children.props.href;
-            if (href == null) return <p>{children}</p>;
-              return <LinkProcessor href={href}>
-                {children.props.children}
-              </LinkProcessor>; 
+        a: ({ node, href, children, ...props }) => {
+          const child = node?.children[0];
+          if (href == null || child?.type === "text" && child.value !== href) {
+            return <a href={href} {...props}>{children}</a>;
           }
-          const childrenContainsImg = React.Children.toArray(children).some((child => isElementOfType(child, "img")));
-          // 画像が含まれていない場合
-          if (!childrenContainsImg) return <p>{children}</p>;
-          // 画像が含まれている場合
+          // 生のリンクのみLinkProcessorを使用
+          return <LinkProcessor href={href}>{children}</LinkProcessor>;
+        },
+        img: ({ src, alt, title }) => {
+          if (typeof src !== "string") {
+            return <span>Invalid image</span>;
+          }
           return (
             <figure className="relative">
+              <Image
+                key={src}
+                src={src}
+                alt={alt || "Article image"}
+                fill
+                sizes="100%"
+                className="object-contain !relative !w-auto mx-auto"
+              />
               {
-                React.Children.map(children, (child) => {
-                  if (isElementOfType(child, "img")) {
-                    const { alt, src } = child.props;
-                    if (typeof src !== "string") {
-                      return child;
-                    }
-                    return (
-                      <Image
-                        key={src}
-                        src={src}
-                        alt={alt ? alt : "Article Image"}
-                        fill
-                        sizes="100%"
-                        className="object-contain !relative !w-auto mx-auto"
-                      />
-                    );
-                  }
-                  if (isElementOfType(child, "em")) {
-                    return <figcaption className="italic text-center">{child.props.children}</figcaption>;
-                  }
-                  return child;
-                })
+                title && <figcaption className="italic text-center">{title}</figcaption>
               }
             </figure>
           );
+        },
+        p: ({ node, children, ...props }) => {
+          // 単独の<a>を含む<p>の場合は<p>で囲まない
+          const child = node?.children[0];
+          if (node?.children.length === 1 && isElement(child, "a")) {
+            return <>{children}</>;
+          }
+          const childrenContainsImg = node?.children.some((child => isElement(child, "img")));
+          // 画像が含まれている場合も<p>で囲まない
+          if (childrenContainsImg) {
+            return <>{children}</>;
+          };
+          return <p {...props}>{children}</p>;
         },
         pre: ({ children }) => {
           if (children == null) return null;
@@ -117,12 +115,12 @@ export default function ArticleBody({ content, showToc = false, className }: { c
           );
         },
         blockquote: ({ children }) => {
-          const childrenArray = React.Children.toArray(children);
+          const childrenArray = Children.toArray(children);
           const content: React.ReactNode[] = [];
           let source = null;
           childrenArray.forEach((child) => {
-            if (isElementOfType(child, "p")) {
-              const text = child.props.children;
+            if (isValidElement<{ children?: React.ReactNode }>(child)) {
+              const text = child.props?.children;
               if (typeof text === "string" && text.trim().startsWith("--")) {
                 source = text.replace(/^--/, "").trim();
               } else {
