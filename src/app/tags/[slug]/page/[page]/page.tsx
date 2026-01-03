@@ -3,7 +3,8 @@ import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata ({ params }: { params: { slug: string, page: number } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string, page: number }> }) {
+  const params = await props.params;
   const { slug, page } = params;
   const tag = await getTagWithCache(slug);
   if (!tag) {
@@ -19,7 +20,8 @@ export async function generateStaticParams() {
   return tags.map((tag) => ({ slug: tag.slug, page: "1" }));
 }
 
-export default async function TagPage({ params }: { params: { slug: string, page: string } }) {
+export default async function TagPage(props: { params: Promise<{ slug: string, page: string }> }) {
+  const params = await props.params;
   const { slug, page } = params;
   const pageNum = Number(page);
   const tag = await getTagWithCache(slug);

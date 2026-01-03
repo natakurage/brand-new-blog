@@ -8,7 +8,8 @@ const getList = cache((id: string) => (
   new PostListManager().get(id, false)
 ));
 
-export async function generateMetadata ({ params }: { params: { id: string, page: string } }) {
+export async function generateMetadata(props: { params: Promise<{ id: string, page: string }> }) {
+  const params = await props.params;
   const data = await loadGlobalSettings();
   const { id } = params;
   const list = await getList(id);
@@ -24,8 +25,8 @@ export async function generateStaticParams() {
   return ids.map((id) => ({ id, page: "1" }));
 }
 
-export default async function ListsPage( { params } : { params: { id: string, page: string } }
-) {
+export default async function ListsPage(props: { params: Promise<{ id: string, page: string }> }) {
+  const params = await props.params;
   const { id, page } = params;
   const pageNum = Number(page);
   const list = await getList(id);

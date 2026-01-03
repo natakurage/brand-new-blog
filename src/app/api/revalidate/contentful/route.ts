@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     pathsToRevalidate.push(...itemsToRevalidate.map(getPath));
   }
   pathsToRevalidate.forEach((p) => revalidatePath(p));
-  tagsToRevalidate.forEach((tag) => revalidateTag(tag));
+  tagsToRevalidate.forEach((tag) => revalidateTag(tag, "max"));
   return NextResponse.json({
     revalidatedPaths: pathsToRevalidate,
     revalidatedTags: tagsToRevalidate,

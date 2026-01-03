@@ -39,7 +39,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isEnabled } = draftMode();
+  const { isEnabled } = await draftMode();
   const isDevelopment = process.env.NODE_ENV === "development";
   const data = await loadGlobalSettings();
   return (

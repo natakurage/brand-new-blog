@@ -3,13 +3,15 @@ import { loadGlobalSettings } from "@/lib/cms";
 import { SongManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: { params: { page: string } }) {
+export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
+  const params = await props.params;
   const data = await loadGlobalSettings();
   const title = "曲一覧 - " + data.siteName + (params.page === "1" ? "" : `: Page ${params.page}`);
   return { title };
 }
 
-export default async function SongsPage({ params }: { params: { page: string } }) {
+export default async function SongsPage(props: { params: Promise<{ page: string }> }) {
+  const params = await props.params;
   const pageNum = Number(params.page);
   const manager = new SongManager();
   const { items: songs, total, limit } = await manager.getNewest({

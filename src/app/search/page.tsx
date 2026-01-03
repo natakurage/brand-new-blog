@@ -2,7 +2,8 @@ import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager } from "@/lib/cms";
 
-export async function generateMetadata ({ searchParams }: { searchParams: { q: string } }) {
+export async function generateMetadata(props: { searchParams: Promise<{ q: string }> }) {
+  const searchParams = await props.searchParams;
   const { q } = searchParams;
   const data = await loadGlobalSettings();
   return {
@@ -13,7 +14,8 @@ export async function generateMetadata ({ searchParams }: { searchParams: { q: s
   };
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: { q: string, page?: string } }) {
+export default async function SearchPage(props: { searchParams: Promise<{ q: string, page?: string }> }) {
+  const searchParams = await props.searchParams;
   const { q, page = 1 } = searchParams;
   const pageNum = Number(page);
   const { items: posts, total, limit } = await new BlogPostManager().fullTextSearch(

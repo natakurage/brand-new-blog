@@ -3,13 +3,15 @@ import { loadGlobalSettings } from "@/lib/cms";
 import { AlbumManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: { params: { page: string } }) {
+export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
+  const params = await props.params;
   const data = await loadGlobalSettings();
   const title = "アルバム一覧 - " + data.siteName + (params.page === "1" ? "" : `: Page ${params.page}`);
   return { title };
 }
 
-export default async function AlbumsPage({ params }: { params: { page: string } }) {
+export default async function AlbumsPage(props: { params: Promise<{ page: string }> }) {
+  const params = await props.params;
   const pageNum = Number(params.page);
   const { items, limit } = await new AlbumManager().getNewest({
     page: pageNum - 1,

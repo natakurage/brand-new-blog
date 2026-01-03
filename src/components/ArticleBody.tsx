@@ -12,6 +12,10 @@ import LinkProcessor from "./LinkProcessor";
 import "katex/dist/katex.min.css";
 import CopyCodeButton from "./CopyCodeButton";
 
+function isElementOfType<T extends React.ElementType>(node: React.ReactNode, tagName: T): node is React.ReactElement<React.ComponentProps<T>, T> {
+  return React.isValidElement(node) && node.type === tagName;
+}
+
 export default function ArticleBody({ content, showToc = false, className }: { content: string, showToc?: boolean, className?: string }) {
   return (
     <Markdown
@@ -46,39 +50,42 @@ export default function ArticleBody({ content, showToc = false, className }: { c
       }]]}
       components={{
         p: ({ children }) => {
+          // nullならnullを返す
           if (children == null) return null;
           // 単独の<a>を含む<p>の場合
-          if (React.Children.count(children) === 1 && React.isValidElement(children) && children.type === "a") {
+          if (React.Children.count(children) === 1 && isElementOfType(children, "a")) {
             const href = children.props.href;
-            if (typeof href === "string") {
+            if (href == null) return <p>{children}</p>;
               return <LinkProcessor href={href}>
                 {children.props.children}
               </LinkProcessor>; 
-            }
           }
-          const childrenContainsImg = React.Children.toArray(children).some((child) => React.isValidElement(child) && child.type === "img");
+          const childrenContainsImg = React.Children.toArray(children).some((child => isElementOfType(child, "img")));
+          // 画像が含まれていない場合
           if (!childrenContainsImg) return <p>{children}</p>;
+          // 画像が含まれている場合
           return (
             <figure className="relative">
               {
                 React.Children.map(children, (child) => {
-                  if (React.isValidElement(child)) {
-                    if (child.type === "img") {
-                      const { alt, src } = child.props;
-                      return (
-                        <Image
-                          key={src}
-                          src={src}
-                          alt={alt ? alt : "Article Image"}
-                          fill
-                          sizes="100%"
-                          className="object-contain !relative !w-auto mx-auto"
-                        />
-                      );
+                  if (isElementOfType(child, "img")) {
+                    const { alt, src } = child.props;
+                    if (typeof src !== "string") {
+                      return child;
                     }
-                    if (child.type === "em") {
-                      return <figcaption className="italic text-center">{child.props.children}</figcaption>;
-                    }
+                    return (
+                      <Image
+                        key={src}
+                        src={src}
+                        alt={alt ? alt : "Article Image"}
+                        fill
+                        sizes="100%"
+                        className="object-contain !relative !w-auto mx-auto"
+                      />
+                    );
+                  }
+                  if (isElementOfType(child, "em")) {
+                    return <figcaption className="italic text-center">{child.props.children}</figcaption>;
                   }
                   return child;
                 })
@@ -87,13 +94,8 @@ export default function ArticleBody({ content, showToc = false, className }: { c
           );
         },
         pre: ({ children }) => {
-          if (children == null) {
-            return null;
-          }
-          if (
-            !React.isValidElement(children)
-            || children.type !== "code"
-          ) {
+          if (children == null) return null;
+          if (!isElementOfType(children, "code")) {
             return <pre>{children}</pre>;
           }
           const className = children.props.className;
@@ -119,7 +121,7 @@ export default function ArticleBody({ content, showToc = false, className }: { c
           const content: React.ReactNode[] = [];
           let source = null;
           childrenArray.forEach((child) => {
-            if (React.isValidElement(child) && child.props.node.tagName === "p") {
+            if (isElementOfType(child, "p")) {
               const text = child.props.children;
               if (typeof text === "string" && text.trim().startsWith("--")) {
                 source = text.replace(/^--/, "").trim();

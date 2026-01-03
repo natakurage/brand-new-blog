@@ -9,7 +9,7 @@ import { loadGlobalSettings } from "@/lib/cms";
 import { SongManager } from "@/lib/cms";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import ListNavigator from "@/components/ListNavigator";
 import { FaExternalLinkAlt, FaFileSignature } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
@@ -27,9 +27,10 @@ const getSong = cache((slug: string, isEnabled: boolean) => (
   new SongManager().getBySlug(slug, isEnabled)
 ));
 
-export async function generateMetadata ({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const data = await loadGlobalSettings();
-  const { isEnabled } = draftMode();
+  const { isEnabled } = await draftMode();
   const { slug } = params;
   const song = await getSong(slug, isEnabled);
   if (!song) {
@@ -154,10 +155,9 @@ function JsonLD({ song }: { song: Song }) {
   );
 }
 
-export default async function SongPage(
-  { params } : { params: { slug: string } }
-) {
-  const { isEnabled } = draftMode();
+export default async function SongPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
+  const { isEnabled } = await draftMode();
   const { slug } = params;
   const song = await getSong(slug, isEnabled);
   if (!song) {
