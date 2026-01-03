@@ -75,14 +75,19 @@ export default function ArticleBody({ content, showToc = false, className }: { c
           const child = node?.children[0];
           if (node?.children.length === 1 && isElement(child, "a")) {
             const href = child.properties?.href?.toString();
-            const _child = child.children[0];
-            if (_child.type === "text") {
-              if (href != null) {
-                return <LinkProcessor href={href}>{_child.value}</LinkProcessor>;
+            let content = null;
+            if (child.children.length === 0) {
+              content = href;
+            } else {
+              const _child = child.children[0];
+              if (_child.type === "text") {
+                content = _child.value;
               }
-              return <a>{_child.value}</a>;
             }
-            return <a></a>;
+            if (href != null) {
+              return <LinkProcessor href={href}>{content}</LinkProcessor>;
+            }
+            return <a>{content}</a>;
           }
           const childrenContainsImg = node?.children.some((child => isElement(child, "img")));
           // 画像が含まれている場合<p>で囲まない
