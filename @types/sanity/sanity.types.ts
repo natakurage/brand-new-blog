@@ -12,6 +12,8 @@
  * ---------------------------------------------------------------------------------
  */
 
+export declare const internalGroqTypeReferenceTo: unique symbol;
+
 // Source: schema.json
 export type Tag = {
   _id: string
@@ -19,8 +21,21 @@ export type Tag = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  slug: Slug
-  name: string
+  slug?: Slug
+  name?: string
+}
+
+export type Slug = {
+  _type: 'slug'
+  current?: string
+  source?: string
+}
+
+export type LinkItemReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'linkItem'
 }
 
 export type LinkList = {
@@ -29,14 +44,12 @@ export type LinkList = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  id: Slug
-  item: Array<{
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    _key: string
-    [internalGroqTypeReferenceTo]?: 'linkItem'
-  }>
+  id?: Slug
+  item?: Array<
+    {
+      _key: string
+    } & LinkItemReference
+  >
   contentfulArchived?: boolean
 }
 
@@ -46,9 +59,23 @@ export type LinkItem = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  name: string
-  href: string
+  name?: string
+  href?: string
   contentfulArchived?: boolean
+}
+
+export type SanityImageAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+}
+
+export type SanityFileAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
 }
 
 export type GlobalSettings = {
@@ -57,73 +84,49 @@ export type GlobalSettings = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  siteName: string
-  description?: string
-  author: string
+  siteName?: string
+  description?: Markdown
+  author?: string
   authorUrl?: string
   copyright?: string
   donate?: string
   donateUrl?: string
-  bio?: string
+  bio?: Markdown
   contactUrl?: string
-  useSidebar: boolean
-  adblock: boolean
-  showRelatedPosts: boolean
-  showNewPosts: boolean
+  useSidebar?: boolean
+  adblock?: boolean
+  showRelatedPosts?: boolean
+  showNewPosts?: boolean
+  itemsPerPage?: number
   recommendedPosts?: Array<string>
   avatar?: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
+    asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
   }
   topLogo?: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
+    asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
   }
   banner?: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
+    asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
   }
-  favicon: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
-    }
+  favicon?: {
+    asset?: SanityFileAssetReference
     media?: unknown
     _type: 'file'
   }
-  appleTouchIcon: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
+  appleTouchIcon?: {
+    asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
@@ -132,22 +135,52 @@ export type GlobalSettings = {
   contentfulArchived?: boolean
 }
 
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top?: number
+  bottom?: number
+  left?: number
+  right?: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x?: number
+  y?: number
+  height?: number
+  width?: number
+}
+
+export type Markdown = string
+
+export type SongReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'song'
+}
+
+export type TagReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'tag'
+}
+
 export type MusicAlbum = {
   _id: string
   _type: 'musicAlbum'
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  slug: Slug
-  description?: string
-  tracks?: Array<{
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    _key: string
-    [internalGroqTypeReferenceTo]?: 'song'
-  }>
+  title?: string
+  slug?: Slug
+  description?: Markdown
+  tracks?: Array<
+    {
+      _key: string
+    } & SongReference
+  >
   releaseDate?: string
   artist?: Array<string>
   credit?: Array<string>
@@ -159,14 +192,12 @@ export type MusicAlbum = {
     | 'CC BY-NC-SA 4.0'
     | 'CC BY-ND 4.0'
     | 'CC BY-NC-ND 4.0'
-  license: string
-  tags?: Array<{
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    _key: string
-    [internalGroqTypeReferenceTo]?: 'tag'
-  }>
+  license?: Markdown
+  tags?: Array<
+    {
+      _key: string
+    } & TagReference
+  >
   contentfulArchived?: boolean
 }
 
@@ -176,15 +207,15 @@ export type Song = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  artist: Array<string>
+  title?: string
+  artist?: Array<string>
   releaseDate?: string
-  slug: Slug
+  slug?: Slug
   credit?: Array<string>
   streamUrl?: string
   url?: Array<string>
-  description?: string
-  lyrics?: string
+  description?: Markdown
+  lyrics?: Markdown
   licenseSelect?:
     | 'CC0 1.0'
     | 'CC BY 4.0'
@@ -193,15 +224,20 @@ export type Song = {
     | 'CC BY-NC-SA 4.0'
     | 'CC BY-ND 4.0'
     | 'CC BY-NC-ND 4.0'
-  license: string
-  tags?: Array<{
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    _key: string
-    [internalGroqTypeReferenceTo]?: 'tag'
-  }>
+  license?: Markdown
+  tags?: Array<
+    {
+      _key: string
+    } & TagReference
+  >
   contentfulArchived?: boolean
+}
+
+export type BlogPostReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'blogPost'
 }
 
 export type PostList = {
@@ -210,23 +246,20 @@ export type PostList = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  posts: Array<{
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    _key: string
-    [internalGroqTypeReferenceTo]?: 'blogPost'
-  }>
-  description?: string
-  slug: Slug
-  tags?: Array<{
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    _key: string
-    [internalGroqTypeReferenceTo]?: 'tag'
-  }>
+  title?: string
+  posts?: Array<
+    {
+      _key: string
+    } & BlogPostReference
+  >
+  description?: Markdown
+  inverted?: boolean
+  slug?: Slug
+  tags?: Array<
+    {
+      _key: string
+    } & TagReference
+  >
   contentfulArchived?: boolean
 }
 
@@ -237,22 +270,17 @@ export type BlogPost = {
   _updatedAt: string
   _rev: string
   documentTimestamps?: string
-  title: string
+  title?: string
   image?: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
+    asset?: SanityImageAssetReference
     media?: unknown
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
   }
-  slug: Slug
-  showToc: boolean
-  body: string
+  slug?: Slug
+  showToc?: boolean
+  body?: Markdown
   licenseSelect?:
     | 'CC0 1.0'
     | 'CC BY 4.0'
@@ -261,18 +289,23 @@ export type BlogPost = {
     | 'CC BY-NC-SA 4.0'
     | 'CC BY-ND 4.0'
     | 'CC BY-NC-ND 4.0'
-  license: string
-  tags?: Array<{
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    _key: string
-    [internalGroqTypeReferenceTo]?: 'tag'
-  }>
+  license?: Markdown
+  tags?: Array<
+    {
+      _key: string
+    } & TagReference
+  >
   contentfulArchived?: boolean
 }
 
-export type Markdown = string
+export type MediaTag = {
+  _id: string
+  _type: 'media.tag'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: Slug
+}
 
 export type SanityImagePaletteSwatch = {
   _type: 'sanity.imagePaletteSwatch'
@@ -300,20 +333,16 @@ export type SanityImageDimensions = {
   aspectRatio?: number
 }
 
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x?: number
-  y?: number
-  height?: number
-  width?: number
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top?: number
-  bottom?: number
-  left?: number
-  right?: number
+export type SanityImageMetadata = {
+  _type: 'sanity.imageMetadata'
+  location?: Geopoint
+  dimensions?: SanityImageDimensions
+  palette?: SanityImagePalette
+  lqip?: string
+  blurHash?: string
+  thumbHash?: string
+  hasAlpha?: boolean
+  isOpaque?: boolean
 }
 
 export type SanityFileAsset = {
@@ -336,6 +365,13 @@ export type SanityFileAsset = {
   path?: string
   url?: string
   source?: SanityAssetSourceData
+}
+
+export type SanityAssetSourceData = {
+  _type: 'sanity.assetSourceData'
+  name?: string
+  id?: string
+  url?: string
 }
 
 export type SanityImageAsset = {
@@ -361,17 +397,6 @@ export type SanityImageAsset = {
   source?: SanityAssetSourceData
 }
 
-export type SanityImageMetadata = {
-  _type: 'sanity.imageMetadata'
-  location?: Geopoint
-  dimensions?: SanityImageDimensions
-  palette?: SanityImagePalette
-  lqip?: string
-  blurHash?: string
-  hasAlpha?: boolean
-  isOpaque?: boolean
-}
-
 export type Geopoint = {
   _type: 'geopoint'
   lat?: number
@@ -379,38 +404,31 @@ export type Geopoint = {
   alt?: number
 }
 
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
-}
-
-export type SanityAssetSourceData = {
-  _type: 'sanity.assetSourceData'
-  name?: string
-  id?: string
-  url?: string
-}
-
 export type AllSanitySchemaTypes =
   | Tag
+  | Slug
+  | LinkItemReference
   | LinkList
   | LinkItem
+  | SanityImageAssetReference
+  | SanityFileAssetReference
   | GlobalSettings
+  | SanityImageCrop
+  | SanityImageHotspot
+  | Markdown
+  | SongReference
+  | TagReference
   | MusicAlbum
   | Song
+  | BlogPostReference
   | PostList
   | BlogPost
-  | Markdown
+  | MediaTag
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
-  | SanityImageHotspot
-  | SanityImageCrop
-  | SanityFileAsset
-  | SanityImageAsset
   | SanityImageMetadata
-  | Geopoint
-  | Slug
+  | SanityFileAsset
   | SanityAssetSourceData
-export declare const internalGroqTypeReferenceTo: unique symbol;
+  | SanityImageAsset
+  | Geopoint

@@ -1,5 +1,5 @@
 import { getClient } from "./client";
-import { GlobalSettings } from "@/lib/models";
+import { GlobalSettings, LinkItem } from "@/lib/models";
 import type {
   GlobalSettings as SanityGlobalSettings,
   LinkItem as SanityLinkItem,
@@ -24,6 +24,13 @@ type SanityGlobalSettingsResolved = ResolveReferences<
 type SanityLinkListResolved = ResolveReferences<SanityLinkList, {
   item: SanityLinkItem[]
 }>;
+
+const TransformLinkItems = (items: SanityLinkItem[]): LinkItem[] => {
+  return items.map((item) => ({
+    href: item.href ?? "#",
+    name: item.name ?? "Unnamed Link"
+  })).filter(Boolean);
+};
 
 export async function loadGlobalSettings(): Promise<GlobalSettings> {
   const client = getClient(false);
@@ -56,28 +63,29 @@ export async function loadGlobalSettings(): Promise<GlobalSettings> {
       revalidate: 86400, // 1 day
     }
   });
-  const socials = linkLists.find(item => item.id.current === socialsKey);
-  const navbarPages = linkLists.find(item => item.id.current === navbarPagesKey);
-  const footerPages = linkLists.find(item => item.id.current === footerPagesKey);
+  const socials = linkLists.find(item => item.id?.current === socialsKey);
+  const navbarPages = linkLists.find(item => item.id?.current === navbarPagesKey);
+  const footerPages = linkLists.find(item => item.id?.current === footerPagesKey);
 
   return {
-    siteName: gs.siteName,
+    siteName: gs.siteName ?? "Unnamed Blog",
     description: gs.description ?? "",
-    author: gs.author,
+    author: gs.author ?? "Unknown Author",
     authorUrl: gs.authorUrl,
     copyright: gs.copyright ?? "Copyright © " + new Date().getFullYear() + " " + gs.author,
     donate: gs.donate,
     donateUrl: gs.donateUrl,
     bio: gs.bio ?? "",
     contactUrl: gs.contactUrl,
-    useSidebar: gs.useSidebar,
-    adblock: gs.adblock,
-    showRelatedPosts: gs.showRelatedPosts,
-    showNewPosts: gs.showNewPosts,
+    useSidebar: gs.useSidebar ?? false,
+    adblock: gs.adblock ?? false,
+    showRelatedPosts: gs.showRelatedPosts ?? false,
+    showNewPosts: gs.showNewPosts ?? false,
+    itemsPerPage: gs.itemsPerPage ?? 10,
     recommendedPosts: gs.recommendedPosts ?? [],
-    socials: socials?.item ?? [],
-    navbarPages: navbarPages?.item ?? [],
-    footerPages: footerPages?.item ?? [],
+    socials: TransformLinkItems(socials?.item ?? []),
+    navbarPages: TransformLinkItems(navbarPages?.item ?? []),
+    footerPages: TransformLinkItems(footerPages?.item ?? []),
     avatar: gs.avatar,
     topLogo: gs.topLogo,
     banner: gs.banner,

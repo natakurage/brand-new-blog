@@ -36,8 +36,8 @@ type SanityMusicAlbumResolved = ResolveReferences<
 
 const TransformTag = (tag: SanityTag): Tag => ({
   typeUrl: "tags",
-  slug: tag.slug.current,
-  name: tag.name,
+  slug: tag.slug?.current ?? "",
+  name: tag.name ?? "Unnamed Tag",
 });
 
 abstract class BlogDataManager<DataType extends BlogData> {
@@ -199,10 +199,10 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
     return {
       typeUrl: "articles",
       id: _id,
-      title,
-      slug: slug.current,
+      title: title ?? "Untitled Article",
+      slug: slug?.current ?? "",
       mainImage: image,
-      content: body,
+      content: body ?? "",
       createdAt: _createdAt,
       updatedAt: _updatedAt,
       tags: tags?.map(TransformTag),
@@ -260,12 +260,12 @@ export class SongManager extends BlogDataManager<Song> {
     return {
       typeUrl: "songs",
       id: _id,
-      title,
-      slug: slug.current,
+      title: title ?? "Untitled Song",
+      slug: slug?.current ?? "",
       content: description ?? "",
       createdAt: _createdAt,
       updatedAt: _updatedAt,
-      artist,
+      artist: artist ?? [],
       credit,
       lyrics,
       releaseDate,
@@ -282,17 +282,18 @@ export class PostListManager extends BlogDataManager<PostList> {
   contentType = "postList";
   additionalResolves = [groq`posts[]->{ ..., "tags": tags[]-> }`];
   override async fromEntry(entry: SanityPostListResolved): Promise<PostList> {
-    const { _id, title, slug, description, posts } = entry;
+    const { _id, title, slug, description, posts, inverted } = entry;
     const items = await Promise.all(
       posts.map((post) => new BlogPostManager().fromEntry(post))
     );
     return {
       typeUrl: "lists",
       id: _id,
-      title,
-      slug: slug.current,
+      title: title ?? "Untitled List",
+      slug: slug?.current ?? "",
       items,
-      description
+      description,
+      inverted: inverted ?? false,
     };
   }
 
@@ -322,8 +323,8 @@ export class AlbumManager extends BlogDataManager<Album> {
     return {
       typeUrl: "albums",
       id: _id,
-      title,
-      slug: slug.current,
+      title: title ?? "Untitled Album",
+      slug: slug?.current ?? "",
       items,
       description,
       releaseDate,

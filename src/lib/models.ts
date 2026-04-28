@@ -26,6 +26,7 @@ export interface GlobalSettings {
   adblock: boolean;
   showRelatedPosts: boolean;
   showNewPosts: boolean;
+  itemsPerPage: number;
   recommendedPosts: string[];
   socials: LinkItem[];
   navbarPages: LinkItem[];
@@ -86,6 +87,7 @@ export interface Song extends BlogItem {
 
 export interface PostList extends ItemList<BlogPost> {
   typeUrl: "lists";
+  inverted: boolean;
 }
 
 export interface Album extends ItemList<Song> {
