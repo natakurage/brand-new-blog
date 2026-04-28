@@ -34,7 +34,8 @@ export default async function ListsPage(props: { params: Promise<{ id: string, p
     notFound();
   }
   const length = list.items.length;
-  const posts = list.items.slice((pageNum - 1) * 10, pageNum * 10);
+  const allPosts = list.inverted ? list.items.toReversed() : list.items;
+  const posts = allPosts.slice((pageNum - 1) * 10, pageNum * 10);
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">記事リスト &ldquo;{list.title}&rdquo;</h1>
