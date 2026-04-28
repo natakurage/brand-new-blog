@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
-import { AlbumManager, BlogPostManager, PostListManager, SongManager, getAllTags } from "@/lib/cms";
+import { AlbumManager, BlogPostManager, PostListManager, SongManager, getAllTags, loadGlobalSettings } from "@/lib/cms";
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000";
-const PAGE_SIZE = 10;
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -50,8 +49,8 @@ function buildEntry(path: string, priority: number, changeFrequency: SitemapEntr
 	};
 }
 
-function buildPageEntries(basePath: string, totalItems: number, priority = 0.8): MetadataRoute.Sitemap {
-	const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+function buildPageEntries(basePath: string, totalItems: number, itemsPerPage: number, priority = 0.8): MetadataRoute.Sitemap {
+	const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 	return Array.from({ length: totalPages }, (_, index) => ({
 		url: toAbsoluteUrl(`${basePath}/page/${index + 1}`),
 		changeFrequency: "weekly" as const,
@@ -60,6 +59,7 @@ function buildPageEntries(basePath: string, totalItems: number, priority = 0.8):
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+	const data = await loadGlobalSettings();
 	const [tags, collectionTotals, collectionPaths] = await Promise.all([
 		getAllTags(),
 		Promise.all(collectionManagers.map((section) => section.manager.getNewest({ page: 0, limit: 1 }))),
@@ -72,11 +72,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 	return [
 		buildEntry("/", 1, "daily"),
-		...collectionManagers.flatMap((section, index) => buildPageEntries(section.basePath, collectionTotals[index].total, section.priority)),
+		...collectionManagers.flatMap((section, index) => buildPageEntries(section.basePath, collectionTotals[index].total, data.itemsPerPage, section.priority)),
 		...collectionPaths[0].map((slug) => buildEntry(`/articles/${slug}`, 0.7)),
 		...collectionPaths[1].map((slug) => buildEntry(`/songs/${slug}`, 0.7)),
-		...albumDetails.flatMap((album) => album ? buildPageEntries(`/albums/${album.slug}`, album.items.length, 0.7) : []),
-		...listDetails.flatMap((list) => list ? buildPageEntries(`/lists/${list.id}`, list.items.length, 0.7) : []),
+		...albumDetails.flatMap((album) => album ? buildPageEntries(`/albums/${album.slug}`, album.items.length, data.itemsPerPage, 0.7) : []),
+		...listDetails.flatMap((list) => list ? buildPageEntries(`/lists/${list.id}`, list.items.length, data.itemsPerPage, 0.7) : []),
 		...tags.map((tag) => buildEntry(`/tags/${tag.slug}/page/1`, 0.6)),
 	];
 }

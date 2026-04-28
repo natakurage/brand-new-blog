@@ -40,10 +40,11 @@ async function JsonLD() {
 
 export default async function Home() {
   const pageNum = 1;
+  const data = await loadGlobalSettings();
   const manager = new BlogPostManager();
   const { items: posts, total, limit } = await manager.getNewest({
     page: pageNum - 1,
-    limit: 10,
+    limit: data.itemsPerPage,
   });
   return (
     <>

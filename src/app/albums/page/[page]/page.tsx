@@ -12,10 +12,11 @@ export async function generateMetadata(props: { params: Promise<{ page: string }
 
 export default async function AlbumsPage(props: { params: Promise<{ page: string }> }) {
   const params = await props.params;
+  const data = await loadGlobalSettings();
   const pageNum = Number(params.page);
   const { items, limit } = await new AlbumManager().getNewest({
     page: pageNum - 1,
-    limit: 10,
+    limit: data.itemsPerPage,
   });
   if (items.length === 0) {
     return notFound();

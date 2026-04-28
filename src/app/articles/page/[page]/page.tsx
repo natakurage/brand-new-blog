@@ -12,11 +12,12 @@ export async function generateMetadata(props: { params: Promise<{ page: string }
 
 export default async function ArticlesPage(props: { params: Promise<{ page: string }> }) {
   const params = await props.params;
+  const data = await loadGlobalSettings();
   const pageNum = Number(params.page);
   const manager = new BlogPostManager();
   const { items: posts, total, limit } = await manager.getNewest({
     page: pageNum - 1,
-    limit: 10,
+    limit: data.itemsPerPage,
   });
   if (posts.length === 0) {
       return notFound();

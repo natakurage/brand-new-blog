@@ -22,6 +22,7 @@ export async function generateStaticParams() {
 
 export default async function TagPage(props: { params: Promise<{ slug: string, page: string }> }) {
   const params = await props.params;
+  const data = await loadGlobalSettings();
   const { slug, page } = params;
   const pageNum = Number(page);
   const tag = await getTagWithCache(slug);
@@ -32,7 +33,7 @@ export default async function TagPage(props: { params: Promise<{ slug: string, p
     tag.slug,
     false,
     {
-      limit: 10,
+      limit: data.itemsPerPage,
       page: pageNum - 1,
     }
   );

@@ -66,6 +66,7 @@ function JsonLD({ album }: { album: Album }) {
 
 export default async function AlbumPage(props: { params: Promise<{ slug: string, page: string }> }) {
   const params = await props.params;
+  const data = await loadGlobalSettings();
   const { slug, page } = params;
   const pageNum = Number(page);
   const album = await getAlbum(slug);
@@ -85,7 +86,7 @@ export default async function AlbumPage(props: { params: Promise<{ slug: string,
           items={songs}
           total={songs.length}
           page={pageNum}
-          limit={10}
+          limit={data.itemsPerPage}
           suffix={`?key=${album.slug}`}
           showDate={false}
         />

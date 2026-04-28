@@ -28,6 +28,7 @@ export async function generateStaticParams() {
 export default async function ListsPage(props: { params: Promise<{ id: string, page: string }> }) {
   const params = await props.params;
   const { id, page } = params;
+  const data = await loadGlobalSettings();
   const pageNum = Number(page);
   const list = await getList(id);
   if (!list) { 
@@ -35,7 +36,7 @@ export default async function ListsPage(props: { params: Promise<{ id: string, p
   }
   const length = list.items.length;
   const allPosts = list.inverted ? list.items.toReversed() : list.items;
-  const posts = allPosts.slice((pageNum - 1) * 10, pageNum * 10);
+  const posts = allPosts.slice((pageNum - 1) * data.itemsPerPage, pageNum * data.itemsPerPage);
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">記事リスト &ldquo;{list.title}&rdquo;</h1>
@@ -45,7 +46,7 @@ export default async function ListsPage(props: { params: Promise<{ id: string, p
         items={posts}
         total={length}
         page={pageNum}
-        limit={10}
+        limit={data.itemsPerPage}
         suffix={`?key=${list.id}`}
       />
     </div>

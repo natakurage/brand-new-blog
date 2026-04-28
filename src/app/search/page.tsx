@@ -16,13 +16,14 @@ export async function generateMetadata(props: { searchParams: Promise<{ q: strin
 
 export default async function SearchPage(props: { searchParams: Promise<{ q: string, page?: string }> }) {
   const searchParams = await props.searchParams;
+  const data = await loadGlobalSettings();
   const { q, page = 1 } = searchParams;
   const pageNum = Number(page);
   const { items: posts, total, limit } = await new BlogPostManager().fullTextSearch(
     q,
     false,
     {
-      limit: 10,
+      limit: data.itemsPerPage,
       page: pageNum - 1
     }
   );

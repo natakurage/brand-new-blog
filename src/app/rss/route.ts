@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
   const { items: posts } = await new BlogPostManager().getNewest({
     page: 0,
-    limit: 10
+    limit: data.itemsPerPage,
   });
 
   const items = posts.map(post => `<item>
