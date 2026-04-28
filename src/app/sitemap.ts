@@ -80,3 +80,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		...tags.map((tag) => buildEntry(`/tags/${tag.slug}/page/1`, 0.6)),
 	];
 }
+
+export const revalidate = 3600; // 1 hour
