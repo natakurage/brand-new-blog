@@ -10,6 +10,7 @@ export interface Tag {
   typeUrl: "tags";
   slug: string;
   name: string;
+  contentWarning?: string;
 }
 
 export interface GlobalSettings {

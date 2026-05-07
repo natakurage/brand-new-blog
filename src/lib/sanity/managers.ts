@@ -38,6 +38,7 @@ const TransformTag = (tag: SanityTag): Tag => ({
   typeUrl: "tags",
   slug: tag.slug?.current ?? "",
   name: tag.name ?? "Unnamed Tag",
+  contentWarning: tag.contentWarning
 });
 
 abstract class BlogDataManager<DataType extends BlogData> {

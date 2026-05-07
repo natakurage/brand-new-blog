@@ -23,6 +23,7 @@ export type Tag = {
   _rev: string
   slug?: Slug
   name?: string
+  contentWarning?: string
 }
 
 export type Slug = {

@@ -15,6 +15,7 @@ import HeaderTime from "@/components/HeaderTime";
 import TagList from "@/components/TagList";
 import HeaderAuthor from "@/components/HeaderAuthor";
 import Credit from "@/components/Credit";
+import ContentWarning from "@/components/ContentWarning";
 import Script from "next/script";
 import { ccDeedUrls } from "@/lib/licenses";
 import Image from "next/image";
@@ -129,6 +130,8 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
 
   const shareInfo = await getShareInfo(post);
 
+  const contentWarnings = post.tags?.map((tag) => tag.contentWarning).filter((cw): cw is string => !!cw) ?? [];
+
   const licenseInfo = new Map<string, string>([
     ["タイトル", post.title],
     ["著者", data.author],
@@ -142,6 +145,11 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
     <>
       <JsonLD post={post} />
       <main className="space-y-5">
+        {
+          contentWarnings.map((warningContent, index) => (
+            <ContentWarning key={index} warningContent={warningContent} />
+          ))
+        }
         <article>
           {
             post.mainImage && (

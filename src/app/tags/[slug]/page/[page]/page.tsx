@@ -1,4 +1,5 @@
 import ItemList from "@/components/ItemList";
+import ContentWarning from "@/components/ContentWarning";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
 import { notFound } from "next/navigation";
@@ -42,6 +43,7 @@ export default async function TagPage(props: { params: Promise<{ slug: string, p
   }
   return (
     <div className="space-y-4">
+      { tag.contentWarning && <ContentWarning warningContent={tag.contentWarning} /> }
       <h1 className="text-3xl font-bold">タグ #{tag.name} がつけられた記事</h1>
       {
         posts.length === 0
