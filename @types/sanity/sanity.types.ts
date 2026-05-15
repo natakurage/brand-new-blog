@@ -281,6 +281,7 @@ export type BlogPost = {
   }
   slug?: Slug
   showToc?: boolean
+  description?: Markdown
   body?: Markdown
   licenseSelect?:
     | 'CC0 1.0'

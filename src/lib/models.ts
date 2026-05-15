@@ -44,6 +44,7 @@ export interface BlogData {
   id: string;
   title: string;
   slug: string;
+  description?: string;
   tags?: Tag[];
 }
 
@@ -57,7 +58,6 @@ export interface BlogItem extends BlogData {
 
 export interface ItemList<T extends BlogItem> extends BlogData {
   items: T[];
-  description?: string;
 }
 
 export interface BlogPost extends BlogItem {

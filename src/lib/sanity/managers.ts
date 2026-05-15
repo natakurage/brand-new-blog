@@ -196,13 +196,14 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
   contentType = "blogPost";
   additionalResolves = [groq`"image": image.asset->url`];
   override async fromEntry(entry: SanityBlogPostResolved): Promise<BlogPost> {
-    const { _id, title, slug, image, body, license, showToc, licenseSelect, tags, _createdAt, _updatedAt } = entry;
+    const { _id, title, slug, image, description, body, license, showToc, licenseSelect, tags, _createdAt, _updatedAt } = entry;
     return {
       typeUrl: "articles",
       id: _id,
       title: title ?? "Untitled Article",
       slug: slug?.current ?? "",
       mainImage: image,
+      description: description ?? "",
       content: body ?? "",
       createdAt: _createdAt,
       updatedAt: _updatedAt,
