@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
-import { BlogPost, getShareInfo } from "@/lib/models";
+import { BlogPost, getShareInfo, getCreditText } from "@/lib/models";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager} from "@/lib/cms";
 import { draftMode } from "next/headers";
@@ -138,15 +138,8 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
 
   const contentWarnings = post.tags?.map((tag) => tag.contentWarning).filter((cw): cw is string => !!cw) ?? [];
 
-  const licenseInfo = new Map<string, string>([
-    ["タイトル", post.title],
-    ["著者", data.author],
-    ["作成年", new Date(post.createdAt).getFullYear().toString()],
-    ["URL", shareInfo.url],
-    ["ライセンス", post.licenseSelect ?? post.license ?? "不明なライセンス"],
-  ]);
-  const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
-  const shareFullText = `# ${post.title}\n\n ${post.content}\n\n---\n\n${licenseText}`;
+  const creditText = await getCreditText(post);
+  const shareFullText = `# ${post.title}\n\n ${post.content}\n\n---\n\n${creditText}`;
   return (
     <>
       <JsonLD post={post} />

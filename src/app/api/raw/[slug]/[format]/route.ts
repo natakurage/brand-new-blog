@@ -1,8 +1,8 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { BlogPostManager, loadGlobalSettings } from "@/lib/cms";
-import { getShareInfo } from "@/lib/models";
+import { BlogPostManager } from "@/lib/cms";
+import { getCreditText } from "@/lib/models";
 import removeMd from "remove-markdown";
 
 const getPost = cache((slug: string, isEnabled: boolean) =>
@@ -34,26 +34,12 @@ export async function GET(
     notFound();
   }
 
-  const [data, shareInfo] = await Promise.all([
-    loadGlobalSettings(),
-    getShareInfo(post),
-  ]);
-
-  const licenseInfo = new Map<string, string>([
-    ["タイトル", post.title],
-    ["著者", data.author],
-    ["作成年", new Date(post.createdAt).getFullYear().toString()],
-    ["URL", shareInfo.url],
-    ["ライセンス", post.licenseSelect ?? post.license ?? "不明なライセンス"],
-  ]);
-  const licenseText = Array.from(licenseInfo.entries())
-    .map(([key, value]) => `- ${key}: ${value}`)
-    .join("\n");
+  const creditText = await getCreditText(post);
 
   const titlePrefix = isEnabled ? "(プレビュー) " : "";
 
   if (format === "md") {
-    const fullMarkdown = `# ${titlePrefix}${post.title}\n\n${post.content}\n\n---\n\n${licenseText}\n`;
+    const fullMarkdown = `# ${titlePrefix}${post.title}\n\n${post.content}\n\n---\n\n${creditText}\n`;
 
     return new Response(fullMarkdown, {
       status: 200,
@@ -65,7 +51,7 @@ export async function GET(
 
   if (format === "txt") {
     const plainTextBody = removeMd(post.content);
-    const fullPlainText = `${titlePrefix}${post.title}\n\n${plainTextBody}\n\n----------------------------------------\n${licenseText}\n`;
+    const fullPlainText = `${titlePrefix}${post.title}\n\n${plainTextBody}\n\n----------------------------------------\n${creditText}\n`;
 
     return new Response(fullPlainText, {
       status: 200,

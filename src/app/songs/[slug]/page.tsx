@@ -4,7 +4,7 @@ import Markdown from "react-markdown";
 import { MdMusicNote, MdDownload } from "react-icons/md";
 import Link from "next/link";
 import Script from "next/script";
-import { getShareInfo, Song } from "@/lib/models";
+import { getShareInfo, Song, getSongCreditText } from "@/lib/models";
 import { loadGlobalSettings } from "@/lib/cms";
 import { SongManager } from "@/lib/cms";
 import { draftMode } from "next/headers";
@@ -171,21 +171,8 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
 
   const shareInfo = await getShareInfo(song);
 
-  const licenseInfo = new Map<string, string>([
-    ["タイトル", song.title],
-    ["アーティスト", song.artist.join(", ")]
-  ]);
-  song.credit?.forEach((credit) => {
-    const [k, v] = credit.split(":");
-    licenseInfo.set(k, v);
-  });
-  ([
-    ["作成年", new Date(song.createdAt).getFullYear().toString()],
-    ["URL", shareInfo.url],
-    ["ライセンス", song.licenseSelect ?? song.license ?? "不明なライセンス"],
-  ]).forEach(([k, v]) => licenseInfo.set(k, v));
-  const licenseText = Array.from(licenseInfo.entries()).map(([key, value]) => `- ${key}: ${value}`).join("\n");
-  const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${licenseText}`;
+  const creditText = await getSongCreditText(song);
+  const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${creditText}`;
 
   return (
     <>
