@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
   ];
   const pathsToRevalidate: string[] = [];
   if (blogData) {
-    const itemsToRevalidate: (BlogData | Tag)[] = [blogData]; // maybe unnecessary, but just in case
+    const itemsToRevalidate: (BlogData | Tag)[] = [blogData];
+
     // Revalidate Tag collection
     if (blogData.tags && blogData.tags.length > 0) {
       tagsToRevalidate.push("tags-collection");
@@ -43,6 +44,14 @@ export async function POST(req: NextRequest) {
     let items: (PostList | Album)[] = [];
     if (cmsToType[contentType] === "BlogPost") {
       items = await new PostListManager().getListsByPost(blogData.slug, true);
+
+      // BlogPost の場合は .md / .txt のパスも再検証対象に登録
+      pathsToRevalidate.push(
+        `/articles/${blogData.slug}.md`,
+        `/articles/${blogData.slug}.txt`,
+        `/api/raw/${blogData.slug}/md`,
+        `/api/raw/${blogData.slug}/txt`
+      );
     } else if (cmsToType[contentType] === "Song") {
       items = await new AlbumManager().getAlbumsBySong(blogData.slug, true);
     }
@@ -57,10 +66,14 @@ export async function POST(req: NextRequest) {
     }
     pathsToRevalidate.push(...itemsToRevalidate.map(getPath));
   }
-  pathsToRevalidate.forEach((p) => revalidatePath(p));
+
+  // 重複パスの排除と再検証
+  const uniquePaths = Array.from(new Set(pathsToRevalidate));
+
+  uniquePaths.forEach((p) => revalidatePath(p));
   tagsToRevalidate.forEach((tag) => revalidateTag(tag, "max"));
   return NextResponse.json({
-    revalidatedPaths: pathsToRevalidate,
+    revalidatedPaths: uniquePaths,
     revalidatedTags: tagsToRevalidate,
   });
 }

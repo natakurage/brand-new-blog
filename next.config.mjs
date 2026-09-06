@@ -26,6 +26,14 @@ const pageRewrites = [
     {
         source: "/tags/:id",
         destination: "/tags/:id/page/1"
+    },
+    {
+        source: "/articles/:slug.md",
+        destination: "/api/raw/:slug/md"
+    },
+    {
+        source: "/articles/:slug.txt",
+        destination: "/api/raw/:slug/txt"
     }
 ];
 

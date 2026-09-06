@@ -40,6 +40,12 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     ogpImageUrl.searchParams.set("bgImage", post.mainImage);
   return {
     title: (isEnabled ? "(プレビュー)" : "") + title,
+    alternates: {
+      types: {
+        "text/markdown": `/articles/${post.slug}.md`,
+        "text/plain": `/articles/${post.slug}.txt`,
+      },
+    },
     openGraph: {
       title: title,
       description: removeMd(post.content).slice(0, 100) || data.description,
