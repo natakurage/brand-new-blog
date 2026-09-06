@@ -1,6 +1,7 @@
 import { BlogItem } from "@/lib/models";
 import Paginator from "./Paginator";
 import ListItem from "./ListItem";
+import ListExporter from "./ListExporter";
 
 interface ItemListProps {
   items: BlogItem[];
@@ -12,14 +13,29 @@ interface ItemListProps {
   showLength?: boolean;
   basePath: string;
   useQueryParam?: boolean;
+  showCount?: boolean;
+  showExporter?: boolean;
 }
 
 export default function ItemList(
-  { basePath, items, total, page, limit, suffix, showDate = true, showLength = true, useQueryParam = false }: ItemListProps
+  { basePath, items, total, page, limit, suffix,
+    showDate = true, showLength = true, useQueryParam = false,
+    showCount = true, showExporter = true
+  }: ItemListProps
 ) {
+  const origin = process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000";
   const maxPages = Math.ceil(total / limit);
+  const currentNum = items.length + (page - 1) * limit;
   return (
     <div className="space-y-8">
+      <div className="flex flex-wrap items-center justify-between">
+        {total > 0 && showCount && (
+          <p className="text-sm text-base-content/70">
+            {currentNum} / {total} 件
+          </p>
+        )}
+        {showExporter && <ListExporter origin={origin} items={items} suffix={suffix} />}
+      </div>
       <ul className="space-y-4">
         {items.map((item) => (item &&
           <li key={item.slug}>

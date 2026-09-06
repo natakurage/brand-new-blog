@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { MdContentCopy } from "react-icons/md";
+import useTimeout from "@/app/hooks/useTimeout";
 
 type CopyMessageType = "URLをコピーしました!" | "全文をコピーしました!";
 
@@ -9,6 +10,9 @@ export default function CopyButton({ url, fullText, className }: { url: string, 
   const popoverRef = useRef<HTMLUListElement | null>(null);
   const [copied, setCopied] = useState(false);
   const [copyMessage, setCopyMessage] = useState<CopyMessageType | null>();
+  const { set: setButtonDisappear } = useTimeout(() => {
+    setCopied(false);
+  }, 3000);
 
   const handleClick = (isFullText: boolean) => {
     const textToCopy = (isFullText && fullText) ? fullText: url;
@@ -16,7 +20,7 @@ export default function CopyButton({ url, fullText, className }: { url: string, 
     setCopied(true);
     closePopover();
     setCopyMessage(isFullText ? "全文をコピーしました!" : "URLをコピーしました!");
-    setTimeout(() => setCopied(false), 3000);
+    setButtonDisappear();
   };
 
   const closePopover = () => {

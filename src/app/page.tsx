@@ -49,7 +49,7 @@ export default async function Home() {
   return (
     <>
       <JsonLD />
-      <ItemList basePath="/articles" items={posts} page={pageNum} total={total} limit={limit} />
+      <ItemList basePath="/articles" items={posts} page={pageNum} total={total} limit={limit} showCount={false} showExporter={false} />
     </>
   );
 }
