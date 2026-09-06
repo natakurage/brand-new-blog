@@ -19,6 +19,7 @@ import ContentWarning from "@/components/ContentWarning";
 import Script from "next/script";
 import { ccDeedUrls } from "@/lib/licenses";
 import Image from "next/image";
+import Link from "next/link";
 
 const getPost = cache((slug: string, isEnabled: boolean) => (
   new BlogPostManager().getBySlug(slug, isEnabled)
@@ -186,6 +187,15 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
               workType="記事"
               license={post.license}
             />
+            <section className="border border-base-content border-dashed rounded p-3 space-y-2">
+              <h2 className="text-2xl font-bold">別の形式</h2>
+              <Link href={`/articles/${post.slug}.md`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+                Markdown版
+              </Link>
+              <Link href={`/articles/${post.slug}.txt`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline ms-4">
+                プレーンテキスト版
+              </Link>
+            </section>
           </footer>
         </article>
         <aside className="space-y-4" aria-label="こちらもおすすめ">
