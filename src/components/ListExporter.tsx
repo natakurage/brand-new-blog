@@ -39,7 +39,7 @@ export default function ListExporter({ origin, items, suffix }: { origin: string
   const exportedContent = () => {
     const separatorValue = separatorValues[separator];
     const formatExtension = format === "normal" ? "" : `.${format}`;
-    const urls = items.map((item) => `${origin}/${item.typeUrl}/${item.slug}` + (suffix ? suffix : '') + formatExtension);
+    const urls = items.map((item) => `${origin}/${item.typeUrl}/${item.slug}`+ formatExtension + (suffix ? suffix : ''));
     const content = urls.join(separatorValue);
 
     return content;
