@@ -79,7 +79,7 @@ export default function Credit({ workType, title, author, artists, url, year, li
             licenseSelect={licenseSelect!}
           />
         : license
-          ? <Markdown className="prose dark:prose-invert! wrap-break-word">{license}</Markdown>
+          ? <div className="prose dark:prose-invert! wrap-break-word"><Markdown>{license}</Markdown></div>
           : <p>ライセンスが不明です。</p>
       }
     </section>

@@ -228,9 +228,11 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
           {
             song.lyrics && <section className="space-y-2">
               <h2 className="text-2xl font-bold">Lyrics</h2>
-                <Markdown className="prose dark:prose-invert! wrap-break-word">
-                  {modifiedLyrics}
-                </Markdown>
+                <div className="prose dark:prose-invert! wrap-break-word">
+                  <Markdown>
+                    {modifiedLyrics}
+                  </Markdown>
+                </div>
             </section>
           }
           <footer className="space-y-5">
