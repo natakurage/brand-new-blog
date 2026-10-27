@@ -172,7 +172,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
               <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} length={removeMd(post.content).length} className="ms-auto" />
             </div>
           </header>
-          <ArticleBody content={post.content} showToc={post.showToc} className="my-12 sm:my-24" />
+          <ArticleBody content={post.content} className="my-12 sm:my-24" />
           <footer className="space-y-5">
             <Suspense fallback={<div>Loading...</div>}>
               <ListNavigator slug={slug} managerType="PostList" />

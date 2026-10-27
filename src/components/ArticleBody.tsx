@@ -3,7 +3,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeToc from "rehype-toc";
+import remarkFlexibleToc, { TocItem } from "remark-flexible-toc";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ElementType, isValidElement, ReactElement, ComponentProps, Children } from "react";
@@ -13,42 +13,19 @@ import LinkProcessor from "./LinkProcessor";
 import "katex/dist/katex.min.css";
 import CopyCodeButton from "./CopyCodeButton";
 
+const TOC_STRING = "_toc";
+
 function isElementOfType<T extends ElementType>(node: React.ReactNode, tagName: T): node is ReactElement<ComponentProps<T>, T> {
   return isValidElement(node) && node.type === tagName;
 }
 
-export default function ArticleBody({ content, showToc = false, className }: { content: string, showToc?: boolean, className?: string }) {
+export default function ArticleBody({ content, className }: { content: string, className?: string }) {
+  const tocResult: TocItem[] = [];
   return (
     <div className={`prose max-w-none dark:prose-invert! wrap-break-word ${className}`}>
       <Markdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeSlug, rehypeKatex, [rehypeToc, {
-          headings: ["h2", "h3"],
-          customizeTOC: (toc: object) => {
-            if (!showToc) return false;
-            return {
-              type: "element",
-              tagName: "details",
-              properties: { className: "collapse collapse-arrow bg-base-200" },
-              children: [
-                {
-                  type: "element",
-                  tagName: "summary",
-                  properties: { className: "collapse-title text-xl font-medium" },
-                  children: [
-                    { type: "text", value: "目次" },
-                  ]
-                },
-                {
-                  type: "element",
-                  tagName: "div",
-                  properties: { className: "collapse-content" },
-                  children: [toc]
-                }
-              ]
-            };
-          }
-        }]]}
+        remarkPlugins={[remarkGfm, remarkMath, [remarkFlexibleToc, { tocRef: tocResult }]]}
+        rehypePlugins={[rehypeSlug, rehypeKatex]}
         components={{
           img: ({ src, alt, title }) => {
             if (typeof src !== "string") {
@@ -144,6 +121,24 @@ export default function ArticleBody({ content, showToc = false, className }: { c
               </figure>
             );
           },
+          h2: ({ node, children, ...props }) => {
+            if (tocResult.length > 0 && children?.toString().trim() === TOC_STRING) {
+              return (
+                <details className="collapse collapse-arrow bg-base-200">
+                  <summary className="collapse-title text-xl font-medium">目次</summary>
+                  <ul className="collapse-content list-none list-inside">
+                    {tocResult.map((item, index) => (
+                      <li key={index} className={`toc-item toc-depth-${item.depth}`}>
+                        <a href={item.href}>{item.value}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              );
+            } else {
+              return <h2 {...props}>{children}</h2>;
+            }
+          }
         }}
       >
         {content}
