@@ -17,7 +17,7 @@ const collectionSummaryProjection = /* groq */ `{ ..., "tags": tags[]-> }`;
 // 記事
 
 const articleFilter = /* groq */ `_type == "blogPost"
-  && ($tag == null || $tag in tags[]->slug.current)
+  && ($tagSlug == null || $tagSlug in tags[]->slug.current)
   && ($slugs == null || slug.current in $slugs)
   && !(slug.current in coalesce($exclude, []))`;
 
