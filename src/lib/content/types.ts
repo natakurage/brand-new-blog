@@ -44,7 +44,7 @@ export interface BlogData {
   title: string;
   slug: string;
   description?: string;
-  tags?: Tag[];
+  tags: Tag[];
 }
 
 export interface BlogItem extends BlogData {

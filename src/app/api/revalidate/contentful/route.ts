@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
     const itemsToRevalidate: (BlogData | Tag)[] = [blogData];
 
     // Revalidate Tag collection
-    if (blogData.tags && blogData.tags.length > 0) {
+    if (blogData.tags.length > 0) {
       tagsToRevalidate.push("tags-collection");
     }
     // Revalidate all tags associated with the item
-    blogData.tags?.forEach((tag) => {
+    blogData.tags.forEach((tag) => {
       itemsToRevalidate.push(tag);
       tagsToRevalidate.push(`tags:slug:${tag.slug}`);
     });

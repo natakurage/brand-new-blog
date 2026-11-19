@@ -193,7 +193,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
           <header className="space-y-5">
             <h1 className="text-4xl font-bold">{song.title}</h1>
             <div>by {song.artist.join(", ")}</div>
-            <TagList tags={song.tags || []} />
+            <TagList tags={song.tags} />
             <div className="text-sm flex flex-wrap">
               <HeaderTime createdAt={song.createdAt} summary={summary} className="ms-auto" />
             </div>

@@ -13,7 +13,7 @@ export default function ListItem({ item, suffix, showLength = true, showDate = t
         {item.title}
       </h2>
       <p>{excerpt}</p>
-      <TagList tags={item.tags ?? []} />
+      <TagList tags={item.tags} />
       <div className="flex flex-row gap-4 mt-2 justify-end text-sm text-base-content/70">
       {
         showLength && <div className="flex flex-row gap-1">
