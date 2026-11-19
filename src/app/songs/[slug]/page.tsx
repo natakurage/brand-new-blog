@@ -18,7 +18,6 @@ import ShareButtons from "@/components/ShareButtons";
 import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
 import ArticleBody from "@/components/ArticleBody";
 import HLSAudioPlayer from "@/components/HLSAudioPlayer";
-import removeMd from "remove-markdown";
 import HeaderTime from "@/components/HeaderTime";
 import TagList from "@/components/TagList";
 import Credit from "@/components/Credit";
@@ -26,6 +25,7 @@ import type { MusicRecording, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
 import { getAbsoluteUrl } from "@/lib/content/href";
+import { summarize } from "@/lib/content/summary";
 
 const getSong = cache((slug: string, isEnabled: boolean) => (
   new SongManager().getBySlug(slug, isEnabled)
@@ -40,6 +40,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   if (!song) {
     notFound();
   }
+  const { excerpt } = summarize(song.content);
   const title = song.title + " - " + data.siteName;
   const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
@@ -47,7 +48,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     title: (isEnabled ? "(プレビュー)" : "") + title,
     openGraph: {
       title: title,
-      description: removeMd(song.content).slice(0, 100) || data.description,
+      description: excerpt || data.description,
       url: getAbsoluteUrl(song, ORIGIN),
       images: [
         {
@@ -134,12 +135,13 @@ export async function generateStaticParams() {
 
 function JsonLD({ song }: { song: Song }) {
   const ogpImageUrl = new URL(`/og`, ORIGIN);
+  const { excerpt } = summarize(song.content);
   ogpImageUrl.searchParams.set("title", song.title);
   const jsonLd: WithContext<MusicRecording> = {
     "@context": "https://schema.org",
     "@type": "MusicRecording",
     name: song.title,
-    description: removeMd(song.content).slice(0, 100),
+    description: excerpt,
     url: getAbsoluteUrl(song, ORIGIN),
     datePublished: song.releaseDate,
     byArtist: song.artist.map((artist) => ({
@@ -171,6 +173,8 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
     notFound();
   }
 
+  const summary = summarize(song.content);
+
   const { youtube_url, mp3_url, flac_url, other_urls } = separate_urls(song.url ?? []);
   const downloadable = !!(mp3_url || flac_url);
 
@@ -191,7 +195,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
             <div>by {song.artist.join(", ")}</div>
             <TagList tags={song.tags || []} />
             <div className="text-sm flex flex-wrap">
-              <HeaderTime createdAt={song.createdAt} length={removeMd(song.content).length} className="ms-auto" />
+              <HeaderTime createdAt={song.createdAt} summary={summary} className="ms-auto" />
             </div>
           </header>
           { youtube_url && <YouTubePlayer vid={getYouTubeId(youtube_url) || ""} /> }

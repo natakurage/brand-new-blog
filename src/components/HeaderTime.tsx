@@ -1,26 +1,33 @@
 import { MdAccessTime } from "react-icons/md";
 import { MdUpdate } from "react-icons/md";
 import { FaRegHourglass, FaRulerHorizontal, FaScrewdriverWrench } from "react-icons/fa6";
-import { lettersPerMinute } from "@/lib/content/summary";
+import type { Summary } from "@/lib/content/summary";
 
-export default function HeaderTime({ createdAt, updatedAt, length, className }: { createdAt?: string; updatedAt?: string; length?: number; className?: string }) {
+interface HeaderTimeProps {
+  createdAt?: string;
+  updatedAt?: string;
+  summary: Pick<Summary, "length" | "readingMinutes">;
+  className?: string;
+}
+
+export default function HeaderTime({ createdAt, updatedAt, summary, className }: HeaderTimeProps) {
   const createdAtDate = createdAt ? new Date(createdAt) : undefined;
   const updatedAtDate = updatedAt ? new Date(updatedAt) : undefined;
   const builtAtDate = new Date();
-  const readingTimeMinutes = length ? Math.ceil(length / lettersPerMinute) : null;
+
   return (
       <div className={`text-base-content/70 space-y-2 ${className}`}>
       <div className="flex flex-row flex-wrap gap-2 justify-end">
       {
         createdAtDate && <span className="flex flex-row gap-1 tooltip" data-tip="Length">
           <FaRulerHorizontal className="my-auto" />
-          {length}文字
+          {summary.length}文字
         </span>
       }
       {
         createdAtDate && <span className="flex flex-row gap-1 tooltip" data-tip="Reading Time">
           <FaRegHourglass className="my-auto" />
-          {readingTimeMinutes}分で読めます
+          {summary.readingMinutes}分で読めます
         </span>
       }
       </div>

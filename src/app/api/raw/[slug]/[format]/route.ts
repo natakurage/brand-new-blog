@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
 import { BlogPostManager, loadGlobalSettings } from "@/lib/cms";
 import { getCreditText } from "@/lib/content/credit";
-import removeMd from "remove-markdown";
 import { ORIGIN } from "@/lib/config";
+import { toPlainText } from "@/lib/content/summary";
 
 const getPost = cache((slug: string, isEnabled: boolean) =>
   new BlogPostManager().getBySlug(slug, isEnabled)
@@ -54,7 +54,7 @@ export async function GET(
   }
 
   if (format === "txt") {
-    const plainTextBody = removeMd(post.content);
+    const plainTextBody = toPlainText(post.content);
     const fullPlainText = `${titlePrefix}${post.title}\n\n${plainTextBody}\n\n----------------------------------------\n${creditText}\n`;
 
     return new Response(fullPlainText, {

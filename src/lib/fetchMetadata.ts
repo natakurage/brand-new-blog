@@ -2,8 +2,8 @@ import { load } from "cheerio";
 import { BlogItem } from "@/lib/content/types";
 import { BlogPostManager, SongManager } from "@/lib/cms";
 import { loadGlobalSettings } from "@/lib/cms";
-import removeMd from "remove-markdown";
 import { ORIGIN } from "./config";
+import { summarize } from "./content/summary";
 
 export interface Metadata {
   metadata: {
@@ -42,12 +42,13 @@ export async function fetchMetadata(url: string) {
     if (!post) {
       return metadata;
     }
+    const { excerpt } = summarize(post.content);
     const bunnerImgUrl = new URL(`/og`, ORIGIN);
     bunnerImgUrl.searchParams.set("title", post.title);
     if ("mainImage" in post && post.mainImage && typeof post.mainImage === "string")
       bunnerImgUrl.searchParams.set("bgImage", post.mainImage);
     metadata.metadata.title = post.title;
-    metadata.metadata.description = removeMd(post.content).slice(0, 100);
+    metadata.metadata.description = excerpt;
     metadata.metadata.banner = bunnerImgUrl.href;
     return metadata;
   }
