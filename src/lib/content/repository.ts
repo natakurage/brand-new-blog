@@ -66,3 +66,12 @@ export type TagRepository = SlugLookup<Tag>;
 export interface SiteSettingsRepository {
   get(): Promise<GlobalSettings>;
 }
+
+export interface Repositories {
+  articles: ArticleRepository;
+  songs: SongRepository;
+  postLists: PostListRepository;
+  albums: AlbumRepository;
+  tags: TagRepository;
+  siteSettings: SiteSettingsRepository;
+}
