@@ -26,7 +26,7 @@ import { licenseUrl } from "@/lib/content/license";
 import { CALENDAR, ORIGIN } from "@/lib/config";
 import { siteOpenGraph } from "@/lib/metadata";
 import { absoluteUrlOf } from "@/lib/content/href";
-import { describe, summarize } from "@/lib/content/summary";
+import { describe } from "@/lib/content/summary";
 
 const getSong = cache((slug: string, isEnabled: boolean) => (
   new SongManager().getBySlug(slug, isEnabled)
@@ -175,8 +175,6 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
     notFound();
   }
 
-  const summary = summarize(song.content);
-
   const { youtube_url, mp3_url, flac_url, other_urls } = separate_urls(song.url ?? []);
   const downloadable = !!(mp3_url || flac_url);
 
@@ -197,7 +195,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
             <div>by {song.artist.join(", ")}</div>
             <TagList tags={song.tags} />
             <div className="text-sm flex flex-wrap">
-              <HeaderTime createdAt={song.createdAt} summary={summary} className="ms-auto" />
+              <HeaderTime createdAt={song.createdAt} summary={song} className="ms-auto" />
             </div>
           </header>
           { youtube_url && <YouTubePlayer vid={getYouTubeId(youtube_url) || ""} /> }

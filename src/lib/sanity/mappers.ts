@@ -65,14 +65,14 @@ const toArticleMeta = (entry: SanityBlogPostResolved): ArticleMeta => ({
   showToc: entry.showToc,
 });
 
-export const toBlogPost = (entry: SanityBlogPostResolved): BlogPost => ({
-  ...toArticleMeta(entry),
-  content: entry.body ?? "",
-});
-
 export const toArticleSummary = (entry: SanityBlogPostResolved): ArticleSummary => ({
   ...toArticleMeta(entry),
   ...summarize(entry.body ?? ""),
+});
+
+export const toBlogPost = (entry: SanityBlogPostResolved): BlogPost => ({
+  ...toArticleSummary(entry),
+  content: entry.body ?? "",
 });
 
 const toSongMeta = (entry: SanitySongResolved): SongMeta => ({
@@ -92,15 +92,15 @@ const toSongMeta = (entry: SanitySongResolved): SongMeta => ({
 });
 
 // CMS の曲の description は長い Markdown で、本文にあたるため content に入れる
-export const toSong = (entry: SanitySongResolved): Song => ({
-  ...toSongMeta(entry),
-  content: entry.description ?? "",
-  lyrics: entry.lyrics,
-});
-
 export const toSongSummary = (entry: SanitySongResolved): SongSummary => ({
   ...toSongMeta(entry),
   ...summarize(entry.description ?? ""),
+});
+
+export const toSong = (entry: SanitySongResolved): Song => ({
+  ...toSongSummary(entry),
+  content: entry.description ?? "",
+  lyrics: entry.lyrics,
 });
 
 const toPostListMeta = (entry: SanityPostListResolved): PostListMeta => ({

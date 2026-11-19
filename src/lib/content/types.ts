@@ -65,7 +65,7 @@ export interface ArticleMeta extends BlogItemMeta {
   showToc?: boolean;
 }
 
-export interface BlogPost extends ArticleMeta {
+export interface BlogPost extends ArticleMeta, Summary {
   content: string;
 }
 
@@ -78,7 +78,7 @@ export interface SongMeta extends BlogItemMeta {
   streamUrl?: string;
 }
 
-export interface Song extends SongMeta {
+export interface Song extends SongMeta, Summary {
   content: string;
   lyrics?: string;
 }

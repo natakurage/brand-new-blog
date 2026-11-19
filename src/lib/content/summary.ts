@@ -1,5 +1,5 @@
 import removeMd from "remove-markdown";
-import type { Content, Summary } from "./types";
+import type { CollectionSummary, ItemSummary, Summary } from "./types";
 
 const lettersPerMinute = 500;
 const summaryLength = 100;
@@ -19,10 +19,10 @@ export const summarize = (markdown: string): Summary => {
   return { excerpt, length, readingMinutes };
 };
 
-export const describe = (item: Content): string => {
+export const describe = (item: ItemSummary | CollectionSummary): string => {
   switch (item.kind) {
     case "article": case "song":
-      return item.description || summarize(item.content).excerpt;
+      return item.description || item.excerpt;
     case "postList": case "album":
       return item.description || "";
     default:

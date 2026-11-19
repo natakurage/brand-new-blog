@@ -25,7 +25,7 @@ import Link from "next/link";
 import { CALENDAR, ORIGIN } from "@/lib/config";
 import { siteOpenGraph } from "@/lib/metadata";
 import { absoluteUrlOf, rawHref } from "@/lib/content/href";
-import { describe, summarize } from "@/lib/content/summary";
+import { describe } from "@/lib/content/summary";
 
 const getPost = cache((slug: string, isEnabled: boolean) => (
   new BlogPostManager().getBySlug(slug, isEnabled)
@@ -134,8 +134,6 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
     repositories.articles.list({ page: firstSix, slugs: data.recommendedPosts }, { preview: isEnabled }),
   ]);
 
-  const summary = summarize(post.content);
-
   const shareInfo = getShareInfo(post, data.siteName, ORIGIN);
 
   const contentWarnings = post.tags.map((tag) => tag.contentWarning).filter((cw): cw is string => !!cw);
@@ -170,7 +168,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
             <TagList tags={post.tags} />
             <div className="text-sm flex flex-wrap">
               <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
-              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} summary={summary} className="ms-auto" />
+              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} summary={post} className="ms-auto" />
             </div>
           </header>
           <ArticleBody content={post.content} className="my-12 sm:my-24" />
