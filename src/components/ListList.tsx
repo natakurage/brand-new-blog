@@ -7,12 +7,11 @@ interface ListListProps<T extends BlogItem> {
   total: number;
   page: number;
   limit: number;
-  basePath: string;
-  useQueryParams?: boolean;
+  hrefFor: (page: number) => string;
 }
 
 export default function ListList<T extends BlogItem>(
-  { basePath, lists, total, page, limit, useQueryParams = false }:
+  { hrefFor, lists, total, page, limit }:
   ListListProps<T>
 ) {
   const maxPages = Math.ceil(total / limit);
@@ -35,10 +34,9 @@ export default function ListList<T extends BlogItem>(
         ))}
       </ul>
       <Paginator
-        basePath={basePath}
+        hrefFor={hrefFor}
         page={page}
         maxPages={maxPages}
-        useQueryParam={useQueryParams}
       />
     </div>
   );

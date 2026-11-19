@@ -8,7 +8,7 @@ import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
-import { getAbsoluteUrl } from "@/lib/content/href";
+import { getAbsoluteUrl, pageHref } from "@/lib/content/href";
 
 const getAlbum = cache((slug: string) => (
   new AlbumManager().getBySlug(slug, false)
@@ -84,7 +84,7 @@ export default async function AlbumPage(props: { params: Promise<{ slug: string,
         <div>{album.artist?.join(", ")}</div>
         <p className="text-sm">{album.description}</p>
         <ItemList
-          basePath={"/songs"}
+          hrefFor={(n) => pageHref("/songs", n)}
           items={songs}
           total={songs.length}
           page={pageNum}

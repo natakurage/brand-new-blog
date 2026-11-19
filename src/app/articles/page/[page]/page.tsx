@@ -1,6 +1,7 @@
 import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager } from "@/lib/cms";
+import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
@@ -23,6 +24,6 @@ export default async function ArticlesPage(props: { params: Promise<{ page: stri
       return notFound();
     }
   return (
-    <ItemList basePath="/articles" items={posts} page={pageNum} total={total} limit={limit} />
+    <ItemList hrefFor={(n) => pageHref("/articles", n)} items={posts} page={pageNum} total={total} limit={limit} />
   );
 }

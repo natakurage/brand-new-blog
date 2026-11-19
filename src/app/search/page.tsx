@@ -2,6 +2,14 @@ import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager } from "@/lib/cms";
 
+const searchHref = (q: string, n: number): string => {
+  const params = new URLSearchParams({ q });
+  if (n !== 1) {
+    params.set("page", String(n));
+  }
+  return `/search?${params}`;
+};
+
 export async function generateMetadata(props: { searchParams: Promise<{ q: string }> }) {
   const searchParams = await props.searchParams;
   const { q } = searchParams;
@@ -34,12 +42,11 @@ export default async function SearchPage(props: { searchParams: Promise<{ q: str
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
           : <ItemList
-              basePath={`/search?q=${q}`}
+              hrefFor={(n) => searchHref(q, n)}
               items={posts}
               total={total}
               page={pageNum}
               limit={limit}
-              useQueryParam={true}
             />
       }
     </div>

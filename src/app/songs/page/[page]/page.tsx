@@ -1,6 +1,7 @@
 import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { SongManager } from "@/lib/cms";
+import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
@@ -23,6 +24,6 @@ export default async function SongsPage(props: { params: Promise<{ page: string 
     return notFound();
   }
   return (
-    <ItemList basePath="/songs" items={songs} page={pageNum} total={total} limit={limit} />
+    <ItemList hrefFor={(n) => pageHref("/songs", n)} items={songs} page={pageNum} total={total} limit={limit} />
   );
 }

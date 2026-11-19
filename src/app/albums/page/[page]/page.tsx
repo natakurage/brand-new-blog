@@ -1,6 +1,7 @@
 import ListList from "@/components/ListList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { AlbumManager } from "@/lib/cms";
+import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
@@ -24,7 +25,7 @@ export default async function AlbumsPage(props: { params: Promise<{ page: string
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">アルバム一覧</h1>
-      <ListList basePath="/albums" lists={items} total={items.length} page={pageNum} limit={limit} />
+      <ListList hrefFor={(n) => pageHref("/albums", n)} lists={items} total={items.length} page={pageNum} limit={limit} />
     </div>
   );
 }

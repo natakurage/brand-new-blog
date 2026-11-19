@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { AlbumManager, BlogPostManager, PostListManager, SongManager, getAllTags, loadGlobalSettings } from "@/lib/cms";
 import { ORIGIN } from "@/lib/config";
+import { pageHref } from "@/lib/content/href";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -51,7 +52,7 @@ function buildEntry(path: string, priority: number, changeFrequency: SitemapEntr
 function buildPageEntries(basePath: string, totalItems: number, itemsPerPage: number, priority = 0.8): MetadataRoute.Sitemap {
 	const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 	return Array.from({ length: totalPages }, (_, index) => ({
-		url: toAbsoluteUrl(`${basePath}/page/${index + 1}`),
+		url: toAbsoluteUrl(pageHref(basePath, index + 1)),
 		changeFrequency: "weekly" as const,
 		priority: index === 0 ? priority : 0.5,
 	}));
@@ -76,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		...collectionPaths[1].map((slug) => buildEntry(`/songs/${slug}`, 0.7)),
 		...albumDetails.flatMap((album) => album ? buildPageEntries(`/albums/${album.slug}`, album.items.length, data.itemsPerPage, 0.7) : []),
 		...listDetails.flatMap((list) => list ? buildPageEntries(`/lists/${list.id}`, list.items.length, data.itemsPerPage, 0.7) : []),
-		...tags.map((tag) => buildEntry(`/tags/${tag.slug}/page/1`, 0.6)),
+		...tags.map((tag) => buildEntry(pageHref(`/tags/${tag.slug}`, 1), 0.6)),
 	];
 }
 

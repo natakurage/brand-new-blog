@@ -1,6 +1,7 @@
 import ListList from "@/components/ListList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { PostListManager } from "@/lib/cms";
+import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
@@ -24,7 +25,7 @@ export default async function ListsPage(props: { params: Promise<{ page: string 
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">リスト一覧</h1>
-      <ListList basePath="/lists" lists={items} total={items.length} page={pageNum} limit={limit} />
+      <ListList hrefFor={(n) => pageHref("/lists", n)} lists={items} total={items.length} page={pageNum} limit={limit} />
     </div>
   );
 }

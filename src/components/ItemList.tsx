@@ -12,15 +12,14 @@ interface ItemListProps {
   suffix?: string;
   showDate?: boolean;
   showLength?: boolean;
-  basePath: string;
-  useQueryParam?: boolean;
+  hrefFor: (page: number) => string;
   showCount?: boolean;
   showExporter?: boolean;
 }
 
 export default function ItemList(
-  { basePath, items, total, page, limit, suffix,
-    showDate = true, showLength = true, useQueryParam = false,
+  { hrefFor, items, total, page, limit, suffix,
+    showDate = true, showLength = true,
     showCount = true, showExporter = true
   }: ItemListProps
 ) {
@@ -49,10 +48,9 @@ export default function ItemList(
         ))}
       </ul>
       <Paginator
-        basePath={basePath}
+        hrefFor={hrefFor}
         page={page}
         maxPages={maxPages}
-        useQueryParam={useQueryParam}
       />
     </div>
   );

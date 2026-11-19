@@ -4,6 +4,7 @@ import { BlogPostManager } from "@/lib/cms";
 import Script from "next/script";
 import type { WebSite, WithContext } from "schema-dts";
 import { ORIGIN } from "@/lib/config";
+import { pageHref } from "@/lib/content/href";
 
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
@@ -50,7 +51,7 @@ export default async function Home() {
   return (
     <>
       <JsonLD />
-      <ItemList basePath="/articles" items={posts} page={pageNum} total={total} limit={limit} showCount={false} showExporter={false} />
+      <ItemList hrefFor={(n) => pageHref("/articles", n)} items={posts} page={pageNum} total={total} limit={limit} showCount={false} showExporter={false} />
     </>
   );
 }
