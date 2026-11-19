@@ -19,7 +19,7 @@ export const summarize = (markdown: string): Summary => {
   const plainText = toPlainText(markdown);
   const segments = Array.from(segmenter.segment(plainText), (s) => s.segment);
   const length = segments.length;
-  const excerpt = segments.slice(0, summaryLength).join("");
+  const excerpt = segments.slice(0, summaryLength).join("") + (length > summaryLength ? "…" : "");
   const readingMinutes = Math.ceil(length / lettersPerMinute);
   return { excerpt, length, readingMinutes };
 }

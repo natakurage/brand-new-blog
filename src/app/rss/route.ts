@@ -14,7 +14,7 @@ export async function GET() {
 
   const items = posts.map(post => `<item>
       <title><![CDATA[${post.title}]]></title>
-      <description><![CDATA[${summarize(post.content).excerpt + "..."}]]></description>
+      <description><![CDATA[${summarize(post.content).excerpt}]]></description>
       <link>${getAbsoluteUrl(post, ORIGIN)}</link>
       <guid isPermaLink="false">${getAbsoluteUrl(post, ORIGIN)}</guid>
       <dc:creator><![CDATA[${data.author}]]></dc:creator>

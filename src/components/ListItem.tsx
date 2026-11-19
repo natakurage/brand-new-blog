@@ -12,7 +12,7 @@ export default function ListItem({ item, suffix, showLength = true, showDate = t
       <h2 className="text-xl font-bold">
         {item.title}
       </h2>
-      <p>{excerpt}...</p>
+      <p>{excerpt}</p>
       <TagList tags={item.tags ?? []} />
       <div className="flex flex-row gap-4 mt-2 justify-end text-sm text-base-content/70">
       {
