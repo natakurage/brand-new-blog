@@ -5,9 +5,12 @@
   "packageManager": "pnpm@12.15.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node scripts/with-key.mjs next dev",
+    "build": "node scripts/with-key.mjs next build",
+    "start": "node scripts/with-key.mjs next start",
+    "encrypt": "dotenvx encrypt -f .env.local",
+    "setup-key": "node scripts/setup-key.mjs",
+    "decrypt": "node scripts/with-key.mjs dotenvx decrypt -f .env.local --stdout",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -33,6 +36,7 @@
     "remove-markdown": "^0.8.0"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^2.38.2",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.20",

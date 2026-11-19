@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(pnpm decrypt*)",
+      "Bash(pnpm setup-key*)",
+      "Bash(dotenvx decrypt*)"
+    ]
+  }
+}
