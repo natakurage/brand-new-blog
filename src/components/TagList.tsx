@@ -1,4 +1,4 @@
-import { Tag } from "@/lib/models";
+import { Tag } from "@/lib/content/types";
 import Link from "next/link";
 
 export default function TagList({ tags, className }: { tags: Tag[], className?: string }) {

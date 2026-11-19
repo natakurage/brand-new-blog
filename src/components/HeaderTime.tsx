@@ -1,13 +1,13 @@
 import { MdAccessTime } from "react-icons/md";
 import { MdUpdate } from "react-icons/md";
 import { FaRegHourglass, FaRulerHorizontal, FaScrewdriverWrench } from "react-icons/fa6";
-import { constants } from "@/lib/cmsUtils";
+import { lettersPerMinute } from "@/lib/content/summary";
 
 export default function HeaderTime({ createdAt, updatedAt, length, className }: { createdAt?: string; updatedAt?: string; length?: number; className?: string }) {
   const createdAtDate = createdAt ? new Date(createdAt) : undefined;
   const updatedAtDate = updatedAt ? new Date(updatedAt) : undefined;
   const builtAtDate = new Date();
-  const readingTimeMinutes = length ? Math.ceil(length / constants.lettersPerMinute) : null;
+  const readingTimeMinutes = length ? Math.ceil(length / lettersPerMinute) : null;
   return (
       <div className={`text-base-content/70 space-y-2 ${className}`}>
       <div className="flex flex-row flex-wrap gap-2 justify-end">

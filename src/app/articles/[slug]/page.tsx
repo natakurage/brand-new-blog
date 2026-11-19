@@ -1,6 +1,8 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
-import { BlogPost, getShareInfo, getCreditText } from "@/lib/models";
+import { BlogPost } from "@/lib/content/types";
+import { getShareInfo } from "@/lib/content/share";
+import { getCreditText } from "@/lib/content/credit";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager} from "@/lib/cms";
 import { draftMode } from "next/headers";
@@ -17,7 +19,7 @@ import HeaderAuthor from "@/components/HeaderAuthor";
 import Credit from "@/components/Credit";
 import ContentWarning from "@/components/ContentWarning";
 import Script from "next/script";
-import { ccDeedUrls } from "@/lib/licenses";
+import { ccDeedUrls } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
 

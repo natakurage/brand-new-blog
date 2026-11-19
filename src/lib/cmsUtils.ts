@@ -37,7 +37,3 @@ export const cmsToType = {
 export const isValidContentType = (type: string): type is keyof typeof cmsToType => {
   return type in cmsToType;
 };
-
-export const constants = {
-  lettersPerMinute: 500
-};

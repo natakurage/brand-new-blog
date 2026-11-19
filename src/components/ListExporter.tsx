@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { BlogItem } from "@/lib/models";
+import { BlogItem } from "@/lib/content/types";
 import { MdClose, MdContentCopy } from "react-icons/md";
 import { PiExport } from "react-icons/pi";
 import useTimeout from "@/app/hooks/useTimeout";

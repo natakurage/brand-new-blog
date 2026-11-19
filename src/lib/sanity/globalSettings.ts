@@ -1,5 +1,5 @@
 import { getClient } from "./client";
-import { GlobalSettings, LinkItem } from "@/lib/models";
+import { GlobalSettings, LinkItem } from "@/lib/content/types";
 import type {
   GlobalSettings as SanityGlobalSettings,
   LinkItem as SanityLinkItem,

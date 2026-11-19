@@ -1,5 +1,5 @@
 import { ItemListManagerMap, isItemListManagerMapKey } from "@/lib/cmsUtils";
-import { BlogData, listNavigatorInfo } from "@/lib/models";
+import { BlogData, listNavigatorInfo } from "@/lib/content/types";
 import { NextRequest, NextResponse } from "next/server";
 
 const responseWithError = (error: string, status: number) => {

@@ -1,4 +1,4 @@
-import { BlogItem } from "@/lib/models";
+import { BlogItem } from "@/lib/content/types";
 import Paginator from "./Paginator";
 import ListItem from "./ListItem";
 import ListExporter from "./ListExporter";

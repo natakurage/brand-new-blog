@@ -1,5 +1,5 @@
 import { getClient } from "./client";
-import { Tag, BlogData, BlogPost, PostList, Album, Song } from "@/lib/models";
+import { Tag, BlogData, BlogPost, PostList, Album, Song } from "@/lib/content/types";
 import { SanityClient, SanityDocument, groq } from "next-sanity";
 import type {
   BlogPost as SanityBlogPost,

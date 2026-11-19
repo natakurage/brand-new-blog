@@ -1,5 +1,4 @@
-import type { LicenseType } from "./licenses";
-import { loadGlobalSettings } from "@/lib/cms";
+import type { LicenseType } from "./license";
 
 export interface LinkItem {
   href: string;
@@ -112,64 +111,3 @@ export interface listNavigatorInfo {
   prev: null | listNavigatorItem;
   next: null | listNavigatorItem;
 }
-
-export const getPath = (item: BlogData | Tag): string => {
-  const slug = item.typeUrl == "lists" ? item.id : item.slug;
-  return `/${item.typeUrl}/${slug}`;
-};
-
-interface ShareInfo {
-  text: string;
-  url: string;
-}
-
-export const getShareInfo = async (item: BlogData): Promise<ShareInfo> => {
-  const origin = process.env.NEXT_PUBLIC_ORIGIN;
-  if (!origin) {
-    throw new Error("Missing NEXT_PUBLIC_ORIGIN");
-  }
-
-  const data = await loadGlobalSettings();
-
-  return {
-    text: `${item.title} - ${data.siteName}`,
-    url: `${origin}/${item.typeUrl}/${item.slug}`
-  };
-};
-
-export const getCreditText = async (item: BlogPost): Promise<string> => {
-  const [data, shareInfo] = await Promise.all([
-    loadGlobalSettings(),
-    getShareInfo(item),
-  ]);
-  const creditInfo = new Map<string, string>([
-    ["タイトル", item.title],
-    ["著者", data.author],
-    ["作成年", new Date(item.createdAt).getFullYear().toString()],
-    ["URL", shareInfo.url],
-    ["ライセンス", item.licenseSelect ?? item.license ?? "不明なライセンス"],
-  ]);
-  return Array.from(creditInfo.entries())
-    .map(([key, value]) => `- ${key}: ${value}`)
-    .join("\n");
-};
-
-export const getSongCreditText = async (song: Song): Promise<string> => {
-  const shareInfo = await getShareInfo(song);
-  const creditInfo = new Map<string, string>([
-    ["タイトル", song.title],
-    ["アーティスト", song.artist.join(", ")]
-  ]);
-  song.credit?.forEach((credit) => {
-    const [k, v] = credit.split(":");
-    creditInfo.set(k, v);
-  });
-  ([
-    ["作成年", new Date(song.createdAt).getFullYear().toString()],
-    ["URL", shareInfo.url],
-    ["ライセンス", song.licenseSelect ?? song.license ?? "不明なライセンス"],
-  ]).forEach(([k, v]) => creditInfo.set(k, v));
-  return Array.from(creditInfo.entries())
-    .map(([key, value]) => `- ${key}: ${value}`)
-    .join("\n");
-};

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
-import { LinkItem } from "@/lib/models";
+import { LinkItem } from "@/lib/content/types";
 
 export default function SideBar({ pages }: { pages?: LinkItem[] }) {
   return (

@@ -1,12 +1,12 @@
 import { cache } from "react";
-import { Album } from "@/lib/models";
+import { Album } from "@/lib/content/types";
 import { loadGlobalSettings } from "@/lib/cms";
 import { AlbumManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";
 import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
-import { ccDeedUrls } from "@/lib/licenses";
+import { ccDeedUrls } from "@/lib/content/license";
 
 const getAlbum = cache((slug: string) => (
   new AlbumManager().getBySlug(slug, false)

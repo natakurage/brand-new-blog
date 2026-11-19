@@ -1,6 +1,6 @@
 "use client";
 
-import { LicenseType, ccDeedUrls } from "@/lib/licenses";
+import { LicenseType, ccDeedUrls } from "@/lib/content/license";
 import { useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 

@@ -2,7 +2,7 @@ import { cache } from "react";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
 import { BlogPostManager } from "@/lib/cms";
-import { getCreditText } from "@/lib/models";
+import { getCreditText } from "@/lib/content/credit";
 import removeMd from "remove-markdown";
 
 const getPost = cache((slug: string, isEnabled: boolean) =>

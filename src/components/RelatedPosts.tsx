@@ -1,4 +1,4 @@
-import { BlogPost } from "@/lib/models";
+import { BlogPost } from "@/lib/content/types";
 import ListItem from "./ListItem";
 
 export async function RelatedPosts({ posts }: { posts: BlogPost[] }) {

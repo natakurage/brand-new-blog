@@ -1,4 +1,4 @@
-import { BlogItem, ItemList } from "@/lib/models";
+import { BlogItem, ItemList } from "@/lib/content/types";
 import Link from "next/link";
 import Paginator from "./Paginator";
 

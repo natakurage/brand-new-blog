@@ -3,8 +3,8 @@ import { MdAccessTime } from "react-icons/md";
 import removeMd from "remove-markdown";
 import TagList from "./TagList";
 import { FaRegHourglass, FaRulerHorizontal } from "react-icons/fa6";
-import { BlogItem } from "@/lib/models";
-import { constants } from "@/lib/cmsUtils";
+import { BlogItem } from "@/lib/content/types";
+import { lettersPerMinute } from "@/lib/content/summary";
 
 export default function ListItem({ item, suffix, showLength = true, showDate = true }: { item: BlogItem; suffix?: string; showLength?: boolean; showDate?: boolean }) {
   return (
@@ -24,7 +24,7 @@ export default function ListItem({ item, suffix, showLength = true, showDate = t
       {
         showLength && <div className="flex flex-row gap-1">
           <FaRegHourglass className="my-auto" />
-          {Math.ceil(removeMd(item.content).length / constants.lettersPerMinute)}分
+          {Math.ceil(removeMd(item.content).length / lettersPerMinute)}分
         </div>
       }
       {

@@ -1,5 +1,5 @@
 import { load } from "cheerio";
-import { BlogItem } from "@/lib/models";
+import { BlogItem } from "@/lib/content/types";
 import { BlogPostManager, SongManager } from "@/lib/cms";
 import { loadGlobalSettings } from "@/lib/cms";
 import removeMd from "remove-markdown";

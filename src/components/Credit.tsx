@@ -1,6 +1,6 @@
 import Markdown from "react-markdown";
-import type { LicenseType } from "@/lib/licenses";
-import { ccDeedUrls, ccLogos } from "@/lib/licenses";
+import type { LicenseType } from "@/lib/content/license";
+import { ccDeedUrls, ccLogos } from "@/lib/content/license";
 import Link from "next/link";
 import Image from "next/image";
 import CopyLicenseButton from "./CopyLicenseButton";

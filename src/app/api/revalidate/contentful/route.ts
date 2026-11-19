@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { PostListManager, AlbumManager } from '@/lib/cms';
 import { BlogDataManagerMap, cmsToType, isValidContentType } from '@/lib/cmsUtils';
-import { Tag, BlogData, getPath, PostList, Album } from '@/lib/models';
+import { Tag, BlogData, PostList, Album } from '@/lib/content/types';
+import { getPath } from '@/lib/content/href';
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-revalidate-secret');
