@@ -4,6 +4,9 @@ import type {
   PostList as SanityPostList,
   MusicAlbum as SanityMusicAlbum,
   Tag as SanityTag,
+  GlobalSettings as SanityGlobalSettings,
+  LinkItem as SanityLinkItem,
+  LinkList as SanityLinkList,
 } from "../../../@types/sanity/sanity.types";
 
 /**
@@ -36,3 +39,20 @@ export type SanityMusicAlbumResolved = ResolveReferences<
     tags?: (SanityTag | null)[];
   }
 >;
+
+export type SanityGlobalSettingsResolved = ResolveReferences<
+  SanityGlobalSettings,
+  {
+    avatar: string;
+    topLogo: string;
+    banner: string;
+    favicon: string;
+    appleTouchIcon: string;
+    description: string;
+    bio: string;
+  }
+>;
+
+export type SanityLinkListResolved = ResolveReferences<SanityLinkList, {
+  item?: (SanityLinkItem | null)[];
+}>;

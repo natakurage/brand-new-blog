@@ -1,4 +1,4 @@
-import type { Tag as SanityTag } from "../../../@types/sanity/sanity.types";
+import type { LinkItem as SanityLinkItem, Tag as SanityTag } from "../../../@types/sanity/sanity.types";
 import type {
   Album,
   AlbumMeta,
@@ -6,6 +6,8 @@ import type {
   ArticleMeta,
   ArticleSummary,
   BlogPost,
+  GlobalSettings,
+  LinkItem,
   PostList,
   PostListMeta,
   PostListSummary,
@@ -16,8 +18,11 @@ import type {
 } from "@/lib/content/types";
 import type { CcLicenseId, License } from "@/lib/content/license";
 import { summarize } from "@/lib/content/summary";
+import { CALENDAR } from "@/lib/config";
 import type {
   SanityBlogPostResolved,
+  SanityGlobalSettingsResolved,
+  SanityLinkListResolved,
   SanityMusicAlbumResolved,
   SanityPostListResolved,
   SanitySongResolved,
@@ -134,3 +139,47 @@ export const toAlbum = (entry: SanityMusicAlbumResolved): Album => ({
 });
 
 export const toAlbumSummary = (entry: SanityMusicAlbumResolved): AlbumSummary => toAlbumMeta(entry);
+
+export const linkListIds = {
+  socials: "socials",
+  navbarPages: "navbar-pages",
+  footerPages: "footer-pages",
+} as const;
+
+const toLinkItems = (list?: SanityLinkListResolved): LinkItem[] => {
+  return (list?.item ?? [])
+    .filter((item): item is SanityLinkItem => item !== null)
+    .map((item) => ({
+      href: item.href ?? "#",
+      name: item.name ?? "Unnamed Link",
+    }));
+};
+
+export const toSiteSettings = (gs: SanityGlobalSettingsResolved, linkLists: SanityLinkListResolved[]): GlobalSettings => {
+  const linkList = (id: string) => linkLists.find((list) => list.id?.current === id);
+  return {
+    siteName: gs.siteName ?? "Unnamed Blog",
+    description: gs.description ?? "",
+    author: gs.author ?? "Unknown Author",
+    authorUrl: gs.authorUrl,
+    copyright: gs.copyright ?? "Copyright © " + CALENDAR.year(new Date()) + " " + gs.author,
+    donate: gs.donate,
+    donateUrl: gs.donateUrl,
+    bio: gs.bio ?? "",
+    contactUrl: gs.contactUrl,
+    useSidebar: gs.useSidebar ?? false,
+    adblock: gs.adblock ?? false,
+    showRelatedPosts: gs.showRelatedPosts ?? false,
+    showNewPosts: gs.showNewPosts ?? false,
+    itemsPerPage: gs.itemsPerPage ?? 10,
+    recommendedPosts: gs.recommendedPosts ?? [],
+    socials: toLinkItems(linkList(linkListIds.socials)),
+    navbarPages: toLinkItems(linkList(linkListIds.navbarPages)),
+    footerPages: toLinkItems(linkList(linkListIds.footerPages)),
+    avatar: gs.avatar,
+    topLogo: gs.topLogo,
+    banner: gs.banner,
+    favicon: gs.favicon,
+    appleTouchIcon: gs.appleTouchIcon,
+  };
+};
