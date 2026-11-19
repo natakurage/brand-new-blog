@@ -1,19 +1,18 @@
 import { cache } from "react";
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cms";
-import { PostListManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
 
-const getList = cache((id: string) => (
-  new PostListManager().get(id, false)
+const getList = cache((slug: string) => (
+  repositories.postLists.findBySlug(slug, { preview: false })
 ));
 
-export async function generateMetadata(props: { params: Promise<{ id: string, page: string }> }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
-  const { id } = params;
-  const list = await getList(id);
+  const data = await repositories.siteSettings.get();
+  const { slug } = params;
+  const list = await getList(slug);
   if (!list) { 
     notFound();
   }
@@ -22,16 +21,16 @@ export async function generateMetadata(props: { params: Promise<{ id: string, pa
 }
 
 export async function generateStaticParams() {
-  const ids = await new PostListManager().getAllIds();
-  return ids.map((id) => ({ id, page: "1" }));
+  const slugs = await repositories.postLists.allSlugs();
+  return slugs.map((slug) => ({ slug, page: "1" }));
 }
 
-export default async function ListsPage(props: { params: Promise<{ id: string, page: string }> }) {
+export default async function ListsPage(props: { params: Promise<{ slug: string, page: string }> }) {
   const params = await props.params;
-  const { id, page } = params;
-  const data = await loadGlobalSettings();
+  const { slug, page } = params;
+  const data = await repositories.siteSettings.get();
   const pageNum = Number(page);
-  const list = await getList(id);
+  const list = await getList(slug);
   if (!list) { 
     notFound();
   }
@@ -48,7 +47,7 @@ export default async function ListsPage(props: { params: Promise<{ id: string, p
         total={length}
         page={pageNum}
         limit={data.itemsPerPage}
-        suffix={`?key=${list.id}`}
+        suffix={`?key=${list.slug}`}
       />
     </div>
   );

@@ -1,8 +1,6 @@
 import type { BlogPost, Kind } from "./types";
 
-type Addressable =
-  | { kind: "postList"; id: string }
-  | { kind: Exclude<Kind, "postList">; slug: string };
+type Addressable = { kind: Kind; slug: string };
 
 const segments: Record<Kind, string> = {
   article: "articles",
@@ -13,8 +11,7 @@ const segments: Record<Kind, string> = {
 };
 
 export const hrefOf = (item: Addressable): string => {
-  const key = item.kind === "postList" ? item.id : item.slug;
-  return `/${segments[item.kind]}/${key}`;
+  return `/${segments[item.kind]}/${item.slug}`;
 };
 
 export const rawHref = (article: BlogPost, format: "md" | "txt"): string => {

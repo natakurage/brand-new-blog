@@ -20,7 +20,7 @@ export default function ListList(
       <ul className="space-y-4">
         {lists.map((list) => (
           <li
-            key={list.id}
+            key={list.slug}
             className="relative p-4 btn-ghost rounded-lg overflow-hidden"
           >
             <article>

@@ -53,7 +53,6 @@ export const toLicense = (licenseSelect?: CcLicenseId, license?: string): Licens
 
 const toArticleMeta = (entry: SanityBlogPostResolved): ArticleMeta => ({
   kind: "article",
-  id: entry._id,
   title: entry.title ?? "Untitled Article",
   slug: entry.slug?.current ?? "",
   mainImage: entry.image,
@@ -77,7 +76,6 @@ export const toBlogPost = (entry: SanityBlogPostResolved): BlogPost => ({
 
 const toSongMeta = (entry: SanitySongResolved): SongMeta => ({
   kind: "song",
-  id: entry._id,
   title: entry.title ?? "Untitled Song",
   slug: entry.slug?.current ?? "",
   createdAt: new Date(entry._createdAt),
@@ -105,7 +103,6 @@ export const toSong = (entry: SanitySongResolved): Song => ({
 
 const toPostListMeta = (entry: SanityPostListResolved): PostListMeta => ({
   kind: "postList",
-  id: entry._id,
   title: entry.title ?? "Untitled List",
   slug: entry.slug?.current ?? "",
   description: entry.description,
@@ -122,7 +119,6 @@ export const toPostListSummary = (entry: SanityPostListResolved): PostListSummar
 
 const toAlbumMeta = (entry: SanityMusicAlbumResolved): AlbumMeta => ({
   kind: "album",
-  id: entry._id,
   title: entry.title ?? "Untitled Album",
   slug: entry.slug?.current ?? "",
   description: entry.description,

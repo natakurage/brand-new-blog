@@ -16,8 +16,8 @@ const pageRewrites = [
         destination: "/albums/page/1"
     },
     {
-        source: "/lists/:id",
-        destination: "/lists/:id/page/1"
+        source: "/lists/:slug",
+        destination: "/lists/:slug/page/1"
     },
     {
         source: "/albums/:id",

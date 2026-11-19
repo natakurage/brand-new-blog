@@ -42,7 +42,6 @@ export interface GlobalSettings {
 
 export interface BlogData {
   kind: Kind;
-  id: string;
   title: string;
   slug: string;
   description?: string;
