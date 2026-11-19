@@ -49,8 +49,8 @@ export interface BlogData {
 
 export interface BlogItem extends BlogData {
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   license: License;
 }
 
@@ -62,8 +62,8 @@ export interface BlogPost extends BlogItem {
   typeUrl: "articles",
   mainImage?: string;
   content: string,
-  createdAt: string,
-  updatedAt: string,
+  createdAt: Date,
+  updatedAt: Date,
   license: License;
   showToc?: boolean
 }
@@ -71,8 +71,8 @@ export interface BlogPost extends BlogItem {
 export interface Song extends BlogItem {
   typeUrl: "songs";
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   artist: string[];
   credit?: string[];
   lyrics?: string;

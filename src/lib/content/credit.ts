@@ -6,7 +6,7 @@ export const getCreditText = (item: BlogPost, author: string, origin: string): s
   const creditInfo = new Map<string, string>([
     ["タイトル", item.title],
     ["著者", author],
-    ["作成年", new Date(item.createdAt).getFullYear().toString()],
+    ["作成年", item.createdAt.getFullYear().toString()],
     ["URL", getAbsoluteUrl(item, origin)],
     ["ライセンス", licenseLabel(item.license)],
   ]);
@@ -25,7 +25,7 @@ export const getSongCreditText = (song: Song, origin: string): string => {
     creditInfo.set(k, v);
   });
   ([
-    ["作成年", new Date(song.createdAt).getFullYear().toString()],
+    ["作成年", song.createdAt.getFullYear().toString()],
     ["URL", getAbsoluteUrl(song, origin)],
     ["ライセンス", licenseLabel(song.license)],
   ]).forEach(([k, v]) => creditInfo.set(k, v));

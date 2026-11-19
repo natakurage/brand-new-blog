@@ -86,8 +86,8 @@ async function JsonLD({ post }: { post: BlogPost }) {
     headline: post.title,
     description: excerpt,
     url: getAbsoluteUrl(post, ORIGIN),
-    datePublished: post.createdAt,
-    dateModified: post.updatedAt,
+    datePublished: post.createdAt.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
     image: [ogpImageUrl.href],
     author: [
       {
@@ -190,7 +190,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
               title={post.title}
               author={data.author}
               url={shareInfo.url}
-              year={new Date(post.createdAt).getFullYear()}
+              year={post.createdAt.getFullYear()}
               workType="記事"
               license={post.license}
             />

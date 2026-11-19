@@ -256,7 +256,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
               title={song.title}
               artists={song.artist}
               url={shareInfo.url}
-              year={new Date(song.createdAt).getFullYear()}
+              year={song.createdAt.getFullYear()}
               additionalInfo={song.credit}
               license={song.license}
             />

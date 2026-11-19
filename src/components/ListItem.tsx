@@ -30,7 +30,7 @@ export default function ListItem({ item, suffix, showLength = true, showDate = t
       {
         showDate && <div className="flex flex-row gap-1">
           <MdAccessTime className="my-auto" />
-          <time dateTime={new Date(item.createdAt).toISOString()}>{new Date(item.createdAt).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+          <time dateTime={item.createdAt.toISOString()}>{item.createdAt.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
         </div>
       }
       </div>

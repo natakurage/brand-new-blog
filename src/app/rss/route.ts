@@ -18,7 +18,7 @@ export async function GET() {
       <link>${getAbsoluteUrl(post, ORIGIN)}</link>
       <guid isPermaLink="false">${getAbsoluteUrl(post, ORIGIN)}</guid>
       <dc:creator><![CDATA[${data.author}]]></dc:creator>
-      <pubDate>${new Date(post.createdAt).toUTCString()}</pubDate>
+      <pubDate>${post.createdAt.toUTCString()}</pubDate>
     </item>`
   );
 

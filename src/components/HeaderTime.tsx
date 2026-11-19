@@ -4,28 +4,26 @@ import { FaRegHourglass, FaRulerHorizontal, FaScrewdriverWrench } from "react-ic
 import type { Summary } from "@/lib/content/summary";
 
 interface HeaderTimeProps {
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   summary: Pick<Summary, "length" | "readingMinutes">;
   className?: string;
 }
 
 export default function HeaderTime({ createdAt, updatedAt, summary, className }: HeaderTimeProps) {
-  const createdAtDate = createdAt ? new Date(createdAt) : undefined;
-  const updatedAtDate = updatedAt ? new Date(updatedAt) : undefined;
   const builtAtDate = new Date();
 
   return (
       <div className={`text-base-content/70 space-y-2 ${className}`}>
       <div className="flex flex-row flex-wrap gap-2 justify-end">
       {
-        createdAtDate && <span className="flex flex-row gap-1 tooltip" data-tip="Length">
+        createdAt && <span className="flex flex-row gap-1 tooltip" data-tip="Length">
           <FaRulerHorizontal className="my-auto" />
           {summary.length}文字
         </span>
       }
       {
-        createdAtDate && <span className="flex flex-row gap-1 tooltip" data-tip="Reading Time">
+        createdAt && <span className="flex flex-row gap-1 tooltip" data-tip="Reading Time">
           <FaRegHourglass className="my-auto" />
           {summary.readingMinutes}分で読めます
         </span>
@@ -33,15 +31,15 @@ export default function HeaderTime({ createdAt, updatedAt, summary, className }:
       </div>
       <div className="flex flex-row flex-wrap gap-2 justify-end">
       {
-        createdAtDate && <span className="flex flex-row gap-1 tooltip" data-tip="Published">
+        createdAt && <span className="flex flex-row gap-1 tooltip" data-tip="Published">
           <MdAccessTime className="my-auto" />
-          <time dateTime={createdAtDate?.toISOString()}>{createdAtDate.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+          <time dateTime={createdAt.toISOString()}>{createdAt.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
         </span>
       }
       {
-        updatedAtDate && <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
+        updatedAt && <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
           <MdUpdate className="my-auto" />
-          <time dateTime={updatedAtDate?.toISOString()}>{updatedAtDate.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+          <time dateTime={updatedAt.toISOString()}>{updatedAt.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
         </span>
       }
         <span className="flex flex-row gap-1 tooltip" data-tip="Built">
