@@ -3,27 +3,21 @@ import { articleBySlugQuery, articleListQuery, articleSearchQuery, articleSlugsQ
 import { toArticleSummary, toBlogPost } from "../mappers";
 import type { SanityBlogPostResolved } from "../types";
 import { cacheFor, DAY, sliceOf, type ClientFor } from "../fetchOptions";
+import { slugLookup } from "./capabilities";
 
 type ArticlePage = { items: SanityBlogPostResolved[]; total: number };
 
-const type = "blogPost";
+const cacheTag = "blogPost";
 
 export const createSanityArticleRepository = (clientFor: ClientFor): ArticleRepository => ({
-  async findBySlug(slug, ctx) {
-    const entry = await clientFor(ctx).fetch<SanityBlogPostResolved | null>(
-      articleBySlugQuery,
-      { slug },
-      cacheFor([type, `${type}:slug:${slug}`], DAY),
-    );
-    return entry ? toBlogPost(entry) : null;
-  },
+  ...slugLookup(clientFor, { cacheTag, bySlugQuery: articleBySlugQuery, slugsQuery: articleSlugsQuery, map: toBlogPost }),
 
   async list({ page, tag, slugs, exclude }, ctx) {
     const tags = [
-      type,
-      ...(tag ? [`${type}:tag:${tag}`] : []),
-      ...[...(slugs ?? []), ...(exclude ?? [])].map((slug) => `${type}:slug:${slug}`),
-      ...(!tag && !slugs && !exclude?.length ? [`${type}-collection`] : []),
+      cacheTag,
+      ...(tag ? [`${cacheTag}:tag:${tag}`] : []),
+      ...[...(slugs ?? []), ...(exclude ?? [])].map((slug) => `${cacheTag}:slug:${slug}`),
+      ...(!tag && !slugs && !exclude?.length ? [`${cacheTag}-collection`] : []),
     ];
     const result = await clientFor(ctx).fetch<ArticlePage>(
       articleListQuery,
@@ -38,7 +32,7 @@ export const createSanityArticleRepository = (clientFor: ClientFor): ArticleRepo
     const entries = await clientFor(ctx).fetch<SanityBlogPostResolved[]>(
       relatedArticlesQuery,
       { slug: article.slug, tagSlugs, limit },
-      cacheFor([type], DAY),
+      cacheFor([cacheTag], DAY),
     );
     return entries.map(toArticleSummary);
   },
@@ -48,12 +42,8 @@ export const createSanityArticleRepository = (clientFor: ClientFor): ArticleRepo
     const result = await clientFor(ctx).fetch<ArticlePage>(
       articleSearchQuery,
       { terms, ...sliceOf(page) },
-      cacheFor([type], 10),
+      cacheFor([cacheTag], 10),
     );
     return { items: result.items.map(toArticleSummary), total: result.total };
-  },
-
-  async allSlugs() {
-    return clientFor({ preview: false }).fetch<string[]>(articleSlugsQuery, {}, cacheFor([], 10));
   },
 });
