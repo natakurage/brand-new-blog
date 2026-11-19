@@ -1,6 +1,6 @@
 import Markdown from "react-markdown";
-import type { LicenseType } from "@/lib/content/license";
-import { ccDeedUrls, ccLogos } from "@/lib/content/license";
+import type { CcLicenseId, License } from "@/lib/content/license";
+import { ccLicenses } from "@/lib/content/license";
 import Link from "next/link";
 import Image from "next/image";
 import CopyLicenseButton from "./CopyLicenseButton";
@@ -13,44 +13,76 @@ interface CreditProps {
   additionalInfo?: string[];
   url: string;
   year: number;
-  licenseSelect?: LicenseType;
-  license?: string;
+  license: License;
 }
 
-function CCLicenseNotice({ workType, title, author, artists, url, year, licenseSelect }: CreditProps) {
+interface CCLicenseNoticeProps {
+  workType?: string;
+  title: string;
+  creator?: string;
+  url: string;
+  year: number;
+  id: CcLicenseId;
+}
+
+type LicenseNoticeProps = Omit<CCLicenseNoticeProps, "id"> & {
+  license: License;
+};
+
+function CCLicenseNotice({ workType, title, creator, url, year, id }: CCLicenseNoticeProps) {
   return (
     <p>
       <Image
-        src={ccLogos[licenseSelect!]}
-        alt={`${licenseSelect} logo`}
+        src={ccLicenses[id].logoUrl}
+        alt={`${id} logo`}
         width={88}
         height={31}
         className="inline me-2 align-middle"
       />
       この{workType}は
       <Link
-        href={ccDeedUrls[licenseSelect!]}
+        href={ccLicenses[id].deedUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="underline text-base-content"
       >
-        {licenseSelect}
+        {id}
       </Link>
       ライセンスのもとで提供されています。
       <CopyLicenseButton
         workType={workType || "作品"}
         title={title}
-        creator={author || artists?.join(", ") || "不明"}
+        creator={creator || "不明"}
         year={year}
         url={url}
-        licenseSelect={licenseSelect!}
+        id={id}
         className="inline ms-2 align-sub"
       />
     </p>
   );
 }
 
-export default function Credit({ workType, title, author, artists, url, year, license, additionalInfo, licenseSelect }: CreditProps) {
+function LicenseNotice({ license, ...rest }: LicenseNoticeProps) {
+  switch (license.kind) {
+    case "cc":
+      return (
+        <CCLicenseNotice {...rest} id={license.id}/>
+      )
+    case "custom":
+      return (
+        <div className="prose dark:prose-invert! wrap-break-word">
+          <Markdown>{license.text}</Markdown>
+        </div>
+      )
+    case "unspecified":
+      return <p>ライセンスが不明です。</p>
+    default:
+      return license satisfies never;
+  }
+}
+
+export default function Credit({ workType, title, author, artists, additionalInfo, url, year, license }: CreditProps) {
+  const creator = author || artists?.join(", ");
   return (
     <section className="border border-base-content border-dashed rounded p-3 space-y-2">
       <h6 className="font-bold">Credit</h6>
@@ -66,22 +98,14 @@ export default function Credit({ workType, title, author, artists, url, year, li
       <h6 className="font-bold">URL</h6>
       <p><Link href={url} className="text-primary">{url}</Link></p>
       <h6 className="font-bold">License</h6>
-      {
-        licenseSelect
-        ? <CCLicenseNotice
-            workType={workType}
-            title={title}
-            author={author || artists?.join(", ")}
-            url={url}
-            year={year}
-            license={license}
-            additionalInfo={additionalInfo}
-            licenseSelect={licenseSelect!}
-          />
-        : license
-          ? <div className="prose dark:prose-invert! wrap-break-word"><Markdown>{license}</Markdown></div>
-          : <p>ライセンスが不明です。</p>
-      }
+      <LicenseNotice
+        workType={workType}
+        title={title}
+        creator={creator}
+        url={url}
+        year={year}
+        license={license}
+      />
     </section>
   );
 }

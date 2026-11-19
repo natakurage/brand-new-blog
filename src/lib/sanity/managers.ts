@@ -9,6 +9,7 @@ import type {
   Tag as SanityTag,
 } from "../../../@types/sanity/sanity.types";
 import { ResolveReferences } from "./types";
+import type { CcLicenseId, License } from "../content/license";
 
 type SanityBlogPostResolved = ResolveReferences<
   SanityBlogPost, { tags?: SanityTag[], image?: string; }
@@ -40,6 +41,16 @@ const TransformTag = (tag: SanityTag): Tag => ({
   name: tag.name ?? "Unnamed Tag",
   contentWarning: tag.contentWarning
 });
+
+const toLicense = (licenseSelect?: CcLicenseId, license?: string): License => {
+  if (licenseSelect) {
+    return { kind: "cc", id: licenseSelect };
+  } else if (license) {
+    return { kind: "custom", text: license };
+  } else {
+    return { kind: "unspecified" };
+  }
+}
 
 abstract class BlogDataManager<DataType extends BlogData> {
   readonly abstract contentType: string;
@@ -208,8 +219,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
       createdAt: _createdAt,
       updatedAt: _updatedAt,
       tags: tags?.map(TransformTag),
-      licenseSelect,
-      license,
+      license: toLicense(licenseSelect, license),
       showToc
     };
   }
@@ -272,8 +282,7 @@ export class SongManager extends BlogDataManager<Song> {
       lyrics,
       releaseDate,
       tags: tags?.map(TransformTag),
-      licenseSelect,
-      license,
+      license: toLicense(licenseSelect, license),
       url,
       streamUrl
     };
@@ -333,8 +342,7 @@ export class AlbumManager extends BlogDataManager<Album> {
       artist,
       credit,
       tags: tags?.map(TransformTag),
-      licenseSelect,
-      license
+      license: toLicense(licenseSelect, license),
     };
   }
 

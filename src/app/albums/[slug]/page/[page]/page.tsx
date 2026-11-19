@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";
 import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
-import { ccDeedUrls } from "@/lib/content/license";
+import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
 import { getAbsoluteUrl, pageHref } from "@/lib/content/href";
 
@@ -53,7 +53,7 @@ function JsonLD({ album }: { album: Album }) {
       name: song.title,
       url: getAbsoluteUrl(song, ORIGIN),
     })),
-    license: album.licenseSelect ? ccDeedUrls[album.licenseSelect] : album.license,
+    license: licenseUrl(album.license),
   };
 
   return (

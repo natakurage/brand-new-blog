@@ -22,7 +22,7 @@ import HeaderTime from "@/components/HeaderTime";
 import TagList from "@/components/TagList";
 import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
-import { ccDeedUrls } from "@/lib/content/license";
+import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
 import { getAbsoluteUrl } from "@/lib/content/href";
 import { summarize } from "@/lib/content/summary";
@@ -148,7 +148,7 @@ function JsonLD({ song }: { song: Song }) {
       "@type": "MusicGroup",
       name: artist
     })),
-    license: song.licenseSelect ? ccDeedUrls[song.licenseSelect] : song.license,
+    license: licenseUrl(song.license),
   };
 
   return (
@@ -258,7 +258,6 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
               url={shareInfo.url}
               year={new Date(song.createdAt).getFullYear()}
               additionalInfo={song.credit}
-              licenseSelect={song.licenseSelect}
               license={song.license}
             />
           </footer>

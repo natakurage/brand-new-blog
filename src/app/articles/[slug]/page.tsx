@@ -18,7 +18,7 @@ import HeaderAuthor from "@/components/HeaderAuthor";
 import Credit from "@/components/Credit";
 import ContentWarning from "@/components/ContentWarning";
 import Script from "next/script";
-import { ccDeedUrls } from "@/lib/content/license";
+import { licenseUrl } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
 import { ORIGIN } from "@/lib/config";
@@ -97,7 +97,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
         image: data.avatar
       }
     ],
-    license: post.licenseSelect ? ccDeedUrls[post.licenseSelect] : post.license,
+    license: licenseUrl(post.license),
   };
 
   return (
@@ -191,7 +191,6 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
               author={data.author}
               url={shareInfo.url}
               year={new Date(post.createdAt).getFullYear()}
-              licenseSelect={post.licenseSelect}
               workType="記事"
               license={post.license}
             />

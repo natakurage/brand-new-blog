@@ -1,6 +1,7 @@
 "use client";
 
-import { LicenseType, ccDeedUrls } from "@/lib/content/license";
+import type { CcLicenseId } from "@/lib/content/license";
+import { ccLicenses } from "@/lib/content/license";
 import { useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 
@@ -10,7 +11,7 @@ interface LicenseInfo {
   creator: string;
   year: number;
   url?: string;
-  licenseSelect: LicenseType;
+  id: CcLicenseId;
 }
 
 export default function CopyLicenseButton({
@@ -19,14 +20,14 @@ export default function CopyLicenseButton({
   creator,
   year,
   url,
-  licenseSelect,
+  id,
   className
 }: LicenseInfo & { className?: string }
 ) {
   const [copied, setCopied] = useState(false);
 
   const modifiedTitle = title.replace(/「(.*?)」/g, '『$1』');
-  const textToCopy = `${creator}による${workType}「${modifiedTitle}」(${year})は、${licenseSelect} (${ccDeedUrls[licenseSelect!]})のもとで提供されています。${url}`;
+  const textToCopy = `${creator}による${workType}「${modifiedTitle}」(${year})は、${id} (${ccLicenses[id].deedUrl})のもとで提供されています。${url}`;
 
   const handleClick = () => {
     navigator.clipboard.writeText(textToCopy);

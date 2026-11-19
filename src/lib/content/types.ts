@@ -1,4 +1,4 @@
-import type { LicenseType } from "./license";
+import type { License } from "./license";
 
 export interface LinkItem {
   href: string;
@@ -51,8 +51,7 @@ export interface BlogItem extends BlogData {
   content: string;
   createdAt: string;
   updatedAt: string;
-  licenseSelect?: LicenseType;
-  license?: string;
+  license: License;
 }
 
 export interface ItemList<T extends BlogItem> extends BlogData {
@@ -65,8 +64,7 @@ export interface BlogPost extends BlogItem {
   content: string,
   createdAt: string,
   updatedAt: string,
-  licenseSelect?: LicenseType,
-  license?: string,
+  license: License;
   showToc?: boolean
 }
 
@@ -79,8 +77,7 @@ export interface Song extends BlogItem {
   credit?: string[];
   lyrics?: string;
   releaseDate?: string;
-  licenseSelect?: LicenseType;
-  license?: string;
+  license: License;
   url?: string[];
   streamUrl?: string;
 }
@@ -95,8 +92,7 @@ export interface Album extends ItemList<Song> {
   releaseDate?: string;
   artist?: string[];
   credit?: string[];
-  licenseSelect?: LicenseType;
-  license?: string;
+  license: License;
 }
 
 export interface listNavigatorItem {

@@ -1,5 +1,6 @@
 import type { BlogPost, Song } from "./types";
 import { getAbsoluteUrl } from "./href";
+import { licenseLabel } from "./license";
 
 export const getCreditText = (item: BlogPost, author: string, origin: string): string => {
   const creditInfo = new Map<string, string>([
@@ -7,7 +8,7 @@ export const getCreditText = (item: BlogPost, author: string, origin: string): s
     ["著者", author],
     ["作成年", new Date(item.createdAt).getFullYear().toString()],
     ["URL", getAbsoluteUrl(item, origin)],
-    ["ライセンス", item.licenseSelect ?? item.license ?? "不明なライセンス"],
+    ["ライセンス", licenseLabel(item.license)],
   ]);
   return Array.from(creditInfo.entries())
     .map(([key, value]) => `- ${key}: ${value}`)
@@ -26,7 +27,7 @@ export const getSongCreditText = (song: Song, origin: string): string => {
   ([
     ["作成年", new Date(song.createdAt).getFullYear().toString()],
     ["URL", getAbsoluteUrl(song, origin)],
-    ["ライセンス", song.licenseSelect ?? song.license ?? "不明なライセンス"],
+    ["ライセンス", licenseLabel(song.license)],
   ]).forEach(([k, v]) => creditInfo.set(k, v));
   return Array.from(creditInfo.entries())
     .map(([key, value]) => `- ${key}: ${value}`)
