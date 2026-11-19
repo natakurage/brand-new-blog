@@ -112,7 +112,7 @@ const toPostListMeta = (entry: SanityPostListResolved): PostListMeta => ({
 
 export const toPostList = (entry: SanityPostListResolved): PostList => ({
   ...toPostListMeta(entry),
-  items: entry.posts.map(toBlogPost),
+  items: (entry.posts ?? []).filter((post) => post !== null).map(toBlogPost),
 });
 
 export const toPostListSummary = (entry: SanityPostListResolved): PostListSummary => toPostListMeta(entry);
@@ -132,7 +132,7 @@ const toAlbumMeta = (entry: SanityMusicAlbumResolved): AlbumMeta => ({
 
 export const toAlbum = (entry: SanityMusicAlbumResolved): Album => ({
   ...toAlbumMeta(entry),
-  items: entry.tracks.map(toSong),
+  items: (entry.tracks ?? []).filter((track) => track !== null).map(toSong),
 });
 
 export const toAlbumSummary = (entry: SanityMusicAlbumResolved): AlbumSummary => toAlbumMeta(entry);

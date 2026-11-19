@@ -24,7 +24,7 @@ export type SanitySongResolved = ResolveReferences<
 export type SanityPostListResolved = ResolveReferences<
   SanityPostList,
   {
-    posts: SanityBlogPostResolved[];
+    posts?: (SanityBlogPostResolved | null)[];
     tags?: (SanityTag | null)[];
   }
 >;
@@ -32,7 +32,7 @@ export type SanityPostListResolved = ResolveReferences<
 export type SanityMusicAlbumResolved = ResolveReferences<
   SanityMusicAlbum,
   {
-    tracks: SanitySongResolved[];
+    tracks?: (SanitySongResolved | null)[];
     tags?: (SanityTag | null)[];
   }
 >;
