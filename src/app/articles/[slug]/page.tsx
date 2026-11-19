@@ -3,8 +3,6 @@ import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/content/types";
 import { getShareInfo } from "@/lib/content/share";
 import { getCreditText } from "@/lib/content/credit";
-import { loadGlobalSettings } from "@/lib/cms";
-import { BlogPostManager} from "@/lib/cms";
 import { repositories } from "@/lib/repositories";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
@@ -28,12 +26,12 @@ import { absoluteUrlOf, rawHref } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
 const getPost = cache((slug: string, isEnabled: boolean) => (
-  new BlogPostManager().getBySlug(slug, isEnabled)
+  repositories.articles.findBySlug(slug, { preview: isEnabled })
 ));
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
   const { slug } = params;
   const post = await getPost(slug, isEnabled);
@@ -73,12 +71,12 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 }
 
 export async function generateStaticParams() {
-  const slugs = await new BlogPostManager().getAllSlugs();
+  const slugs = await repositories.articles.allSlugs();
   return slugs.map((slug) => ({ slug, key: undefined }));
 }
 
 async function JsonLD({ post }: { post: BlogPost }) {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", post.title);
   if (post.mainImage)
@@ -115,7 +113,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
 
 export default async function ArticlePage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
   const { slug } = params;
   const post = await getPost(slug, isEnabled);

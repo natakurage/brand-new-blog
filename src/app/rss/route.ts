@@ -1,16 +1,15 @@
-import { loadGlobalSettings } from "@/lib/cms";
-import { BlogPostManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "@/lib/config";
 import { absoluteUrlOf } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
 export async function GET() {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
 
-  const { items: posts } = await new BlogPostManager().getNewest({
-    page: 0,
-    limit: data.itemsPerPage,
-  });
+  const { items: posts } = await repositories.articles.list(
+    { page: { page: 1, size: data.itemsPerPage } },
+    { preview: false },
+  );
 
   const items = posts.map(post => `<item>
       <title><![CDATA[${post.title}]]></title>

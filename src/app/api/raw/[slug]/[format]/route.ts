@@ -1,17 +1,17 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { BlogPostManager, loadGlobalSettings } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { getCreditText } from "@/lib/content/credit";
 import { CALENDAR, ORIGIN } from "@/lib/config";
 import { toPlainText } from "@/lib/content/summary";
 
 const getPost = cache((slug: string, isEnabled: boolean) =>
-  new BlogPostManager().getBySlug(slug, isEnabled)
+  repositories.articles.findBySlug(slug, { preview: isEnabled })
 );
 
 export async function generateStaticParams() {
-  const slugs = await new BlogPostManager().getAllSlugs();
+  const slugs = await repositories.articles.allSlugs();
   const formats = ["md", "txt"];
 
   return slugs.flatMap((slug) =>
@@ -30,7 +30,7 @@ export async function GET(
 
   const { isEnabled } = await draftMode();
   const [data, post] = await Promise.all([
-    loadGlobalSettings(),
+    repositories.siteSettings.get(),
     getPost(slug, isEnabled)
   ]);
 

@@ -7,8 +7,7 @@ import Script from "next/script";
 import { Song } from "@/lib/content/types";
 import { getShareInfo } from "@/lib/content/share";
 import { getSongCreditText } from "@/lib/content/credit";
-import { loadGlobalSettings } from "@/lib/cms";
-import { SongManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { draftMode } from "next/headers";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import { Suspense } from "react";
@@ -29,12 +28,12 @@ import { absoluteUrlOf } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
 const getSong = cache((slug: string, isEnabled: boolean) => (
-  new SongManager().getBySlug(slug, isEnabled)
+  repositories.songs.findBySlug(slug, { preview: isEnabled })
 ));
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
   const { slug } = params;
   const song = await getSong(slug, isEnabled);
@@ -132,7 +131,7 @@ function DownloadLinkTable({ urls }: { urls: string[] }) {
 }
 
 export async function generateStaticParams() {
-  const slugs = await new SongManager().getAllSlugs();
+  const slugs = await repositories.songs.allSlugs();
   return slugs.map((slug) => ({ slug, key: undefined }));
 }
 
@@ -168,7 +167,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
   const { isEnabled } = await draftMode();
   const { slug } = params;
   const [data, song] = await Promise.all([
-    loadGlobalSettings(),
+    repositories.siteSettings.get(),
     getSong(slug, isEnabled)
   ]);
   if (!song) {

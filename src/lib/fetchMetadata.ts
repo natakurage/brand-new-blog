@@ -1,7 +1,6 @@
 import { load } from "cheerio";
 import { Content } from "@/lib/content/types";
-import { BlogPostManager, SongManager } from "@/lib/cms";
-import { loadGlobalSettings } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "./config";
 import { describe } from "./content/summary";
 
@@ -23,12 +22,12 @@ export async function fetchMetadata(url: string) {
     const [, type, slug] = absUrl.pathname.split("/");
     let post: Content | null = null;
     if (type === "articles") {
-      post = await new BlogPostManager().getBySlug(slug, false);
+      post = await repositories.articles.findBySlug(slug, { preview: false });
     }
     else if (type === "songs") {
-      post = await new SongManager().getBySlug(slug, false);
+      post = await repositories.songs.findBySlug(slug, { preview: false });
     }
-    const data = await loadGlobalSettings();
+    const data = await repositories.siteSettings.get();
     const metadata: Metadata = {
       metadata: {
         website: absUrl.href,

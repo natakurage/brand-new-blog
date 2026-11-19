@@ -1,41 +1,35 @@
 import type { MetadataRoute } from "next";
-import { AlbumManager, BlogPostManager, PostListManager, SongManager, getAllTags, loadGlobalSettings } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "@/lib/config";
 import { hrefOf, pageHref } from "@/lib/content/href";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
-const articleManager = new BlogPostManager();
-const songManager = new SongManager();
-const albumManager = new AlbumManager();
-const listManager = new PostListManager();
+const published = { preview: false };
+const firstItem = { page: 1, size: 1 };
 
-const collectionManagers = [
+const collections = [
 	{
 		basePath: "/articles",
 		priority: 0.7,
-		manager: articleManager,
-		getPaths: () => articleManager.getAllSlugs(),
+		count: () => repositories.articles.list({ page: firstItem }, published).then((page) => page.total),
 	},
 	{
 		basePath: "/songs",
 		priority: 0.7,
-		manager: songManager,
-		getPaths: () => songManager.getAllSlugs(),
+		count: () => repositories.songs.list(firstItem, published).then((page) => page.total),
 	},
 	{
 		basePath: "/albums",
 		priority: 0.7,
-		manager: albumManager,
-		getPaths: () => albumManager.getAllSlugs(),
+		count: () => repositories.albums.list(firstItem, published).then((page) => page.total),
 	},
 	{
 		basePath: "/lists",
 		priority: 0.7,
-		manager: listManager,
-		getPaths: () => listManager.getAllIds(),
+		count: () => repositories.postLists.list(firstItem, published).then((page) => page.total),
 	},
-] as const;
+];
 
 function toAbsoluteUrl(path: string) {
 	return new URL(path, ORIGIN).href;
@@ -59,25 +53,28 @@ function buildPageEntries(basePath: string, totalItems: number, itemsPerPage: nu
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const data = await loadGlobalSettings();
-	const [tags, collectionTotals, collectionPaths] = await Promise.all([
-		getAllTags(),
-		Promise.all(collectionManagers.map((section) => section.manager.getNewest({ page: 0, limit: 1 }))),
-		Promise.all(collectionManagers.map((section) => section.getPaths())),
+	const data = await repositories.siteSettings.get();
+	const [tagSlugs, collectionTotals, articleSlugs, songSlugs, albumSlugs, listSlugs] = await Promise.all([
+		repositories.tags.allSlugs(),
+		Promise.all(collections.map((section) => section.count())),
+		repositories.articles.allSlugs(),
+		repositories.songs.allSlugs(),
+		repositories.albums.allSlugs(),
+		repositories.postLists.allSlugs(),
 	]);
 	const [albumDetails, listDetails] = await Promise.all([
-		Promise.all(collectionPaths[2].map((slug) => albumManager.getBySlug(slug))),
-		Promise.all(collectionPaths[3].map((id) => listManager.get(id))),
+		Promise.all(albumSlugs.map((slug) => repositories.albums.findBySlug(slug, published))),
+		Promise.all(listSlugs.map((slug) => repositories.postLists.findBySlug(slug, published))),
 	]);
 
 	return [
 		buildEntry("/", 1, "daily"),
-		...collectionManagers.flatMap((section, index) => buildPageEntries(section.basePath, collectionTotals[index].total, data.itemsPerPage, section.priority)),
-		...collectionPaths[0].map((slug) => buildEntry(hrefOf({ slug, kind: "article" }), 0.7)),
-		...collectionPaths[1].map((slug) => buildEntry(hrefOf({ slug, kind: "song" }), 0.7)),
+		...collections.flatMap((section, index) => buildPageEntries(section.basePath, collectionTotals[index], data.itemsPerPage, section.priority)),
+		...articleSlugs.map((slug) => buildEntry(hrefOf({ slug, kind: "article" }), 0.7)),
+		...songSlugs.map((slug) => buildEntry(hrefOf({ slug, kind: "song" }), 0.7)),
 		...albumDetails.flatMap((album) => album ? buildPageEntries(hrefOf(album), album.items.length, data.itemsPerPage, 0.7) : []),
 		...listDetails.flatMap((list) => list ? buildPageEntries(hrefOf(list), list.items.length, data.itemsPerPage, 0.7) : []),
-		...tags.map((tag) => buildEntry(pageHref(hrefOf(tag), 1), 0.6)),
+		...tagSlugs.map((slug) => buildEntry(hrefOf({ slug, kind: "tag" }), 0.6)),
 	];
 }
 
