@@ -5,6 +5,7 @@ import { getShareInfo } from "@/lib/content/share";
 import { getCreditText } from "@/lib/content/credit";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager} from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { draftMode } from "next/headers";
 import { Suspense } from "react";
 import type { WithContext, BlogPosting } from "schema-dts";
@@ -122,25 +123,15 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
     notFound();
   }
 
-  const manager = new BlogPostManager();
+  const firstSix = { page: 1, size: 6 };
   const [
-    { items: relatedPosts },
+    relatedPosts,
     { items: newPosts },
     { items: recommendedPosts }
   ] = await Promise.all([
-    manager.getRelatedPosts({
-      slug: post.slug,
-      tagSlugs: post.tags.map((tag) => tag.slug),
-    }),
-    manager.getNewest({
-      limit: 6,
-      excludes: [post.slug],
-    }),
-    manager.getBySlugs(
-      data.recommendedPosts,
-      isEnabled,
-      { limit: 6 }
-    )
+    repositories.articles.related(post, 6, { preview: false }),
+    repositories.articles.list({ page: firstSix, exclude: [post.slug] }, { preview: false }),
+    repositories.articles.list({ page: firstSix, slugs: data.recommendedPosts }, { preview: isEnabled }),
   ]);
 
   const summary = summarize(post.content);

@@ -1,19 +1,18 @@
-import { BlogItem, ItemList } from "@/lib/content/types";
+import type { CollectionSummary } from "@/lib/content/types";
 import Link from "next/link";
 import Paginator from "./Paginator";
 import { hrefOf } from "@/lib/content/href";
 
-interface ListListProps<T extends BlogItem> {
-  lists: ItemList<T>[];
+interface ListListProps {
+  lists: CollectionSummary[];
   total: number;
   page: number;
   limit: number;
   hrefFor: (page: number) => string;
 }
 
-export default function ListList<T extends BlogItem>(
-  { hrefFor, lists, total, page, limit }:
-  ListListProps<T>
+export default function ListList(
+  { hrefFor, lists, total, page, limit }: ListListProps
 ) {
   const maxPages = Math.ceil(total / limit);
   return (

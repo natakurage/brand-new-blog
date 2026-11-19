@@ -1,31 +1,30 @@
 import ListList from "@/components/ListList";
-import { loadGlobalSettings } from "@/lib/cms";
-import { PostListManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const title = "記事リスト一覧 - " + data.siteName + (params.page === "1" ? "" : `: Page ${params.page}`);
   return { title };
 }
 
 export default async function ListsPage(props: { params: Promise<{ page: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const pageNum = Number(params.page);
-  const { items, limit } = await new PostListManager().getNewest({
-    page: pageNum - 1,
-    limit: data.itemsPerPage,
-  });
+  const { items, total } = await repositories.postLists.list(
+    { page: pageNum, size: data.itemsPerPage },
+    { preview: false },
+  );
   if (items.length === 0) {
       return notFound();
     }
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">リスト一覧</h1>
-      <ListList hrefFor={(n) => pageHref("/lists", n)} lists={items} total={items.length} page={pageNum} limit={limit} />
+      <ListList hrefFor={(n) => pageHref("/lists", n)} lists={items} total={total} page={pageNum} limit={data.itemsPerPage} />
     </div>
   );
 }

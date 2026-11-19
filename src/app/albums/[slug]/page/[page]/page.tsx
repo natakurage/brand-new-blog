@@ -1,7 +1,6 @@
 import { cache } from "react";
 import { Album } from "@/lib/content/types";
-import { loadGlobalSettings } from "@/lib/cms";
-import { AlbumManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";
 import Script from "next/script";
@@ -11,12 +10,12 @@ import { ORIGIN } from "@/lib/config";
 import { absoluteUrlOf, hrefOf, pageHref } from "@/lib/content/href";
 
 const getAlbum = cache((slug: string) => (
-  new AlbumManager().getBySlug(slug, false)
+  repositories.albums.findBySlug(slug, { preview: false })
 ));
 
 export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const { slug } = params;
   const album = await getAlbum(slug);
   if (!album) { 
@@ -27,7 +26,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string, 
 }
 
 export async function generateStaticParams() {
-  const slugs = await new AlbumManager().getAllSlugs();
+  const slugs = await repositories.albums.allSlugs();
   return slugs.map((slug) => ({ slug, page: "1" }));
 }
 
@@ -68,7 +67,7 @@ function JsonLD({ album }: { album: Album }) {
 
 export default async function AlbumPage(props: { params: Promise<{ slug: string, page: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const { slug, page } = params;
   const pageNum = Number(page);
   const album = await getAlbum(slug);

@@ -1,11 +1,11 @@
-import { BlogItem } from "@/lib/content/types";
+import type { ItemSummary } from "@/lib/content/types";
 import Paginator from "./Paginator";
 import ListItem from "./ListItem";
 import ListExporter from "./ListExporter";
 import { ORIGIN } from "@/lib/config";
 
 interface ItemListProps {
-  items: BlogItem[];
+  items: ItemSummary[];
   total: number;
   page: number;
   limit: number;

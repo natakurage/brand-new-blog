@@ -1,20 +1,19 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cms";
-import { BlogPostManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import Script from "next/script";
 import type { WebSite, WithContext } from "schema-dts";
 import { ORIGIN } from "@/lib/config";
 import { pageHref } from "@/lib/content/href";
 
 export async function generateMetadata() {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   return {
     title: data.siteName,
   };
 }
 
 async function JsonLD() {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const jsonLd: WithContext<WebSite> = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -42,16 +41,15 @@ async function JsonLD() {
 
 export default async function Home() {
   const pageNum = 1;
-  const data = await loadGlobalSettings();
-  const manager = new BlogPostManager();
-  const { items: posts, total, limit } = await manager.getNewest({
-    page: pageNum - 1,
-    limit: data.itemsPerPage,
-  });
+  const data = await repositories.siteSettings.get();
+  const { items: posts, total } = await repositories.articles.list(
+    { page: { page: pageNum, size: data.itemsPerPage } },
+    { preview: false },
+  );
   return (
     <>
       <JsonLD />
-      <ItemList hrefFor={(n) => pageHref("/articles", n)} items={posts} page={pageNum} total={total} limit={limit} showCount={false} showExporter={false} />
+      <ItemList hrefFor={(n) => pageHref("/articles", n)} items={posts} page={pageNum} total={total} limit={data.itemsPerPage} showCount={false} showExporter={false} />
     </>
   );
 }

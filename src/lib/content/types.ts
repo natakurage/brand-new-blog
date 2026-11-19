@@ -59,10 +59,6 @@ export interface BlogItem extends BlogItemMeta {
   content: string;
 }
 
-export interface ItemList<T extends BlogItem> extends BlogData {
-  items: T[];
-}
-
 export interface ArticleMeta extends BlogItemMeta {
   kind: "article";
   mainImage?: string;
@@ -93,7 +89,7 @@ export interface PostListMeta extends BlogData {
 }
 
 export interface PostList extends PostListMeta {
-  items: BlogPost[];
+  items: ArticleSummary[];
 }
 
 export interface AlbumMeta extends BlogData {
@@ -105,7 +101,7 @@ export interface AlbumMeta extends BlogData {
 }
 
 export interface Album extends AlbumMeta {
-  items: Song[];
+  items: SongSummary[];
 }
 
 export interface listNavigatorItem {
@@ -132,3 +128,6 @@ export type ArticleSummary = ArticleMeta & Summary;
 export type SongSummary = SongMeta & Summary;
 export type PostListSummary = PostListMeta;
 export type AlbumSummary = AlbumMeta;
+
+export type ItemSummary = ArticleSummary | SongSummary;
+export type CollectionSummary = PostListSummary | AlbumSummary;

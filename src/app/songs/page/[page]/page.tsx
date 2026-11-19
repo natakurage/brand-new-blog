@@ -1,29 +1,27 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cms";
-import { SongManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const title = "曲一覧 - " + data.siteName + (params.page === "1" ? "" : `: Page ${params.page}`);
   return { title };
 }
 
 export default async function SongsPage(props: { params: Promise<{ page: string }> }) {
   const params = await props.params;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const pageNum = Number(params.page);
-  const manager = new SongManager();
-  const { items: songs, total, limit } = await manager.getNewest({
-    page: pageNum - 1,
-    limit: data.itemsPerPage,
-  });
+  const { items: songs, total } = await repositories.songs.list(
+    { page: pageNum, size: data.itemsPerPage },
+    { preview: false },
+  );
   if (songs.length === 0) {
     return notFound();
   }
   return (
-    <ItemList hrefFor={(n) => pageHref("/songs", n)} items={songs} page={pageNum} total={total} limit={limit} />
+    <ItemList hrefFor={(n) => pageHref("/songs", n)} items={songs} page={pageNum} total={total} limit={data.itemsPerPage} />
   );
 }

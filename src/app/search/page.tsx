@@ -1,6 +1,5 @@
 import ItemList from "@/components/ItemList";
-import { loadGlobalSettings } from "@/lib/cms";
-import { BlogPostManager } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 
 const searchHref = (q: string, n: number): string => {
   const params = new URLSearchParams({ q });
@@ -13,7 +12,7 @@ const searchHref = (q: string, n: number): string => {
 export async function generateMetadata(props: { searchParams: Promise<{ q: string }> }) {
   const searchParams = await props.searchParams;
   const { q } = searchParams;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   return {
     title: `"${q}"の検索結果` + " - " + data.siteName,
     robots: {
@@ -24,16 +23,13 @@ export async function generateMetadata(props: { searchParams: Promise<{ q: strin
 
 export default async function SearchPage(props: { searchParams: Promise<{ q: string, page?: string }> }) {
   const searchParams = await props.searchParams;
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const { q, page = 1 } = searchParams;
   const pageNum = Number(page);
-  const { items: posts, total, limit } = await new BlogPostManager().fullTextSearch(
+  const { items: posts, total } = await repositories.articles.search(
     q,
-    false,
-    {
-      limit: data.itemsPerPage,
-      page: pageNum - 1
-    }
+    { page: pageNum, size: data.itemsPerPage },
+    { preview: false },
   );
   return (
     <div className="space-y-4">
@@ -46,7 +42,7 @@ export default async function SearchPage(props: { searchParams: Promise<{ q: str
               items={posts}
               total={total}
               page={pageNum}
-              limit={limit}
+              limit={data.itemsPerPage}
             />
       }
     </div>
