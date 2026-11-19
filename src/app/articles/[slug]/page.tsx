@@ -43,8 +43,10 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   ogpImageUrl.searchParams.set("title", title);
   if (post.mainImage)
     ogpImageUrl.searchParams.set("bgImage", post.mainImage);
+  const description = describe(post) || data.description;
   return {
     title: (isEnabled ? "(プレビュー)" : "") + title,
+    description: description,
     alternates: {
       types: {
         "text/markdown": rawHref(post, "md"),
@@ -53,7 +55,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     },
     openGraph: {
       title: title,
-      description: describe(post) || data.description,
+      description: description,
       url: absoluteUrlOf(post, ORIGIN),
       images: [
         {

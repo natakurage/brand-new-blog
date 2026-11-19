@@ -14,6 +14,7 @@ import { ORIGIN } from "@/lib/config";
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
   return {
+    description: data.description,
     metadataBase: new URL(ORIGIN),
     icons: {
       icon: data.favicon,
@@ -21,6 +22,7 @@ export async function generateMetadata() {
     },
     openGraph: {
       siteName: data.siteName,
+      description: data.description,
       images: [
         {
           url: "/banner.png",

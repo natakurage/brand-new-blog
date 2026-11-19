@@ -25,7 +25,7 @@ import type { MusicRecording, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { CALENDAR, ORIGIN } from "@/lib/config";
 import { absoluteUrlOf } from "@/lib/content/href";
-import { summarize } from "@/lib/content/summary";
+import { describe, summarize } from "@/lib/content/summary";
 
 const getSong = cache((slug: string, isEnabled: boolean) => (
   new SongManager().getBySlug(slug, isEnabled)
@@ -40,15 +40,16 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   if (!song) {
     notFound();
   }
-  const { excerpt } = summarize(song.content);
   const title = song.title + " - " + data.siteName;
+  const description = describe(song) || data.description;
   const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
   return {
     title: (isEnabled ? "(プレビュー)" : "") + title,
+    description: description,
     openGraph: {
       title: title,
-      description: excerpt || data.description,
+      description: description || data.description,
       url: absoluteUrlOf(song, ORIGIN),
       images: [
         {
@@ -135,13 +136,12 @@ export async function generateStaticParams() {
 
 function JsonLD({ song }: { song: Song }) {
   const ogpImageUrl = new URL(`/og`, ORIGIN);
-  const { excerpt } = summarize(song.content);
   ogpImageUrl.searchParams.set("title", song.title);
   const jsonLd: WithContext<MusicRecording> = {
     "@context": "https://schema.org",
     "@type": "MusicRecording",
     name: song.title,
-    description: excerpt,
+    description: describe(song),
     url: absoluteUrlOf(song, ORIGIN),
     datePublished: song.releaseDate,
     byArtist: song.artist.map((artist) => ({
