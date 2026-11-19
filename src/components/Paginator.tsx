@@ -9,6 +9,9 @@ interface PaginatorProps {
 }
 
 export default function Paginator({ hrefFor, page, maxPages, numPages = 5 } : PaginatorProps) {
+  if (maxPages <= 1) {
+    return null;
+  }
   return (
     <div className="join flex justify-center">
       {
