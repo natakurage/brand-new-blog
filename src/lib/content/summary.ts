@@ -6,8 +6,8 @@ const summaryLength = 100;
 const segmenter = new Intl.Segmenter("ja", { granularity: "grapheme" });
 
 export const toPlainText = (markdown: string): string => {
-  return removeMd(markdown)
-}
+  return removeMd(markdown);
+};
 
 export interface Summary {
   excerpt: string;
@@ -22,4 +22,4 @@ export const summarize = (markdown: string): Summary => {
   const excerpt = segments.slice(0, summaryLength).join("") + (length > summaryLength ? "…" : "");
   const readingMinutes = Math.ceil(length / lettersPerMinute);
   return { excerpt, length, readingMinutes };
-}
+};

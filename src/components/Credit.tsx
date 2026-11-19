@@ -67,15 +67,15 @@ function LicenseNotice({ license, ...rest }: LicenseNoticeProps) {
     case "cc":
       return (
         <CCLicenseNotice {...rest} id={license.id}/>
-      )
+      );
     case "custom":
       return (
         <div className="prose dark:prose-invert! wrap-break-word">
           <Markdown>{license.text}</Markdown>
         </div>
-      )
+      );
     case "unspecified":
-      return <p>ライセンスが不明です。</p>
+      return <p>ライセンスが不明です。</p>;
     default:
       return license satisfies never;
   }

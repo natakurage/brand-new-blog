@@ -44,7 +44,7 @@ const TransformTag = (tag: SanityTag): Tag => ({
 
 const toTags = (tags?: (SanityTag | null)[]): Tag[] => {
   return tags?.filter((tag) => tag !== null).map(TransformTag) ?? [];
-}
+};
 
 const toLicense = (licenseSelect?: CcLicenseId, license?: string): License => {
   if (licenseSelect) {
@@ -54,7 +54,7 @@ const toLicense = (licenseSelect?: CcLicenseId, license?: string): License => {
   } else {
     return { kind: "unspecified" };
   }
-}
+};
 
 abstract class BlogDataManager<DataType extends BlogData> {
   readonly abstract contentType: string;

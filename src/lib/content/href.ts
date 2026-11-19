@@ -23,8 +23,8 @@ export const rawHref = (article: BlogPost, format: "md" | "txt"): string => {
 
 export const absoluteUrlOf = (item: Addressable, origin: string): string => {
   return new URL(hrefOf(item), origin).toString();
-}
+};
 
 export const pageHref = (base: string, n: number): string => {
   return n === 1 ? base : `${base}/page/${n}`;
-}
+};

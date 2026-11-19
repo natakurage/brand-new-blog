@@ -121,7 +121,7 @@ export default function ArticleBody({ content, className }: { content: string, c
               </figure>
             );
           },
-          h2: ({ node, children, ...props }) => {
+          h2: ({ children, ...props }) => {
             if (tocResult.length > 0 && children?.toString().trim() === TOC_STRING) {
               return (
                 <details className="collapse collapse-arrow bg-base-200">

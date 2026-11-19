@@ -24,7 +24,7 @@ export const licenseLabel = (license: License): string => {
     case "unspecified":
       return "不明なライセンス";
   }
-}
+};
 
 export const licenseUrl = (license: License) => {
   switch (license.kind) {
@@ -37,4 +37,4 @@ export const licenseUrl = (license: License) => {
     default:
       return license satisfies never;
   }
-}
+};

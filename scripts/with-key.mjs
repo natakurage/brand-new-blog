@@ -3,7 +3,6 @@
 // .env.local がない環境（Vercel などのホスティングや CI）では、そのままコマンドを実行する。
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
-import os from 'node:os';
 
 const keyFile = '.dotenvx.key.gpg';
 const env = { ...process.env };

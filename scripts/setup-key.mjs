@@ -2,7 +2,6 @@
 // .env.keys の鍵を gpg（パスフレーズ）で暗号化 → 復号できるか確認 → .env.keys を削除
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 
 const keyFile = '.dotenvx.key.gpg';
