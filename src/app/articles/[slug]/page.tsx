@@ -22,7 +22,7 @@ import { licenseUrl } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
 import { ORIGIN } from "@/lib/config";
-import { getAbsoluteUrl } from "@/lib/content/href";
+import { absoluteUrlOf, rawHref } from "@/lib/content/href";
 import { summarize } from "@/lib/content/summary";
 
 const getPost = cache((slug: string, isEnabled: boolean) => (
@@ -48,14 +48,14 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     title: (isEnabled ? "(プレビュー)" : "") + title,
     alternates: {
       types: {
-        "text/markdown": `/articles/${post.slug}.md`,
-        "text/plain": `/articles/${post.slug}.txt`,
+        "text/markdown": rawHref(post, "md"),
+        "text/plain": rawHref(post, "txt"),
       },
     },
     openGraph: {
       title: title,
       description: excerpt || data.description,
-      url: getAbsoluteUrl(post, ORIGIN),
+      url: absoluteUrlOf(post, ORIGIN),
       images: [
         {
           url: ogpImageUrl.href,
@@ -85,7 +85,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
     "@type": "BlogPosting",
     headline: post.title,
     description: excerpt,
-    url: getAbsoluteUrl(post, ORIGIN),
+    url: absoluteUrlOf(post, ORIGIN),
     datePublished: post.createdAt.toISOString(),
     dateModified: post.updatedAt.toISOString(),
     image: [ogpImageUrl.href],
@@ -196,10 +196,10 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
             />
             <section className="border border-base-content border-dashed rounded p-3 space-y-2">
               <h2 className="text-2xl font-bold">別の形式</h2>
-              <Link href={`/articles/${post.slug}.md`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
+              <Link href={rawHref(post, "md")} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
                 Markdown版
               </Link>
-              <Link href={`/articles/${post.slug}.txt`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline ms-4">
+              <Link href={rawHref(post, "txt")} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline ms-4">
                 プレーンテキスト版
               </Link>
             </section>

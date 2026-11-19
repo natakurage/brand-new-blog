@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { AlbumManager, BlogPostManager, PostListManager, SongManager, getAllTags, loadGlobalSettings } from "@/lib/cms";
 import { ORIGIN } from "@/lib/config";
-import { pageHref } from "@/lib/content/href";
+import { hrefOf, pageHref } from "@/lib/content/href";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -73,11 +73,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	return [
 		buildEntry("/", 1, "daily"),
 		...collectionManagers.flatMap((section, index) => buildPageEntries(section.basePath, collectionTotals[index].total, data.itemsPerPage, section.priority)),
-		...collectionPaths[0].map((slug) => buildEntry(`/articles/${slug}`, 0.7)),
-		...collectionPaths[1].map((slug) => buildEntry(`/songs/${slug}`, 0.7)),
-		...albumDetails.flatMap((album) => album ? buildPageEntries(`/albums/${album.slug}`, album.items.length, data.itemsPerPage, 0.7) : []),
-		...listDetails.flatMap((list) => list ? buildPageEntries(`/lists/${list.id}`, list.items.length, data.itemsPerPage, 0.7) : []),
-		...tags.map((tag) => buildEntry(pageHref(`/tags/${tag.slug}`, 1), 0.6)),
+		...collectionPaths[0].map((slug) => buildEntry(hrefOf({ slug, kind: "article" }), 0.7)),
+		...collectionPaths[1].map((slug) => buildEntry(hrefOf({ slug, kind: "song" }), 0.7)),
+		...albumDetails.flatMap((album) => album ? buildPageEntries(hrefOf(album), album.items.length, data.itemsPerPage, 0.7) : []),
+		...listDetails.flatMap((list) => list ? buildPageEntries(hrefOf(list), list.items.length, data.itemsPerPage, 0.7) : []),
+		...tags.map((tag) => buildEntry(pageHref(hrefOf(tag), 1), 0.6)),
 	];
 }
 

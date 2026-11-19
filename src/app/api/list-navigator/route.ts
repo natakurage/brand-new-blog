@@ -1,4 +1,5 @@
 import { ItemListManagerMap, isItemListManagerMapKey } from "@/lib/cmsUtils";
+import { hrefOf } from "@/lib/content/href";
 import { BlogData, listNavigatorInfo } from "@/lib/content/types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,16 +31,14 @@ export async function GET(request: NextRequest) {
   const next = items[currentId + 1] ?? null;
   const navigatorInfo: listNavigatorInfo = {
     listTitle: title,
-    typeUrl: list.typeUrl,
+    listHref: hrefOf(list),
     prev: prev == null ? null : {
       title: prev.title,
-      slug: prev.slug,
-      typeUrl: prev.typeUrl
+      href: hrefOf(prev),
     },
     next: next == null ? null : {
       title: next.title,
-      slug: next.slug,
-      typeUrl: next.typeUrl
+      href: hrefOf(next),
     }
   };
   return new NextResponse(JSON.stringify(navigatorInfo), { status: 200 });

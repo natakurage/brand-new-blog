@@ -8,7 +8,7 @@ import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
-import { getAbsoluteUrl, pageHref } from "@/lib/content/href";
+import { absoluteUrlOf, hrefOf, pageHref } from "@/lib/content/href";
 
 const getAlbum = cache((slug: string) => (
   new AlbumManager().getBySlug(slug, false)
@@ -39,7 +39,7 @@ function JsonLD({ album }: { album: Album }) {
     "@context": "https://schema.org",
     "@type": "MusicAlbum",
     name: album.title,
-    url: getAbsoluteUrl(album, ORIGIN),
+    url: absoluteUrlOf(album, ORIGIN),
     image: ogpImageUrl.href,
     byArtist: album.artist?.map((artist) => ({
       "@type": "MusicGroup",
@@ -51,7 +51,7 @@ function JsonLD({ album }: { album: Album }) {
     track: album.items.map((song) => ({
       "@type": "MusicRecording",
       name: song.title,
-      url: getAbsoluteUrl(song, ORIGIN),
+      url: absoluteUrlOf(song, ORIGIN),
     })),
     license: licenseUrl(album.license),
   };
@@ -84,7 +84,7 @@ export default async function AlbumPage(props: { params: Promise<{ slug: string,
         <div>{album.artist?.join(", ")}</div>
         <p className="text-sm">{album.description}</p>
         <ItemList
-          hrefFor={(n) => pageHref(`/albums/${album.slug}`, n)}
+          hrefFor={(n) => pageHref(hrefOf(album), n)}
           items={songs}
           total={songs.length}
           page={pageNum}

@@ -3,7 +3,7 @@ import ContentWarning from "@/components/ContentWarning";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager, getAllTags, getTagWithCache } from "@/lib/cms";
 import { notFound } from "next/navigation";
-import { pageHref } from "@/lib/content/href";
+import { hrefOf, pageHref } from "@/lib/content/href";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string, page: number }> }) {
   const params = await props.params;
@@ -49,7 +49,7 @@ export default async function TagPage(props: { params: Promise<{ slug: string, p
       {
         posts.length === 0
           ? <p className="my-4">記事が見つかりません。</p>
-          : <ItemList hrefFor={(n) => pageHref(`/tags/${tag.slug}`, n)} items={posts} total={total} page={pageNum} limit={limit} />
+          : <ItemList hrefFor={(n) => pageHref(hrefOf(tag), n)} items={posts} total={total} page={pageNum} limit={limit} />
       }
     </div>
   );

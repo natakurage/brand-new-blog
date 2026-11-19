@@ -3,7 +3,7 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { PostListManager, AlbumManager } from '@/lib/cms';
 import { BlogDataManagerMap, cmsToType, isValidContentType } from '@/lib/cmsUtils';
 import { Tag, BlogData, PostList, Album } from '@/lib/content/types';
-import { getPath } from '@/lib/content/href';
+import { hrefOf, rawHref } from '@/lib/content/href';
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-revalidate-secret');
@@ -43,13 +43,13 @@ export async function POST(req: NextRequest) {
     });
     // Revalidate ListItems that contain the item
     let items: (PostList | Album)[] = [];
-    if (cmsToType[contentType] === "BlogPost") {
+    if (blogData.kind === "article") {
       items = await new PostListManager().getListsByPost(blogData.slug, true);
 
       // BlogPost の場合は .md / .txt のパスも再検証対象に登録
       pathsToRevalidate.push(
-        `/articles/${blogData.slug}.md`,
-        `/articles/${blogData.slug}.txt`,
+        rawHref(blogData, "md"),
+        rawHref(blogData, "txt"),
         `/api/raw/${blogData.slug}/md`,
         `/api/raw/${blogData.slug}/txt`
       );
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         tagsToRevalidate.push(`${contentType}:slug:${list.slug}`);
       });
     }
-    pathsToRevalidate.push(...itemsToRevalidate.map(getPath));
+    pathsToRevalidate.push(...itemsToRevalidate.map(hrefOf));
   }
 
   // 重複パスの排除と再検証

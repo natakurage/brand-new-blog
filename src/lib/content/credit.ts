@@ -1,5 +1,5 @@
 import type { BlogPost, Song } from "./types";
-import { getAbsoluteUrl } from "./href";
+import { absoluteUrlOf } from "./href";
 import { licenseLabel } from "./license";
 
 export const getCreditText = (item: BlogPost, author: string, origin: string): string => {
@@ -7,7 +7,7 @@ export const getCreditText = (item: BlogPost, author: string, origin: string): s
     ["タイトル", item.title],
     ["著者", author],
     ["作成年", item.createdAt.getFullYear().toString()],
-    ["URL", getAbsoluteUrl(item, origin)],
+    ["URL", absoluteUrlOf(item, origin)],
     ["ライセンス", licenseLabel(item.license)],
   ]);
   return Array.from(creditInfo.entries())
@@ -26,7 +26,7 @@ export const getSongCreditText = (song: Song, origin: string): string => {
   });
   ([
     ["作成年", song.createdAt.getFullYear().toString()],
-    ["URL", getAbsoluteUrl(song, origin)],
+    ["URL", absoluteUrlOf(song, origin)],
     ["ライセンス", licenseLabel(song.license)],
   ]).forEach(([k, v]) => creditInfo.set(k, v));
   return Array.from(creditInfo.entries())

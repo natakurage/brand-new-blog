@@ -1,3 +1,4 @@
+import { hrefOf } from "@/lib/content/href";
 import { Tag } from "@/lib/content/types";
 import Link from "next/link";
 
@@ -7,7 +8,7 @@ export default function TagList({ tags, className }: { tags: Tag[], className?: 
     {
       tags.map((tag) => (
         <li key={tag.slug} className="inline">
-          <Link href={`/tags/${tag.slug}`} className="badge badge-neutral link link-hover">
+          <Link href={hrefOf(tag)} className="badge badge-neutral link link-hover">
             # {tag.name}
           </Link>
         </li>

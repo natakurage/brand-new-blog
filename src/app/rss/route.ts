@@ -1,7 +1,7 @@
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager } from "@/lib/cms";
 import { ORIGIN } from "@/lib/config";
-import { getAbsoluteUrl } from "@/lib/content/href";
+import { absoluteUrlOf } from "@/lib/content/href";
 import { summarize } from "@/lib/content/summary";
 
 export async function GET() {
@@ -15,8 +15,8 @@ export async function GET() {
   const items = posts.map(post => `<item>
       <title><![CDATA[${post.title}]]></title>
       <description><![CDATA[${summarize(post.content).excerpt}]]></description>
-      <link>${getAbsoluteUrl(post, ORIGIN)}</link>
-      <guid isPermaLink="false">${getAbsoluteUrl(post, ORIGIN)}</guid>
+      <link>${absoluteUrlOf(post, ORIGIN)}</link>
+      <guid isPermaLink="false">${absoluteUrlOf(post, ORIGIN)}</guid>
       <dc:creator><![CDATA[${data.author}]]></dc:creator>
       <pubDate>${post.createdAt.toUTCString()}</pubDate>
     </item>`

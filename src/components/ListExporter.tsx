@@ -5,6 +5,7 @@ import { BlogItem } from "@/lib/content/types";
 import { MdClose, MdContentCopy } from "react-icons/md";
 import { PiExport } from "react-icons/pi";
 import useTimeout from "@/app/hooks/useTimeout";
+import { absoluteUrlOf } from "@/lib/content/href";
 
 const formats = {
   normal: "通常",
@@ -39,7 +40,7 @@ export default function ListExporter({ origin, items, suffix }: { origin: string
   const exportedContent = () => {
     const separatorValue = separatorValues[separator];
     const formatExtension = format === "normal" ? "" : `.${format}`;
-    const urls = items.map((item) => `${origin}/${item.typeUrl}/${item.slug}`+ formatExtension + (suffix ? suffix : ''));
+    const urls = items.map((item) => absoluteUrlOf(item, origin)+ formatExtension + (suffix ? suffix : ''));
     const content = urls.join(separatorValue);
 
     return content;

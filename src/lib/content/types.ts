@@ -1,12 +1,14 @@
 import type { License } from "./license";
 
+export type Kind = "article" | "song" | "postList" | "album" | "tag";
+
 export interface LinkItem {
   href: string;
   name: string;
 }
 
 export interface Tag {
-  typeUrl: "tags";
+  kind: "tag";
   slug: string;
   name: string;
   contentWarning?: string;
@@ -39,7 +41,7 @@ export interface GlobalSettings {
 }
 
 export interface BlogData {
-  typeUrl: string;
+  kind: Kind;
   id: string;
   title: string;
   slug: string;
@@ -59,7 +61,7 @@ export interface ItemList<T extends BlogItem> extends BlogData {
 }
 
 export interface BlogPost extends BlogItem {
-  typeUrl: "articles",
+  kind: "article",
   mainImage?: string;
   content: string,
   createdAt: Date,
@@ -69,7 +71,7 @@ export interface BlogPost extends BlogItem {
 }
 
 export interface Song extends BlogItem {
-  typeUrl: "songs";
+  kind: "song";
   content: string;
   createdAt: Date;
   updatedAt: Date;
@@ -83,12 +85,12 @@ export interface Song extends BlogItem {
 }
 
 export interface PostList extends ItemList<BlogPost> {
-  typeUrl: "lists";
+  kind: "postList";
   inverted: boolean;
 }
 
 export interface Album extends ItemList<Song> {
-  typeUrl: "albums";
+  kind: "album";
   releaseDate?: string;
   artist?: string[];
   credit?: string[];
@@ -97,13 +99,12 @@ export interface Album extends ItemList<Song> {
 
 export interface listNavigatorItem {
   title: string;
-  slug: string;
-  typeUrl: string;
+  href: string;
 }
 
 export interface listNavigatorInfo {
   listTitle: string;
-  typeUrl: string;
+  listHref: string;
   prev: null | listNavigatorItem;
   next: null | listNavigatorItem;
 }

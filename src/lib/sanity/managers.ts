@@ -36,7 +36,7 @@ type SanityMusicAlbumResolved = ResolveReferences<
 >;
 
 const TransformTag = (tag: SanityTag): Tag => ({
-  typeUrl: "tags",
+  kind: "tag",
   slug: tag.slug?.current ?? "",
   name: tag.name ?? "Unnamed Tag",
   contentWarning: tag.contentWarning
@@ -213,7 +213,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
   override async fromEntry(entry: SanityBlogPostResolved): Promise<BlogPost> {
     const { _id, title, slug, image, description, body, license, showToc, licenseSelect, tags, _createdAt, _updatedAt } = entry;
     return {
-      typeUrl: "articles",
+      kind: "article",
       id: _id,
       title: title ?? "Untitled Article",
       slug: slug?.current ?? "",
@@ -274,7 +274,7 @@ export class SongManager extends BlogDataManager<Song> {
       tags, _createdAt, _updatedAt
     } = entry;
     return {
-      typeUrl: "songs",
+      kind: "song",
       id: _id,
       title: title ?? "Untitled Song",
       slug: slug?.current ?? "",
@@ -302,7 +302,7 @@ export class PostListManager extends BlogDataManager<PostList> {
       posts.map((post) => new BlogPostManager().fromEntry(post))
     );
     return {
-      typeUrl: "lists",
+      kind: "postList",
       id: _id,
       title: title ?? "Untitled List",
       slug: slug?.current ?? "",
@@ -337,7 +337,7 @@ export class AlbumManager extends BlogDataManager<Album> {
       entry.tracks.map((track) => new SongManager().fromEntry(track))
     );
     return {
-      typeUrl: "albums",
+      kind: "album",
       id: _id,
       title: title ?? "Untitled Album",
       slug: slug?.current ?? "",

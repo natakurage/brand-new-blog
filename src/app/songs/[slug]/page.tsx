@@ -24,7 +24,7 @@ import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
-import { getAbsoluteUrl } from "@/lib/content/href";
+import { absoluteUrlOf } from "@/lib/content/href";
 import { summarize } from "@/lib/content/summary";
 
 const getSong = cache((slug: string, isEnabled: boolean) => (
@@ -49,7 +49,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     openGraph: {
       title: title,
       description: excerpt || data.description,
-      url: getAbsoluteUrl(song, ORIGIN),
+      url: absoluteUrlOf(song, ORIGIN),
       images: [
         {
           url: ogpImageUrl.href,
@@ -142,7 +142,7 @@ function JsonLD({ song }: { song: Song }) {
     "@type": "MusicRecording",
     name: song.title,
     description: excerpt,
-    url: getAbsoluteUrl(song, ORIGIN),
+    url: absoluteUrlOf(song, ORIGIN),
     datePublished: song.releaseDate,
     byArtist: song.artist.map((artist) => ({
       "@type": "MusicGroup",

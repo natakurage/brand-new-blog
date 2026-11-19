@@ -1,6 +1,7 @@
 import { BlogItem, ItemList } from "@/lib/content/types";
 import Link from "next/link";
 import Paginator from "./Paginator";
+import { hrefOf } from "@/lib/content/href";
 
 interface ListListProps<T extends BlogItem> {
   lists: ItemList<T>[];
@@ -28,7 +29,7 @@ export default function ListList<T extends BlogItem>(
                 {list.title}
               </h2>
               {list.description && <p>{list.description.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>}
-              <Link href={`/${list.typeUrl}/${list.id}`} className="absolute w-full h-full top-0 left-0 z-1" />
+              <Link href={hrefOf(list)} className="absolute w-full h-full top-0 left-0 z-1" />
             </article>
           </li>
         ))}

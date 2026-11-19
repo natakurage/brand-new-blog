@@ -4,6 +4,7 @@ import TagList from "./TagList";
 import { FaRegHourglass, FaRulerHorizontal } from "react-icons/fa6";
 import { BlogItem } from "@/lib/content/types";
 import { summarize } from "@/lib/content/summary";
+import { hrefOf } from "@/lib/content/href";
 
 export default function ListItem({ item, suffix, showLength = true, showDate = true }: { item: BlogItem; suffix?: string; showLength?: boolean; showDate?: boolean }) {
   const { excerpt, length, readingMinutes } = summarize(item.content);
@@ -34,7 +35,7 @@ export default function ListItem({ item, suffix, showLength = true, showDate = t
         </div>
       }
       </div>
-      <Link href={`/${item.typeUrl}/${item.slug}` + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
+      <Link href={hrefOf(item) + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
     </article>
   );
 }

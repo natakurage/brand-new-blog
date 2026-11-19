@@ -3,7 +3,7 @@ import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { PostListManager } from "@/lib/cms";
 import { notFound } from "next/navigation";
-import { pageHref } from "@/lib/content/href";
+import { hrefOf, pageHref } from "@/lib/content/href";
 
 const getList = cache((id: string) => (
   new PostListManager().get(id, false)
@@ -43,7 +43,7 @@ export default async function ListsPage(props: { params: Promise<{ id: string, p
       <h1 className="text-3xl font-bold">記事リスト &ldquo;{list.title}&rdquo;</h1>
       <p className="text-sm">{list.description}</p>
       <ItemList
-        hrefFor={(n) => pageHref(`/lists/${list.id}`, n)}
+        hrefFor={(n) => pageHref(hrefOf(list), n)}
         items={posts}
         total={length}
         page={pageNum}
