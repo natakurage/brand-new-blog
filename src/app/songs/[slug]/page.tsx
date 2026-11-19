@@ -23,7 +23,7 @@ import TagList from "@/components/TagList";
 import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
-import { ORIGIN } from "@/lib/config";
+import { CALENDAR, ORIGIN } from "@/lib/config";
 import { absoluteUrlOf } from "@/lib/content/href";
 import { summarize } from "@/lib/content/summary";
 
@@ -182,7 +182,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
 
   const shareInfo = getShareInfo(song, data.siteName, ORIGIN);
 
-  const creditText = getSongCreditText(song, ORIGIN);
+  const creditText = getSongCreditText(song, ORIGIN, CALENDAR);
   const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${creditText}`;
 
   return (
@@ -256,7 +256,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
               title={song.title}
               artists={song.artist}
               url={shareInfo.url}
-              year={song.createdAt.getFullYear()}
+              year={CALENDAR.year(song.createdAt)}
               additionalInfo={song.credit}
               license={song.license}
             />

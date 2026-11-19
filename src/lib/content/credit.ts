@@ -1,12 +1,13 @@
 import type { BlogPost, Song } from "./types";
 import { absoluteUrlOf } from "./href";
 import { licenseLabel } from "./license";
+import type { Calendar } from "./date";
 
-export const getCreditText = (item: BlogPost, author: string, origin: string): string => {
+export const getCreditText = (item: BlogPost, author: string, origin: string, calendar: Calendar): string => {
   const creditInfo = new Map<string, string>([
     ["タイトル", item.title],
     ["著者", author],
-    ["作成年", item.createdAt.getFullYear().toString()],
+    ["作成年", calendar.year(item.createdAt).toString()],
     ["URL", absoluteUrlOf(item, origin)],
     ["ライセンス", licenseLabel(item.license)],
   ]);
@@ -15,7 +16,7 @@ export const getCreditText = (item: BlogPost, author: string, origin: string): s
     .join("\n");
 };
 
-export const getSongCreditText = (song: Song, origin: string): string => {
+export const getSongCreditText = (song: Song, origin: string, calendar: Calendar): string => {
   const creditInfo = new Map<string, string>([
     ["タイトル", song.title],
     ["アーティスト", song.artist.join(", ")]
@@ -25,7 +26,7 @@ export const getSongCreditText = (song: Song, origin: string): string => {
     creditInfo.set(k, v);
   });
   ([
-    ["作成年", song.createdAt.getFullYear().toString()],
+    ["作成年", calendar.year(song.createdAt).toString()],
     ["URL", absoluteUrlOf(song, origin)],
     ["ライセンス", licenseLabel(song.license)],
   ]).forEach(([k, v]) => creditInfo.set(k, v));

@@ -5,6 +5,7 @@ import { FaRegHourglass, FaRulerHorizontal } from "react-icons/fa6";
 import { BlogItem } from "@/lib/content/types";
 import { summarize } from "@/lib/content/summary";
 import { hrefOf } from "@/lib/content/href";
+import { CALENDAR } from "@/lib/config";
 
 export default function ListItem({ item, suffix, showLength = true, showDate = true }: { item: BlogItem; suffix?: string; showLength?: boolean; showDate?: boolean }) {
   const { excerpt, length, readingMinutes } = summarize(item.content);
@@ -31,7 +32,7 @@ export default function ListItem({ item, suffix, showLength = true, showDate = t
       {
         showDate && <div className="flex flex-row gap-1">
           <MdAccessTime className="my-auto" />
-          <time dateTime={item.createdAt.toISOString()}>{item.createdAt.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+          <time dateTime={item.createdAt.toISOString()}>{CALENDAR.date(item.createdAt)}</time>
         </div>
       }
       </div>

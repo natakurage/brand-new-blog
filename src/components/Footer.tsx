@@ -4,6 +4,7 @@ import { FaXTwitter, FaGithub, FaBluesky, FaYoutube, FaKey } from "react-icons/f
 import { IoIosGlobe } from "react-icons/io";
 import AvatarIcon from "./AvatarIcon";
 import { GiOstrich } from "react-icons/gi";
+import { CALENDAR } from "@/lib/config";
 
 function SocialIcon({ site, href }: { site: string; href: string }) {
   const icons = new Map([
@@ -45,7 +46,7 @@ export async function Footer() {
           </div>
         </div>
         <p className="justify-self-center text-center">
-          Copyright © {new Date().getFullYear()} {data.copyright}
+          Copyright © {CALENDAR.year(new Date())} {data.copyright}
         </p>
       </aside>
       <nav>

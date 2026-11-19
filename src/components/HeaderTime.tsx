@@ -2,6 +2,7 @@ import { MdAccessTime } from "react-icons/md";
 import { MdUpdate } from "react-icons/md";
 import { FaRegHourglass, FaRulerHorizontal, FaScrewdriverWrench } from "react-icons/fa6";
 import type { Summary } from "@/lib/content/summary";
+import { CALENDAR } from "@/lib/config";
 
 interface HeaderTimeProps {
   createdAt?: Date;
@@ -33,23 +34,19 @@ export default function HeaderTime({ createdAt, updatedAt, summary, className }:
       {
         createdAt && <span className="flex flex-row gap-1 tooltip" data-tip="Published">
           <MdAccessTime className="my-auto" />
-          <time dateTime={createdAt.toISOString()}>{createdAt.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+          <time dateTime={createdAt.toISOString()}>{CALENDAR.date(createdAt)}</time>
         </span>
       }
       {
         updatedAt && <span className="flex flex-row gap-1 tooltip" data-tip="Updated">
           <MdUpdate className="my-auto" />
-          <time dateTime={updatedAt.toISOString()}>{updatedAt.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })}</time>
+          <time dateTime={updatedAt.toISOString()}>{CALENDAR.date(updatedAt)}</time>
         </span>
       }
         <span className="flex flex-row gap-1 tooltip" data-tip="Built">
           <FaScrewdriverWrench className="my-auto" />
           <time dateTime={builtAtDate.toISOString()}>
-          {
-            builtAtDate.toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo" })
-            + " "
-            + builtAtDate.toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo" })
-          }
+          {CALENDAR.dateTime(builtAtDate)}
           </time>
         </span>
       </div>

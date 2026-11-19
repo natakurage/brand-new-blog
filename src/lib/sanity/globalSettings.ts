@@ -7,6 +7,7 @@ import type {
 } from "../../../@types/sanity/sanity.types";
 import { ResolveReferences } from "./types";
 import { groq } from "next-sanity";
+import { CALENDAR } from "@/lib/config";
 
 type SanityGlobalSettingsResolved = ResolveReferences<
   SanityGlobalSettings,
@@ -72,7 +73,7 @@ export async function loadGlobalSettings(): Promise<GlobalSettings> {
     description: gs.description ?? "",
     author: gs.author ?? "Unknown Author",
     authorUrl: gs.authorUrl,
-    copyright: gs.copyright ?? "Copyright © " + new Date().getFullYear() + " " + gs.author,
+    copyright: gs.copyright ?? "Copyright © " + CALENDAR.year(new Date()) + " " + gs.author,
     donate: gs.donate,
     donateUrl: gs.donateUrl,
     bio: gs.bio ?? "",

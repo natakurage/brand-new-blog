@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
 import { BlogPostManager, loadGlobalSettings } from "@/lib/cms";
 import { getCreditText } from "@/lib/content/credit";
-import { ORIGIN } from "@/lib/config";
+import { CALENDAR, ORIGIN } from "@/lib/config";
 import { toPlainText } from "@/lib/content/summary";
 
 const getPost = cache((slug: string, isEnabled: boolean) =>
@@ -38,7 +38,7 @@ export async function GET(
     notFound();
   }
 
-  const creditText = getCreditText(post, data.author, ORIGIN);
+  const creditText = getCreditText(post, data.author, ORIGIN, CALENDAR);
 
   const titlePrefix = isEnabled ? "(プレビュー) " : "";
 

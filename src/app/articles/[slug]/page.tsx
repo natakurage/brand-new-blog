@@ -21,7 +21,7 @@ import Script from "next/script";
 import { licenseUrl } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
-import { ORIGIN } from "@/lib/config";
+import { CALENDAR, ORIGIN } from "@/lib/config";
 import { absoluteUrlOf, rawHref } from "@/lib/content/href";
 import { summarize } from "@/lib/content/summary";
 
@@ -147,7 +147,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
 
   const contentWarnings = post.tags.map((tag) => tag.contentWarning).filter((cw): cw is string => !!cw);
 
-  const creditText = getCreditText(post, data.author, ORIGIN);
+  const creditText = getCreditText(post, data.author, ORIGIN, CALENDAR);
   const shareFullText = `# ${post.title}\n\n ${post.content}\n\n---\n\n${creditText}`;
   return (
     <>
@@ -190,7 +190,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
               title={post.title}
               author={data.author}
               url={shareInfo.url}
-              year={post.createdAt.getFullYear()}
+              year={CALENDAR.year(post.createdAt)}
               workType="記事"
               license={post.license}
             />
