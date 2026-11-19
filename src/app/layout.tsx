@@ -10,6 +10,7 @@ import { draftMode } from "next/headers";
 import PreviewWarning from "@/components/PreviewWarning";
 import SideBar from "@/components/SideBar";
 import { ORIGIN } from "@/lib/config";
+import { siteOpenGraph } from "@/lib/metadata";
 
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
@@ -20,18 +21,7 @@ export async function generateMetadata() {
       icon: data.favicon,
       apple: data.appleTouchIcon
     },
-    openGraph: {
-      siteName: data.siteName,
-      description: data.description,
-      images: [
-        {
-          url: "/banner.png",
-          width: 1200,
-          height: 630,
-          alt: data.siteName + " OGP"
-        }
-      ]
-    }
+    openGraph: siteOpenGraph(data)
   };
 }
 

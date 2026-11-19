@@ -22,6 +22,7 @@ import { licenseUrl } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
 import { CALENDAR, ORIGIN } from "@/lib/config";
+import { siteOpenGraph } from "@/lib/metadata";
 import { absoluteUrlOf, rawHref } from "@/lib/content/href";
 import { describe, summarize } from "@/lib/content/summary";
 
@@ -54,6 +55,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
       },
     },
     openGraph: {
+      ...siteOpenGraph(data),
       title: title,
       description: description,
       url: absoluteUrlOf(post, ORIGIN),

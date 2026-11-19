@@ -24,6 +24,7 @@ import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { CALENDAR, ORIGIN } from "@/lib/config";
+import { siteOpenGraph } from "@/lib/metadata";
 import { absoluteUrlOf } from "@/lib/content/href";
 import { describe, summarize } from "@/lib/content/summary";
 
@@ -48,8 +49,9 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     title: (isEnabled ? "(プレビュー)" : "") + title,
     description: description,
     openGraph: {
+      ...siteOpenGraph(data),
       title: title,
-      description: description || data.description,
+      description: description,
       url: absoluteUrlOf(song, ORIGIN),
       images: [
         {
