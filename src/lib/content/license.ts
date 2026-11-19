@@ -31,7 +31,7 @@ export const licenseUrl = (license: License) => {
     case "cc":
       return ccLicenses[license.id].deedUrl;
     case "custom":
-      return license.text;
+      return undefined;
     case "unspecified":
       return undefined;
     default:
