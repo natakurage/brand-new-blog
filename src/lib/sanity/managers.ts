@@ -1,60 +1,14 @@
 import { getClient } from "./client";
 import { Tag, BlogData, BlogPost, PostList, Album, Song } from "@/lib/content/types";
 import { SanityClient, SanityDocument, groq } from "next-sanity";
+import type { Tag as SanityTag } from "../../../@types/sanity/sanity.types";
 import type {
-  BlogPost as SanityBlogPost,
-  Song as SanitySong,
-  PostList as SanityPostList,
-  MusicAlbum as SanityMusicAlbum,
-  Tag as SanityTag,
-} from "../../../@types/sanity/sanity.types";
-import { ResolveReferences } from "./types";
-import type { CcLicenseId, License } from "../content/license";
-
-type SanityBlogPostResolved = ResolveReferences<
-  SanityBlogPost, { tags?: (SanityTag | null)[], image?: string; }
->;
-
-type SanitySongResolved = ResolveReferences<
-  SanitySong, { tags?: (SanityTag | null)[]; }
->;
-
-type SanityPostListResolved = ResolveReferences<
-  SanityPostList,
-  {
-    posts: SanityBlogPostResolved[];
-    tags?: (SanityTag | null)[];
-  }
->;
-
-type SanityMusicAlbumResolved = ResolveReferences<
-  SanityMusicAlbum,
-  {
-    tracks: SanitySongResolved[];
-    tags?: (SanityTag | null)[];
-  }
->;
-
-const TransformTag = (tag: SanityTag): Tag => ({
-  kind: "tag",
-  slug: tag.slug?.current ?? "",
-  name: tag.name ?? "Unnamed Tag",
-  contentWarning: tag.contentWarning
-});
-
-const toTags = (tags?: (SanityTag | null)[]): Tag[] => {
-  return tags?.filter((tag) => tag !== null).map(TransformTag) ?? [];
-};
-
-const toLicense = (licenseSelect?: CcLicenseId, license?: string): License => {
-  if (licenseSelect) {
-    return { kind: "cc", id: licenseSelect };
-  } else if (license) {
-    return { kind: "custom", text: license };
-  } else {
-    return { kind: "unspecified" };
-  }
-};
+  SanityBlogPostResolved,
+  SanityMusicAlbumResolved,
+  SanityPostListResolved,
+  SanitySongResolved,
+} from "./types";
+import { toAlbum, toBlogPost, toPostList, toSong, toTag } from "./mappers";
 
 abstract class BlogDataManager<DataType extends BlogData> {
   readonly abstract contentType: string;
@@ -211,21 +165,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
   contentType = "blogPost";
   additionalResolves = [groq`"image": image.asset->url`];
   override async fromEntry(entry: SanityBlogPostResolved): Promise<BlogPost> {
-    const { _id, title, slug, image, description, body, license, showToc, licenseSelect, tags, _createdAt, _updatedAt } = entry;
-    return {
-      kind: "article",
-      id: _id,
-      title: title ?? "Untitled Article",
-      slug: slug?.current ?? "",
-      mainImage: image,
-      description: description ?? "",
-      content: body ?? "",
-      createdAt: new Date(_createdAt),
-      updatedAt: new Date(_updatedAt),
-      tags: toTags(tags),
-      license: toLicense(licenseSelect, license),
-      showToc
-    };
+    return toBlogPost(entry);
   }
 
   async getRelatedPosts(
@@ -268,28 +208,7 @@ export class SongManager extends BlogDataManager<Song> {
   contentType = "song";
   additionalResolves = [];
   override async fromEntry(entry: SanitySongResolved): Promise<Song> {
-    const {
-      _id, title, slug, description, artist, releaseDate, credit,
-      lyrics, licenseSelect, license, url, streamUrl,
-      tags, _createdAt, _updatedAt
-    } = entry;
-    return {
-      kind: "song",
-      id: _id,
-      title: title ?? "Untitled Song",
-      slug: slug?.current ?? "",
-      content: description ?? "",
-      createdAt: new Date(_createdAt),
-      updatedAt: new Date(_updatedAt),
-      artist: artist ?? [],
-      credit,
-      lyrics,
-      releaseDate,
-      tags: toTags(tags),
-      license: toLicense(licenseSelect, license),
-      url,
-      streamUrl
-    };
+    return toSong(entry);
   }
 }
 
@@ -297,20 +216,7 @@ export class PostListManager extends BlogDataManager<PostList> {
   contentType = "postList";
   additionalResolves = [groq`posts[]->{ ..., "tags": tags[]-> }`];
   override async fromEntry(entry: SanityPostListResolved): Promise<PostList> {
-    const { _id, title, slug, description, posts, inverted, tags } = entry;
-    const items = await Promise.all(
-      posts.map((post) => new BlogPostManager().fromEntry(post))
-    );
-    return {
-      kind: "postList",
-      id: _id,
-      title: title ?? "Untitled List",
-      slug: slug?.current ?? "",
-      items,
-      description,
-      tags: toTags(tags),
-      inverted: inverted ?? false,
-    };
+    return toPostList(entry);
   }
 
   async getListsByPost(postSlug: string, preview = false) {
@@ -332,23 +238,7 @@ export class AlbumManager extends BlogDataManager<Album> {
   contentType = "musicAlbum";
   additionalResolves = [groq`tracks[]->{ ..., "tags": tags[]-> }`];
   override async fromEntry(entry: SanityMusicAlbumResolved): Promise<Album> {
-    const { _id, title, slug, description, releaseDate, artist, credit, licenseSelect, license, tags } = entry;
-    const items = await Promise.all(
-      entry.tracks.map((track) => new SongManager().fromEntry(track))
-    );
-    return {
-      kind: "album",
-      id: _id,
-      title: title ?? "Untitled Album",
-      slug: slug?.current ?? "",
-      items,
-      description,
-      releaseDate,
-      artist,
-      credit,
-      tags: toTags(tags),
-      license: toLicense(licenseSelect, license),
-    };
+    return toAlbum(entry);
   }
 
   async getAlbumsBySong(songSlug: string, preview = false) {
@@ -373,7 +263,7 @@ export async function getAllTags(preview = false, client?: SanityClient) : Promi
     tags: ["tags", "tags-collection"],
     revalidate: 86400 // 1 day
   });
-  return tagCollection.map(TransformTag);
+  return tagCollection.map(toTag);
 }
 
 export async function getTagWithCache(tagSlug: string, client?: SanityClient) : Promise<Tag | null> {
@@ -387,5 +277,5 @@ export async function getTagWithCache(tagSlug: string, client?: SanityClient) : 
       revalidate: 86400 // 1 day
     }
   });
-  return tag ? TransformTag(tag) : null;
+  return tag ? toTag(tag) : null;
 }
