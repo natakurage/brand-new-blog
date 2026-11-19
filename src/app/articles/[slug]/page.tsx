@@ -23,7 +23,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CALENDAR, ORIGIN } from "@/lib/config";
 import { absoluteUrlOf, rawHref } from "@/lib/content/href";
-import { summarize } from "@/lib/content/summary";
+import { describe, summarize } from "@/lib/content/summary";
 
 const getPost = cache((slug: string, isEnabled: boolean) => (
   new BlogPostManager().getBySlug(slug, isEnabled)
@@ -38,7 +38,6 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   if (!post) {
     notFound();
   }
-  const { excerpt } = summarize(post.content);
   const title = post.title + " - " + data.siteName;
   const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
@@ -54,7 +53,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     },
     openGraph: {
       title: title,
-      description: excerpt || data.description,
+      description: describe(post) || data.description,
       url: absoluteUrlOf(post, ORIGIN),
       images: [
         {
@@ -76,7 +75,6 @@ export async function generateStaticParams() {
 async function JsonLD({ post }: { post: BlogPost }) {
   const data = await loadGlobalSettings();
   const ogpImageUrl = new URL(`/og`, ORIGIN);
-  const { excerpt } = summarize(post.content);
   ogpImageUrl.searchParams.set("title", post.title);
   if (post.mainImage)
     ogpImageUrl.searchParams.set("bgImage", post.mainImage);
@@ -84,7 +82,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
-    description: excerpt,
+    description: describe(post),
     url: absoluteUrlOf(post, ORIGIN),
     datePublished: post.createdAt.toISOString(),
     dateModified: post.updatedAt.toISOString(),

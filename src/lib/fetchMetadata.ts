@@ -1,9 +1,9 @@
 import { load } from "cheerio";
-import { BlogItem } from "@/lib/content/types";
+import { Content } from "@/lib/content/types";
 import { BlogPostManager, SongManager } from "@/lib/cms";
 import { loadGlobalSettings } from "@/lib/cms";
 import { ORIGIN } from "./config";
-import { summarize } from "./content/summary";
+import { describe } from "./content/summary";
 
 export interface Metadata {
   metadata: {
@@ -21,7 +21,7 @@ export async function fetchMetadata(url: string) {
   if (url.startsWith("/")) {
     const absUrl = new URL(url, ORIGIN);
     const [, type, slug] = absUrl.pathname.split("/");
-    let post: BlogItem | null = null;
+    let post: Content | null = null;
     if (type === "articles") {
       post = await new BlogPostManager().getBySlug(slug, false);
     }
@@ -42,13 +42,12 @@ export async function fetchMetadata(url: string) {
     if (!post) {
       return metadata;
     }
-    const { excerpt } = summarize(post.content);
     const bunnerImgUrl = new URL(`/og`, ORIGIN);
     bunnerImgUrl.searchParams.set("title", post.title);
     if ("mainImage" in post && post.mainImage && typeof post.mainImage === "string")
       bunnerImgUrl.searchParams.set("bgImage", post.mainImage);
     metadata.metadata.title = post.title;
-    metadata.metadata.description = excerpt;
+    metadata.metadata.description = describe(post);
     metadata.metadata.banner = bunnerImgUrl.href;
     return metadata;
   }

@@ -108,3 +108,5 @@ export interface listNavigatorInfo {
   prev: null | listNavigatorItem;
   next: null | listNavigatorItem;
 }
+
+export type Content = BlogPost | Song | PostList | Album;
