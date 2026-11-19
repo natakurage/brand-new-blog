@@ -1,31 +1,40 @@
-import { ItemListManagerMap, isItemListManagerMapKey } from "@/lib/cmsUtils";
+import { repositories } from "@/lib/repositories";
 import { hrefOf } from "@/lib/content/href";
-import { BlogData, listNavigatorInfo } from "@/lib/content/types";
+import type { Album, PostList, listNavigatorInfo } from "@/lib/content/types";
 import { NextRequest, NextResponse } from "next/server";
 
 const responseWithError = (error: string, status: number) => {
   return new NextResponse(JSON.stringify({ error }), { status });
 };
 
+const findList = (kind: string, slug: string): Promise<PostList | Album | null> | null => {
+  switch (kind) {
+    case "postList":
+      return repositories.postLists.findBySlug(slug, { preview: false });
+    case "album":
+      return repositories.albums.findBySlug(slug, { preview: false });
+    default:
+      return null;
+  }
+};
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const key = searchParams.get("key");
   const currentSlug = searchParams.get("slug");
-  const managerType = searchParams.get("type");
-  const useSlug = searchParams.get("useSlug");
+  const kind = searchParams.get("kind");
   // check params
-  if (!key || !currentSlug || !managerType) return responseWithError("Missing parameters", 400);
-  // check manager type
-  if (!isItemListManagerMapKey(managerType)) return responseWithError("Invalid manager type", 400);
-  const manager = new ItemListManagerMap[managerType]();
-  if (!manager) return responseWithError("Type not found", 400);
+  if (!key || !currentSlug || !kind) return responseWithError("Missing parameters", 400);
+  // check kind
+  const listPromise = findList(kind, key);
+  if (!listPromise) return responseWithError("Invalid kind", 400);
   // get list
-  const list = useSlug === "true" ? await manager.getBySlug(key) : await manager.get(key);
+  const list = await listPromise;
   if (!list) return responseWithError("List not found", 404);
   // get info
   const { title, items } = list;
   // check index
-  const currentId = items.findIndex((item: BlogData) => item.slug === currentSlug);
+  const currentId = items.findIndex((item) => item.slug === currentSlug);
   if (currentId === -1) return responseWithError("Item not found", 404);
   const prev = items[currentId - 1] ?? null;
   const next = items[currentId + 1] ?? null;

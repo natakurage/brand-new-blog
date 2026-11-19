@@ -247,7 +247,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
           }
           <footer className="space-y-5">
             <Suspense fallback={<div>Loading...</div>}>
-              <ListNavigator slug={slug} managerType="Album" useSlug />
+              <ListNavigator slug={slug} kind="album" />
             </Suspense>
             <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
             <Credit

@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { PostListManager, AlbumManager } from '@/lib/cms';
-import { BlogDataManagerMap, cmsToType, isValidContentType } from '@/lib/cmsUtils';
-import { Tag, BlogData, PostList, Album } from '@/lib/content/types';
+import { repositories } from '@/lib/repositories';
+import { isSanityContentType, kindOfSanityType } from '@/lib/sanity/webhook';
+import type { CollectionSummary, Content, Kind } from '@/lib/content/types';
 import { hrefOf, rawHref } from '@/lib/content/href';
+
+const ctx = { preview: true };
+
+const findContent = (kind: Exclude<Kind, "tag">, slug: string): Promise<Content | null> => {
+  switch (kind) {
+    case "article":
+      return repositories.articles.findBySlug(slug, ctx);
+    case "song":
+      return repositories.songs.findBySlug(slug, ctx);
+    case "postList":
+      return repositories.postLists.findBySlug(slug, ctx);
+    case "album":
+      return repositories.albums.findBySlug(slug, ctx);
+    default:
+      return kind satisfies never;
+  }
+};
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-revalidate-secret');
@@ -17,11 +34,10 @@ export async function POST(req: NextRequest) {
   if (typeof entityId !== 'string' || typeof contentType !== 'string' || typeof slug !== 'string') {
     return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
   }
-  if (!isValidContentType(contentType)) {
+  if (!isSanityContentType(contentType)) {
     return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
   }
-  const manager = new BlogDataManagerMap[cmsToType[contentType]]();
-  const blogData = await manager.defaultFetcher(contentType === 'postList' ? entityId : slug, true);
+  const blogData = await findContent(kindOfSanityType[contentType], slug);
   // Revalidate itself and collection
   const tagsToRevalidate = [
     `${contentType}:id:${entityId}`,
@@ -30,7 +46,7 @@ export async function POST(req: NextRequest) {
   ];
   const pathsToRevalidate: string[] = [];
   if (blogData) {
-    const itemsToRevalidate: (BlogData | Tag)[] = [blogData];
+    const itemsToRevalidate: { kind: Kind; slug: string }[] = [blogData];
 
     // Revalidate Tag collection
     if (blogData.tags.length > 0) {
@@ -42,9 +58,9 @@ export async function POST(req: NextRequest) {
       tagsToRevalidate.push(`tags:slug:${tag.slug}`);
     });
     // Revalidate ListItems that contain the item
-    let items: (PostList | Album)[] = [];
+    let items: CollectionSummary[] = [];
     if (blogData.kind === "article") {
-      items = await new PostListManager().getListsByPost(blogData.slug, true);
+      items = await repositories.postLists.containing(blogData.slug, ctx);
 
       // BlogPost の場合は .md / .txt のパスも再検証対象に登録
       pathsToRevalidate.push(
@@ -53,18 +69,16 @@ export async function POST(req: NextRequest) {
         `/api/raw/${blogData.slug}/md`,
         `/api/raw/${blogData.slug}/txt`
       );
-    } else if (cmsToType[contentType] === "Song") {
-      items = await new AlbumManager().getAlbumsBySong(blogData.slug, true);
+    } else if (blogData.kind === "song") {
+      items = await repositories.albums.containing(blogData.slug, ctx);
     }
-    if (items) {
-      if (items.length > 0) {
-        tagsToRevalidate.push(`${contentType}-collection`);
-      }
-      items.forEach((list) => {
-        itemsToRevalidate.push(list);
-        tagsToRevalidate.push(`${contentType}:slug:${list.slug}`);
-      });
+    if (items.length > 0) {
+      tagsToRevalidate.push(`${contentType}-collection`);
     }
+    items.forEach((list) => {
+      itemsToRevalidate.push(list);
+      tagsToRevalidate.push(`${contentType}:slug:${list.slug}`);
+    });
     pathsToRevalidate.push(...itemsToRevalidate.map(hrefOf));
   }
 

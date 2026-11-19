@@ -1,7 +1,6 @@
 "use client";
 
 import { listNavigatorInfo, listNavigatorItem } from "@/lib/content/types";
-import { ItemListManagerMap } from "@/lib/cmsUtils";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,8 +11,8 @@ const withEllipsis = (str: string, len: number) => (
 );
 
 export default function ListNavigator(
-  { slug, managerType, useSlug = false }
-: { slug: string, managerType: keyof typeof ItemListManagerMap, useSlug?: boolean }) {
+  { slug, kind }
+: { slug: string, kind: "postList" | "album" }) {
   const router = useRouter();
   const key = useSearchParams().get("key");
   
@@ -31,8 +30,7 @@ export default function ListNavigator(
       const searchParams = new URLSearchParams({
         slug,
         key,
-        type: managerType,
-        useSlug: useSlug ? "true" : "false"
+        kind,
       });
       const response = await fetch("/api/list-navigator?" + searchParams);
       const navigatorInfo: listNavigatorInfo = await response.json();
@@ -46,7 +44,7 @@ export default function ListNavigator(
       setNext(navigatorInfo.next);
     };
     f();
-  }, [key, router, slug, managerType, useSlug]);
+  }, [key, router, slug, kind]);
   
   return (
     <nav>

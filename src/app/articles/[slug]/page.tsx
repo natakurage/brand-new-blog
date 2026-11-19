@@ -172,7 +172,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
           <ArticleBody content={post.content} className="my-12 sm:my-24" />
           <footer className="space-y-5">
             <Suspense fallback={<div>Loading...</div>}>
-              <ListNavigator slug={slug} managerType="PostList" useSlug />
+              <ListNavigator slug={slug} kind="postList" />
             </Suspense>
             <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
             <Credit
