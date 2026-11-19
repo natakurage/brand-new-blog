@@ -17,7 +17,7 @@ import type {
   Tag,
 } from "@/lib/content/types";
 import type { CcLicenseId, License } from "@/lib/content/license";
-import { summarize } from "@/lib/content/summary";
+import { digestOf } from "@/lib/content/summary";
 import { CALENDAR } from "@/lib/config";
 import type {
   SanityBlogPostResolved,
@@ -67,7 +67,7 @@ const toArticleMeta = (entry: SanityBlogPostResolved): ArticleMeta => ({
 
 export const toArticleSummary = (entry: SanityBlogPostResolved): ArticleSummary => ({
   ...toArticleMeta(entry),
-  ...summarize(entry.body ?? ""),
+  ...digestOf(entry.body ?? ""),
 });
 
 export const toBlogPost = (entry: SanityBlogPostResolved): BlogPost => ({
@@ -94,7 +94,7 @@ const toSongMeta = (entry: SanitySongResolved): SongMeta => ({
 // CMS の曲の description は長い Markdown で、本文にあたるため content に入れる
 export const toSongSummary = (entry: SanitySongResolved): SongSummary => ({
   ...toSongMeta(entry),
-  ...summarize(entry.description ?? ""),
+  ...digestOf(entry.description ?? ""),
 });
 
 export const toSong = (entry: SanitySongResolved): Song => ({

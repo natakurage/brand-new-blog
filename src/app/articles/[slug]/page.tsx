@@ -168,7 +168,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
             <TagList tags={post.tags} />
             <div className="text-sm flex flex-wrap">
               <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
-              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} summary={post} className="ms-auto" />
+              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} length={post.length} readingMinutes={post.readingMinutes} className="ms-auto" />
             </div>
           </header>
           <ArticleBody content={post.content} className="my-12 sm:my-24" />

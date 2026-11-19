@@ -65,7 +65,7 @@ export interface ArticleMeta extends BlogItemMeta {
   showToc?: boolean;
 }
 
-export interface BlogPost extends ArticleMeta, Summary {
+export interface BlogPost extends ArticleMeta, Digest {
   content: string;
 }
 
@@ -78,7 +78,7 @@ export interface SongMeta extends BlogItemMeta {
   streamUrl?: string;
 }
 
-export interface Song extends SongMeta, Summary {
+export interface Song extends SongMeta, Digest {
   content: string;
   lyrics?: string;
 }
@@ -118,14 +118,14 @@ export interface listNavigatorInfo {
 
 export type Content = BlogPost | Song | PostList | Album;
 
-export interface Summary {
+export interface Digest {
   excerpt: string;
   length: number;
   readingMinutes: number;
 }
 
-export type ArticleSummary = ArticleMeta & Summary;
-export type SongSummary = SongMeta & Summary;
+export type ArticleSummary = ArticleMeta & Digest;
+export type SongSummary = SongMeta & Digest;
 export type PostListSummary = PostListMeta;
 export type AlbumSummary = AlbumMeta;
 

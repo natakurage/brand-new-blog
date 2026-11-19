@@ -1,5 +1,5 @@
 import removeMd from "remove-markdown";
-import type { CollectionSummary, ItemSummary, Summary } from "./types";
+import type { CollectionSummary, ItemSummary, Digest } from "./types";
 
 const lettersPerMinute = 500;
 const summaryLength = 100;
@@ -10,7 +10,7 @@ export const toPlainText = (markdown: string): string => {
   return removeMd(markdown);
 };
 
-export const summarize = (markdown: string): Summary => {
+export const digestOf = (markdown: string): Digest => {
   const plainText = toPlainText(markdown);
   const segments = Array.from(segmenter.segment(plainText), (s) => s.segment);
   const length = segments.length;

@@ -195,7 +195,7 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
             <div>by {song.artist.join(", ")}</div>
             <TagList tags={song.tags} />
             <div className="text-sm flex flex-wrap">
-              <HeaderTime createdAt={song.createdAt} summary={song} className="ms-auto" />
+              <HeaderTime createdAt={song.createdAt} length={song.length} readingMinutes={song.readingMinutes} className="ms-auto" />
             </div>
           </header>
           { youtube_url && <YouTubePlayer vid={getYouTubeId(youtube_url) || ""} /> }
