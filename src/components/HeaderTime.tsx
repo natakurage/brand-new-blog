@@ -1,7 +1,7 @@
 import { MdAccessTime } from "react-icons/md";
 import { MdUpdate } from "react-icons/md";
 import { FaRegHourglass, FaRulerHorizontal, FaScrewdriverWrench } from "react-icons/fa6";
-import type { Summary } from "@/lib/content/summary";
+import type { Summary } from "@/lib/content/types";
 import { CALENDAR } from "@/lib/config";
 
 interface HeaderTimeProps {

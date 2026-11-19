@@ -49,52 +49,63 @@ export interface BlogData {
   tags: Tag[];
 }
 
-export interface BlogItem extends BlogData {
-  content: string;
+export interface BlogItemMeta extends BlogData {
   createdAt: Date;
   updatedAt: Date;
   license: License;
+}
+
+export interface BlogItem extends BlogItemMeta {
+  content: string;
 }
 
 export interface ItemList<T extends BlogItem> extends BlogData {
   items: T[];
 }
 
-export interface BlogPost extends BlogItem {
-  kind: "article",
+export interface ArticleMeta extends BlogItemMeta {
+  kind: "article";
   mainImage?: string;
-  content: string,
-  createdAt: Date,
-  updatedAt: Date,
-  license: License;
-  showToc?: boolean
+  showToc?: boolean;
 }
 
-export interface Song extends BlogItem {
-  kind: "song";
+export interface BlogPost extends ArticleMeta {
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
+}
+
+export interface SongMeta extends BlogItemMeta {
+  kind: "song";
   artist: string[];
   credit?: string[];
-  lyrics?: string;
   releaseDate?: string;
-  license: License;
   url?: string[];
   streamUrl?: string;
 }
 
-export interface PostList extends ItemList<BlogPost> {
+export interface Song extends SongMeta {
+  content: string;
+  lyrics?: string;
+}
+
+export interface PostListMeta extends BlogData {
   kind: "postList";
   inverted: boolean;
 }
 
-export interface Album extends ItemList<Song> {
+export interface PostList extends PostListMeta {
+  items: BlogPost[];
+}
+
+export interface AlbumMeta extends BlogData {
   kind: "album";
   releaseDate?: string;
   artist?: string[];
   credit?: string[];
   license: License;
+}
+
+export interface Album extends AlbumMeta {
+  items: Song[];
 }
 
 export interface listNavigatorItem {
@@ -110,3 +121,15 @@ export interface listNavigatorInfo {
 }
 
 export type Content = BlogPost | Song | PostList | Album;
+
+export interface Summary {
+  excerpt: string;
+  length: number;
+  readingMinutes: number;
+}
+
+// 一覧用の型：本文や中身を除いたメタデータに、本文から計算した要約を加えたもの
+export type ArticleSummary = ArticleMeta & Summary;
+export type SongSummary = SongMeta & Summary;
+export type PostListSummary = PostListMeta;
+export type AlbumSummary = AlbumMeta;

@@ -1,5 +1,5 @@
 import removeMd from "remove-markdown";
-import { Content } from "./types";
+import type { Content, Summary } from "./types";
 
 const lettersPerMinute = 500;
 const summaryLength = 100;
@@ -9,12 +9,6 @@ const segmenter = new Intl.Segmenter("ja", { granularity: "grapheme" });
 export const toPlainText = (markdown: string): string => {
   return removeMd(markdown);
 };
-
-export interface Summary {
-  excerpt: string;
-  length: number;
-  readingMinutes: number;
-}
 
 export const summarize = (markdown: string): Summary => {
   const plainText = toPlainText(markdown);
