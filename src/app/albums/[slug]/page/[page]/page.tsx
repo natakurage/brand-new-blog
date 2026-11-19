@@ -84,7 +84,7 @@ export default async function AlbumPage(props: { params: Promise<{ slug: string,
         <div>{album.artist?.join(", ")}</div>
         <p className="text-sm">{album.description}</p>
         <ItemList
-          hrefFor={(n) => pageHref("/songs", n)}
+          hrefFor={(n) => pageHref(`/albums/${album.slug}`, n)}
           items={songs}
           total={songs.length}
           page={pageNum}
