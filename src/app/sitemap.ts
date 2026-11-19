@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { AlbumManager, BlogPostManager, PostListManager, SongManager, getAllTags, loadGlobalSettings } from "@/lib/cms";
-
-const SITE_ORIGIN = process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000";
+import { ORIGIN } from "@/lib/config";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -38,7 +37,7 @@ const collectionManagers = [
 ] as const;
 
 function toAbsoluteUrl(path: string) {
-	return new URL(path, SITE_ORIGIN).href;
+	return new URL(path, ORIGIN).href;
 }
 
 function buildEntry(path: string, priority: number, changeFrequency: SitemapEntry["changeFrequency"] = "weekly"): SitemapEntry {

@@ -1,9 +1,10 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { draftMode } from "next/headers";
-import { BlogPostManager } from "@/lib/cms";
+import { BlogPostManager, loadGlobalSettings } from "@/lib/cms";
 import { getCreditText } from "@/lib/content/credit";
 import removeMd from "remove-markdown";
+import { ORIGIN } from "@/lib/config";
 
 const getPost = cache((slug: string, isEnabled: boolean) =>
   new BlogPostManager().getBySlug(slug, isEnabled)
@@ -28,13 +29,16 @@ export async function GET(
   const { slug, format } = await props.params;
 
   const { isEnabled } = await draftMode();
-  const post = await getPost(slug, isEnabled);
+  const [data, post] = await Promise.all([
+    loadGlobalSettings(),
+    getPost(slug, isEnabled)
+  ]);
 
   if (!post) {
     notFound();
   }
 
-  const creditText = await getCreditText(post);
+  const creditText = getCreditText(post, data.author, ORIGIN);
 
   const titlePrefix = isEnabled ? "(プレビュー) " : "";
 

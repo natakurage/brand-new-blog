@@ -22,6 +22,8 @@ import Script from "next/script";
 import { ccDeedUrls } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
+import { ORIGIN } from "@/lib/config";
+import { getAbsoluteUrl } from "@/lib/content/href";
 
 const getPost = cache((slug: string, isEnabled: boolean) => (
   new BlogPostManager().getBySlug(slug, isEnabled)
@@ -37,7 +39,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     notFound();
   }
   const title = post.title + " - " + data.siteName;
-  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
   if (post.mainImage)
     ogpImageUrl.searchParams.set("bgImage", post.mainImage);
@@ -52,7 +54,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     openGraph: {
       title: title,
       description: removeMd(post.content).slice(0, 100) || data.description,
-      url: new URL(`/articles/${post.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+      url: getAbsoluteUrl(post, ORIGIN),
       images: [
         {
           url: ogpImageUrl.href,
@@ -72,7 +74,7 @@ export async function generateStaticParams() {
 
 async function JsonLD({ post }: { post: BlogPost }) {
   const data = await loadGlobalSettings();
-  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", post.title);
   if (post.mainImage)
     ogpImageUrl.searchParams.set("bgImage", post.mainImage);
@@ -81,7 +83,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
     "@type": "BlogPosting",
     headline: post.title,
     description: removeMd(post.content).slice(0, 100),
-    url: new URL(`/articles/${post.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+    url: getAbsoluteUrl(post, ORIGIN),
     datePublished: post.createdAt,
     dateModified: post.updatedAt,
     image: [ogpImageUrl.href],
@@ -137,11 +139,11 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
     )
   ]);
 
-  const shareInfo = await getShareInfo(post);
+  const shareInfo = getShareInfo(post, data.siteName, ORIGIN);
 
   const contentWarnings = post.tags?.map((tag) => tag.contentWarning).filter((cw): cw is string => !!cw) ?? [];
 
-  const creditText = await getCreditText(post);
+  const creditText = getCreditText(post, data.author, ORIGIN);
   const shareFullText = `# ${post.title}\n\n ${post.content}\n\n---\n\n${creditText}`;
   return (
     <>

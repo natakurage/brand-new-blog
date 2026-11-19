@@ -1,17 +1,12 @@
 import type { BlogPost, Song } from "./types";
-import { getShareInfo } from "./share";
-import { loadGlobalSettings } from "@/lib/cms";
+import { getAbsoluteUrl } from "./href";
 
-export const getCreditText = async (item: BlogPost): Promise<string> => {
-  const [data, shareInfo] = await Promise.all([
-    loadGlobalSettings(),
-    getShareInfo(item),
-  ]);
+export const getCreditText = (item: BlogPost, author: string, origin: string): string => {
   const creditInfo = new Map<string, string>([
     ["タイトル", item.title],
-    ["著者", data.author],
+    ["著者", author],
     ["作成年", new Date(item.createdAt).getFullYear().toString()],
-    ["URL", shareInfo.url],
+    ["URL", getAbsoluteUrl(item, origin)],
     ["ライセンス", item.licenseSelect ?? item.license ?? "不明なライセンス"],
   ]);
   return Array.from(creditInfo.entries())
@@ -19,8 +14,7 @@ export const getCreditText = async (item: BlogPost): Promise<string> => {
     .join("\n");
 };
 
-export const getSongCreditText = async (song: Song): Promise<string> => {
-  const shareInfo = await getShareInfo(song);
+export const getSongCreditText = (song: Song, origin: string): string => {
   const creditInfo = new Map<string, string>([
     ["タイトル", song.title],
     ["アーティスト", song.artist.join(", ")]
@@ -31,7 +25,7 @@ export const getSongCreditText = async (song: Song): Promise<string> => {
   });
   ([
     ["作成年", new Date(song.createdAt).getFullYear().toString()],
-    ["URL", shareInfo.url],
+    ["URL", getAbsoluteUrl(song, origin)],
     ["ライセンス", song.licenseSelect ?? song.license ?? "不明なライセンス"],
   ]).forEach(([k, v]) => creditInfo.set(k, v));
   return Array.from(creditInfo.entries())

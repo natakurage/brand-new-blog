@@ -2,7 +2,8 @@ import ItemList from "@/components/ItemList";
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager } from "@/lib/cms";
 import Script from "next/script";
-import type {  WebSite, WithContext } from "schema-dts";
+import type { WebSite, WithContext } from "schema-dts";
+import { ORIGIN } from "@/lib/config";
 
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
@@ -17,12 +18,12 @@ async function JsonLD() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: data.siteName,
-    url: process.env.NEXT_PUBLIC_ORIGIN,
+    url: ORIGIN,
     description: data.description,
-    image: new URL("/banner.png", process.env.NEXT_PUBLIC_ORIGIN).href,
+    image: new URL("/banner.png", ORIGIN).href,
     potentialAction: {
       "@type": "SearchAction",
-      target: new URL("/search?q={search_term_string}", process.env.NEXT_PUBLIC_ORIGIN).href,
+      target: new URL("/search?q={search_term_string}", ORIGIN).href,
       // @ts-expect-error: 'query-input' is not in the schema-dts types but required by schema.org
       "query-input": "required name=search_term_string"
     },

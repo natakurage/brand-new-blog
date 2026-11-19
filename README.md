@@ -28,7 +28,7 @@ npm install
 |SANITY_VIEWER_TOKEN | SanityのAPIトークン（閲覧者権限必須） |
 |SANITY_PREVIEW_SECRET | プレビュー用シークレット（任意の文字列） |
 |REVALIDATE_SECRET | 再検証用シークレット（任意の文字列） |
-|NEXT_PUBLIC_ORIGIN | ホスト名（RSS用） |
+|NEXT_PUBLIC_ORIGIN | サイトのオリジン |
 
 ## ライセンス
 

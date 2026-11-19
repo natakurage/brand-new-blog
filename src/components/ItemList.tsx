@@ -2,6 +2,7 @@ import { BlogItem } from "@/lib/content/types";
 import Paginator from "./Paginator";
 import ListItem from "./ListItem";
 import ListExporter from "./ListExporter";
+import { ORIGIN } from "@/lib/config";
 
 interface ItemListProps {
   items: BlogItem[];
@@ -23,7 +24,6 @@ export default function ItemList(
     showCount = true, showExporter = true
   }: ItemListProps
 ) {
-  const origin = process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000";
   const maxPages = Math.ceil(total / limit);
   const currentNum = items.length + (page - 1) * limit;
   return (
@@ -34,7 +34,7 @@ export default function ItemList(
             {currentNum} / {total} 件
           </p>
         )}
-        {showExporter && <ListExporter origin={origin} items={items} suffix={suffix} />}
+        {showExporter && <ListExporter origin={ORIGIN} items={items} suffix={suffix} />}
       </div>
       <ul className="space-y-4">
         {items.map((item) => (item &&

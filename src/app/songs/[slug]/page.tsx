@@ -24,6 +24,8 @@ import TagList from "@/components/TagList";
 import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/content/license";
+import { ORIGIN } from "@/lib/config";
+import { getAbsoluteUrl } from "@/lib/content/href";
 
 const getSong = cache((slug: string, isEnabled: boolean) => (
   new SongManager().getBySlug(slug, isEnabled)
@@ -39,14 +41,14 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     notFound();
   }
   const title = song.title + " - " + data.siteName;
-  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
   return {
     title: (isEnabled ? "(プレビュー)" : "") + title,
     openGraph: {
       title: title,
       description: removeMd(song.content).slice(0, 100) || data.description,
-      url: new URL(`/songs/${song.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+      url: getAbsoluteUrl(song, ORIGIN),
       images: [
         {
           url: ogpImageUrl.href,
@@ -131,14 +133,14 @@ export async function generateStaticParams() {
 }
 
 function JsonLD({ song }: { song: Song }) {
-  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", song.title);
   const jsonLd: WithContext<MusicRecording> = {
     "@context": "https://schema.org",
     "@type": "MusicRecording",
     name: song.title,
     description: removeMd(song.content).slice(0, 100),
-    url: new URL(`/songs/${song.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+    url: getAbsoluteUrl(song, ORIGIN),
     datePublished: song.releaseDate,
     byArtist: song.artist.map((artist) => ({
       "@type": "MusicGroup",
@@ -161,7 +163,10 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
   const params = await props.params;
   const { isEnabled } = await draftMode();
   const { slug } = params;
-  const song = await getSong(slug, isEnabled);
+  const [data, song] = await Promise.all([
+    loadGlobalSettings(),
+    getSong(slug, isEnabled)
+  ]);
   if (!song) {
     notFound();
   }
@@ -171,9 +176,9 @@ export default async function SongPage(props: { params: Promise<{ slug: string }
 
   const modifiedLyrics = song.lyrics?.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n');
 
-  const shareInfo = await getShareInfo(song);
+  const shareInfo = getShareInfo(song, data.siteName, ORIGIN);
 
-  const creditText = await getSongCreditText(song);
+  const creditText = getSongCreditText(song, ORIGIN);
   const shareFullText = `# ${song.title}\n\n ${song.content}\n\n## Lyrics\n\n${modifiedLyrics}\n\n---\n\n${creditText}`;
 
   return (

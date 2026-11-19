@@ -7,6 +7,8 @@ import ItemList from "@/components/ItemList";
 import Script from "next/script";
 import type { MusicAlbum, WithContext } from "schema-dts";
 import { ccDeedUrls } from "@/lib/content/license";
+import { ORIGIN } from "@/lib/config";
+import { getAbsoluteUrl } from "@/lib/content/href";
 
 const getAlbum = cache((slug: string) => (
   new AlbumManager().getBySlug(slug, false)
@@ -30,14 +32,14 @@ export async function generateStaticParams() {
 }
 
 function JsonLD({ album }: { album: Album }) {
-  const ogpImageUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+  const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", album.title);
 
   const jsonLd: WithContext<MusicAlbum> = {
     "@context": "https://schema.org",
     "@type": "MusicAlbum",
     name: album.title,
-    url: new URL(`/albums/${album.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href,
+    url: getAbsoluteUrl(album, ORIGIN),
     image: ogpImageUrl.href,
     byArtist: album.artist?.map((artist) => ({
       "@type": "MusicGroup",
@@ -49,7 +51,7 @@ function JsonLD({ album }: { album: Album }) {
     track: album.items.map((song) => ({
       "@type": "MusicRecording",
       name: song.title,
-      url: new URL(`/songs/${song.slug}`, process.env.NEXT_PUBLIC_ORIGIN).href
+      url: getAbsoluteUrl(song, ORIGIN),
     })),
     license: album.licenseSelect ? ccDeedUrls[album.licenseSelect] : album.license,
   };

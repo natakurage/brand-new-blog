@@ -1,14 +1,11 @@
 import { loadGlobalSettings } from "@/lib/cms";
 import { BlogPostManager } from "@/lib/cms";
+import { ORIGIN } from "@/lib/config";
+import { getAbsoluteUrl } from "@/lib/content/href";
 import removeMd from "remove-markdown";
 
-export async function GET(request: Request) {
+export async function GET() {
   const data = await loadGlobalSettings();
-  const url = new URL(request.url).origin;
-
-  if (!url) {
-    return new Response(null, { status: 404 });
-  }
 
   const { items: posts } = await new BlogPostManager().getNewest({
     page: 0,
@@ -18,8 +15,8 @@ export async function GET(request: Request) {
   const items = posts.map(post => `<item>
       <title><![CDATA[${post.title}]]></title>
       <description><![CDATA[${removeMd(post.content).slice(0, 100) + "..."}]]></description>
-      <link>${url}/articles/${post.slug}</link>
-      <guid isPermaLink="false">${url}/articles/${post.slug}</guid>
+      <link>${getAbsoluteUrl(post, ORIGIN)}</link>
+      <guid isPermaLink="false">${getAbsoluteUrl(post, ORIGIN)}</guid>
       <dc:creator><![CDATA[${data.author}]]></dc:creator>
       <pubDate>${new Date(post.createdAt).toUTCString()}</pubDate>
     </item>`
@@ -28,10 +25,10 @@ export async function GET(request: Request) {
   const channel = `<channel>
   <title>${data.siteName}</title>
   <description>${data.description}</description>
-  <link>${url}</link>
+  <link>${ORIGIN}</link>
   <generator>${data.siteName}</generator>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-  <atom:link href="${url}/rss" rel="self" type="application/rss+xml"/>
+  <atom:link href="${new URL('/rss', ORIGIN).href}" rel="self" type="application/rss+xml"/>
   <language><![CDATA[ja]]></language>
   ${items.join("\n")}
   </channel>`;

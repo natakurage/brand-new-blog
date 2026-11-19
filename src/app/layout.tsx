@@ -9,11 +9,12 @@ import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
 import PreviewWarning from "@/components/PreviewWarning";
 import SideBar from "@/components/SideBar";
+import { ORIGIN } from "@/lib/config";
 
 export async function generateMetadata() {
   const data = await loadGlobalSettings();
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_ORIGIN || "http://localhost:3000"),
+    metadataBase: new URL(ORIGIN),
     icons: {
       icon: data.favicon,
       apple: data.appleTouchIcon

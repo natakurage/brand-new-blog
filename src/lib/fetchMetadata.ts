@@ -3,6 +3,7 @@ import { BlogItem } from "@/lib/content/types";
 import { BlogPostManager, SongManager } from "@/lib/cms";
 import { loadGlobalSettings } from "@/lib/cms";
 import removeMd from "remove-markdown";
+import { ORIGIN } from "./config";
 
 export interface Metadata {
   metadata: {
@@ -18,7 +19,7 @@ export interface Metadata {
 export async function fetchMetadata(url: string) {
   // if internal URL
   if (url.startsWith("/")) {
-    const absUrl = new URL(url, process.env.NEXT_PUBLIC_ORIGIN);
+    const absUrl = new URL(url, ORIGIN);
     const [, type, slug] = absUrl.pathname.split("/");
     let post: BlogItem | null = null;
     if (type === "articles") {
@@ -41,7 +42,7 @@ export async function fetchMetadata(url: string) {
     if (!post) {
       return metadata;
     }
-    const bunnerImgUrl = new URL(`/og`, process.env.NEXT_PUBLIC_ORIGIN);
+    const bunnerImgUrl = new URL(`/og`, ORIGIN);
     bunnerImgUrl.searchParams.set("title", post.title);
     if ("mainImage" in post && post.mainImage && typeof post.mainImage === "string")
       bunnerImgUrl.searchParams.set("bgImage", post.mainImage);
