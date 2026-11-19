@@ -1,4 +1,4 @@
-import { loadGlobalSettings } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import Link from "next/link";
 import { FaXTwitter, FaGithub, FaBluesky, FaYoutube, FaKey } from "react-icons/fa6";
 import { IoIosGlobe } from "react-icons/io";
@@ -29,7 +29,7 @@ function SocialIcon({ site, href }: { site: string; href: string }) {
 }
 
 export async function Footer() {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   return (
     <footer className="footer md:footer-horizontal bg-neutral text-neutral-content p-10">
       <aside>

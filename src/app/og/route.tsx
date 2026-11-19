@@ -1,11 +1,11 @@
-import { loadGlobalSettings } from '@/lib/cms';
+import { repositories } from '@/lib/repositories';
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 
 // export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   const { searchParams } = new URL(request.url);
   const title = searchParams.get('title') || 'Default Title';
   const bgImageUrl = searchParams.get('bgImage') || null;

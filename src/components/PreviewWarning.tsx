@@ -1,10 +1,10 @@
 import DisablePreview from "@/components/DisablePreview";
-import { loadGlobalSettings } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import Link from "next/link";
 import { MdWarning } from "react-icons/md";
 
 export default async function PreviewWarning() {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   return (
     <div className="my-4 space-y-2">
       <div role="alert" className="alert alert-warning">

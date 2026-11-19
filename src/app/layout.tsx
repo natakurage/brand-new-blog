@@ -1,7 +1,7 @@
 import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
-import { loadGlobalSettings } from "@/lib/cms";
+import { repositories } from "@/lib/repositories";
 import NextTopLoader from "nextjs-toploader";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
@@ -13,7 +13,7 @@ import { ORIGIN } from "@/lib/config";
 import { siteOpenGraph } from "@/lib/metadata";
 
 export async function generateMetadata() {
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   return {
     description: data.description,
     metadataBase: new URL(ORIGIN),
@@ -34,7 +34,7 @@ export default async function RootLayout({
 }>) {
   const { isEnabled } = await draftMode();
   const isDevelopment = process.env.NODE_ENV === "development";
-  const data = await loadGlobalSettings();
+  const data = await repositories.siteSettings.get();
   return (
     <html lang="ja" suppressHydrationWarning>
       <body>
