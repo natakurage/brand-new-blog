@@ -1,20 +1,12 @@
 import { defineQuery } from "next-sanity";
 
-/*
- * GROQ のクエリ。条件はすべてパラメータで渡し、文字列を組み立てない。
- * 省略できる条件は null を渡すと無効になる（GROQ は未定義のパラメータを参照するとエラーになるため）。
- * ページ送りは $start（含む）と $end（含まない）で指定する。
- */
+// 省略する条件には null を渡す（GROQ は渡されていないパラメータを参照するとエラーになる）
 
-// 射影（取得するフィールドと参照の解決）
 const articleProjection = /* groq */ `{ ..., "tags": tags[]->, "image": image.asset->url }`;
 const songProjection = /* groq */ `{ ..., "tags": tags[]-> }`;
 const postListProjection = /* groq */ `{ ..., "tags": tags[]->, "posts": posts[]->${articleProjection} }`;
 const albumProjection = /* groq */ `{ ..., "tags": tags[]->, "tracks": tracks[]->${songProjection} }`;
-// 一覧用：中身（posts / tracks）を取得しない
 const collectionSummaryProjection = /* groq */ `{ ..., "tags": tags[]-> }`;
-
-// 記事
 
 const articleFilter = /* groq */ `_type == "blogPost"
   && ($tagSlug == null || $tagSlug in tags[]->slug.current)
@@ -40,8 +32,6 @@ export const articleSearchQuery = defineQuery(`{
 
 export const articleSlugsQuery = defineQuery(`*[_type == "blogPost" && defined(slug.current)].slug.current`);
 
-// 曲
-
 export const songBySlugQuery = defineQuery(`*[_type == "song" && slug.current == $slug][0]${songProjection}`);
 
 export const songListQuery = defineQuery(`{
@@ -50,8 +40,6 @@ export const songListQuery = defineQuery(`{
 }`);
 
 export const songSlugsQuery = defineQuery(`*[_type == "song" && defined(slug.current)].slug.current`);
-
-// 記事リスト
 
 export const postListBySlugQuery = defineQuery(`*[_type == "postList" && slug.current == $slug][0]${postListProjection}`);
 
@@ -64,8 +52,6 @@ export const postListsContainingQuery = defineQuery(`*[_type == "postList" && $a
 
 export const postListSlugsQuery = defineQuery(`*[_type == "postList" && defined(slug.current)].slug.current`);
 
-// アルバム
-
 export const albumBySlugQuery = defineQuery(`*[_type == "musicAlbum" && slug.current == $slug][0]${albumProjection}`);
 
 export const albumListQuery = defineQuery(`{
@@ -77,13 +63,9 @@ export const albumsContainingQuery = defineQuery(`*[_type == "musicAlbum" && $so
 
 export const albumSlugsQuery = defineQuery(`*[_type == "musicAlbum" && defined(slug.current)].slug.current`);
 
-// タグ
-
 export const tagBySlugQuery = defineQuery(`*[_type == "tag" && slug.current == $slug][0]`);
 
 export const tagSlugsQuery = defineQuery(`*[_type == "tag" && defined(slug.current)].slug.current`);
-
-// サイト設定
 
 export const siteSettingsQuery = defineQuery(`*[_type == "globalSettings"][0]{
   ...,

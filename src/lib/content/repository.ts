@@ -13,12 +13,10 @@ import type {
 } from "./types";
 
 /*
- * コンテンツを取得する窓口。実装（CMS ごとの adapter）はこの契約を守る。
- *
+ * 実装が守る契約
  * - 見つからないときは null を返す
  * - 通信やデータの異常は例外を投げる（null に変換しない）
  * - 戻り値は正規化済み：参照切れの要素は除かれ、必須のフィールドは埋まっている
- * - 一覧（list など）は本文や中身を含まない一覧用の型を返す
  */
 
 export type Page<T> = { items: T[]; total: number };
@@ -36,13 +34,12 @@ export type ArticleListQuery = {
   exclude?: string[];
 };
 
-// slug で引けるもの。allSlugs は静的生成のためのもので、公開済みのもののみを返す
 export interface SlugLookup<T> {
   findBySlug(slug: string, ctx: ReadContext): Promise<T | null>;
+  // 静的生成用。公開済みのもののみを返す
   allSlugs(): Promise<string[]>;
 }
 
-// ページ単位で一覧できるもの
 export interface PagedList<S> {
   list(page: PageRequest, ctx: ReadContext): Promise<Page<S>>;
 }
@@ -57,12 +54,10 @@ export interface ArticleRepository extends SlugLookup<BlogPost> {
 export interface SongRepository extends SlugLookup<Song>, PagedList<SongSummary> {}
 
 export interface PostListRepository extends SlugLookup<PostList>, PagedList<PostListSummary> {
-  // articleSlug の記事を含むリスト
   containing(articleSlug: string, ctx: ReadContext): Promise<PostListSummary[]>;
 }
 
 export interface AlbumRepository extends SlugLookup<Album>, PagedList<AlbumSummary> {
-  // songSlug の曲を含むアルバム
   containing(songSlug: string, ctx: ReadContext): Promise<AlbumSummary[]>;
 }
 

@@ -128,7 +128,6 @@ export interface Summary {
   readingMinutes: number;
 }
 
-// 一覧用の型：本文や中身を除いたメタデータに、本文から計算した要約を加えたもの
 export type ArticleSummary = ArticleMeta & Summary;
 export type SongSummary = SongMeta & Summary;
 export type PostListSummary = PostListMeta;

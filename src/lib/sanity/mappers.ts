@@ -23,7 +23,7 @@ import type {
   SanitySongResolved,
 } from "./types";
 
-// Sanity の文書をドメインの型に変換する。Sanity の形を知っているのはこのファイルと queries だけにする
+// Sanity の文書の形を知っているのは、このファイルと queries.ts だけにする
 
 export const toTag = (tag: SanityTag): Tag => ({
   kind: "tag",
@@ -36,7 +36,6 @@ export const toTags = (tags?: (SanityTag | null)[]): Tag[] => {
   return tags?.filter((tag) => tag !== null).map(toTag) ?? [];
 };
 
-// licenseSelect（CC）と license（自由記述）が両方あれば CC を優先する
 export const toLicense = (licenseSelect?: CcLicenseId, license?: string): License => {
   if (licenseSelect) {
     return { kind: "cc", id: licenseSelect };
@@ -87,8 +86,7 @@ const toSongMeta = (entry: SanitySongResolved): SongMeta => ({
   streamUrl: entry.streamUrl,
 });
 
-// CMS の曲の description は長い Markdown で、意味としては本文にあたる。
-// そのためドメインでは content に入れ、短い説明文の description は持たない
+// CMS の曲の description は長い Markdown で、本文にあたるため content に入れる
 export const toSong = (entry: SanitySongResolved): Song => ({
   ...toSongMeta(entry),
   content: entry.description ?? "",
