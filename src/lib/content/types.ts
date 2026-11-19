@@ -84,7 +84,6 @@ export interface Song extends SongMeta, Digest {
 
 export interface PostListMeta extends BlogData {
   kind: "postList";
-  inverted: boolean;
 }
 
 export interface PostList extends PostListMeta {

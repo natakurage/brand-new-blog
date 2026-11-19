@@ -107,13 +107,15 @@ const toPostListMeta = (entry: SanityPostListResolved): PostListMeta => ({
   slug: entry.slug?.current ?? "",
   description: entry.description,
   tags: toTags(entry.tags),
-  inverted: entry.inverted ?? false,
 });
 
-export const toPostList = (entry: SanityPostListResolved): PostList => ({
-  ...toPostListMeta(entry),
-  items: (entry.posts ?? []).filter((post) => post !== null).map(toArticleSummary),
-});
+export const toPostList = (entry: SanityPostListResolved): PostList => {
+  const items = (entry.posts ?? []).filter((post) => post !== null).map(toArticleSummary);
+  return {
+    ...toPostListMeta(entry),
+    items: entry.inverted ? items.toReversed() : items,
+  };
+};
 
 export const toPostListSummary = (entry: SanityPostListResolved): PostListSummary => toPostListMeta(entry);
 
