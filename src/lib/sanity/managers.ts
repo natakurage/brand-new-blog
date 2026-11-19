@@ -12,18 +12,18 @@ import { ResolveReferences } from "./types";
 import type { CcLicenseId, License } from "../content/license";
 
 type SanityBlogPostResolved = ResolveReferences<
-  SanityBlogPost, { tags?: SanityTag[], image?: string; }
+  SanityBlogPost, { tags?: (SanityTag | null)[], image?: string; }
 >;
 
 type SanitySongResolved = ResolveReferences<
-  SanitySong, { tags?: SanityTag[]; }
+  SanitySong, { tags?: (SanityTag | null)[]; }
 >;
 
 type SanityPostListResolved = ResolveReferences<
   SanityPostList,
   {
     posts: SanityBlogPostResolved[];
-    tags?: SanityTag[];
+    tags?: (SanityTag | null)[];
   }
 >;
 
@@ -31,7 +31,7 @@ type SanityMusicAlbumResolved = ResolveReferences<
   SanityMusicAlbum,
   {
     tracks: SanitySongResolved[];
-    tags?: SanityTag[];
+    tags?: (SanityTag | null)[];
   }
 >;
 
@@ -41,6 +41,10 @@ const TransformTag = (tag: SanityTag): Tag => ({
   name: tag.name ?? "Unnamed Tag",
   contentWarning: tag.contentWarning
 });
+
+const toTags = (tags?: (SanityTag | null)[]): Tag[] => {
+  return tags?.filter((tag) => tag !== null).map(TransformTag) ?? [];
+}
 
 const toLicense = (licenseSelect?: CcLicenseId, license?: string): License => {
   if (licenseSelect) {
@@ -218,7 +222,7 @@ export class BlogPostManager extends BlogDataManager<BlogPost> {
       content: body ?? "",
       createdAt: new Date(_createdAt),
       updatedAt: new Date(_updatedAt),
-      tags: tags?.map(TransformTag) ?? [],
+      tags: toTags(tags),
       license: toLicense(licenseSelect, license),
       showToc
     };
@@ -281,7 +285,7 @@ export class SongManager extends BlogDataManager<Song> {
       credit,
       lyrics,
       releaseDate,
-      tags: tags?.map(TransformTag) ?? [],
+      tags: toTags(tags),
       license: toLicense(licenseSelect, license),
       url,
       streamUrl
@@ -304,7 +308,7 @@ export class PostListManager extends BlogDataManager<PostList> {
       slug: slug?.current ?? "",
       items,
       description,
-      tags: tags?.map(TransformTag) ?? [],
+      tags: toTags(tags),
       inverted: inverted ?? false,
     };
   }
@@ -342,7 +346,7 @@ export class AlbumManager extends BlogDataManager<Album> {
       releaseDate,
       artist,
       credit,
-      tags: tags?.map(TransformTag) ?? [],
+      tags: toTags(tags),
       license: toLicense(licenseSelect, license),
     };
   }
