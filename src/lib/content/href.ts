@@ -14,7 +14,11 @@ export const hrefOf = (item: Addressable): string => {
   return `/${segments[item.kind]}/${item.slug}`;
 };
 
-export const rawHref = (article: BlogPost, format: "md" | "txt"): string => {
+export const rawFormats = ["md", "txt"] as const;
+
+export type RawFormat = typeof rawFormats[number];
+
+export const rawHref = (article: BlogPost, format: RawFormat): string => {
   return `${hrefOf(article)}.${format}`;
 };
 

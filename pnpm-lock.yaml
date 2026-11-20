@@ -237,6 +237,9 @@ importers:
       remove-markdown:
         specifier: ^0.8.0
         version: 0.8.0
+      valibot:
+        specifier: ^1.5.0
+        version: 1.5.0(@typescript/typescript6@6.0.2)
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: ^2.38.2

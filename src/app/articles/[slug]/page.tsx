@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { parseParams, SlugParams } from "@/lib/params";
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/content/types";
 import { getShareInfo } from "@/lib/content/share";
@@ -30,7 +31,7 @@ const getPost = cache((slug: string, isEnabled: boolean) => (
 ));
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
   const { slug } = params;
@@ -112,7 +113,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
 }
 
 export default async function ArticlePage(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
   const { slug } = params;

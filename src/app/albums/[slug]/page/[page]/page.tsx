@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { parseParams, SlugPageParams } from "@/lib/params";
 import { Album } from "@/lib/content/types";
 import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
@@ -14,14 +15,14 @@ const getAlbum = cache((slug: string) => (
 ));
 
 export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug } = params;
   const album = await getAlbum(slug);
   if (!album) { 
     notFound();
   }
-  const title = `アルバム ${data.siteName}` + (params.page === "1" ? "" : `: Page ${params.page}`);
+  const title = `アルバム ${data.siteName}` + (params.page === 1 ? "" : `: Page ${params.page}`);
   return { title };
 }
 
@@ -66,10 +67,10 @@ function JsonLD({ album }: { album: Album }) {
 }
 
 export default async function AlbumPage(props: { params: Promise<{ slug: string, page: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug, page } = params;
-  const pageNum = Number(page);
+  const pageNum = page;
   const album = await getAlbum(slug);
   if (!album) { 
     notFound();

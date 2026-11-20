@@ -1,11 +1,12 @@
 import ItemList from "@/components/ItemList";
+import { parseParams, SlugPageParams } from "@/lib/params";
 import ContentWarning from "@/components/ContentWarning";
 import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
 
-export async function generateMetadata(props: { params: Promise<{ slug: string, page: number }> }) {
-  const params = await props.params;
+export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
+  const params = parseParams(SlugPageParams, await props.params);
   const { slug, page } = params;
   const tag = await repositories.tags.findBySlug(slug, { preview: false });
   if (!tag) {
@@ -22,10 +23,10 @@ export async function generateStaticParams() {
 }
 
 export default async function TagPage(props: { params: Promise<{ slug: string, page: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug, page } = params;
-  const pageNum = Number(page);
+  const pageNum = page;
   const tag = await repositories.tags.findBySlug(slug, { preview: false });
   if (!tag) {
     notFound();

@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { parseParams, SlugParams } from "@/lib/params";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdMusicNote, MdDownload } from "react-icons/md";
@@ -32,7 +33,7 @@ const getSong = cache((slug: string, isEnabled: boolean) => (
 ));
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
   const { slug } = params;
@@ -163,7 +164,7 @@ function JsonLD({ song }: { song: Song }) {
 }
 
 export default async function SongPage(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugParams, await props.params);
   const { isEnabled } = await draftMode();
   const { slug } = params;
   const [data, song] = await Promise.all([

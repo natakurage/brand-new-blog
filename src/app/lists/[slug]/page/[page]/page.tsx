@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { parseParams, SlugPageParams } from "@/lib/params";
 import ItemList from "@/components/ItemList";
 import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
@@ -9,14 +10,14 @@ const getList = cache((slug: string) => (
 ));
 
 export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug } = params;
   const list = await getList(slug);
   if (!list) { 
     notFound();
   }
-  const title = `記事リスト ${data.siteName}` + (params.page === "1" ? "" : `: Page ${params.page}`);
+  const title = `記事リスト ${data.siteName}` + (params.page === 1 ? "" : `: Page ${params.page}`);
   return { title };
 }
 
@@ -26,10 +27,10 @@ export async function generateStaticParams() {
 }
 
 export default async function ListsPage(props: { params: Promise<{ slug: string, page: string }> }) {
-  const params = await props.params;
+  const params = parseParams(SlugPageParams, await props.params);
   const { slug, page } = params;
   const data = await repositories.siteSettings.get();
-  const pageNum = Number(page);
+  const pageNum = page;
   const list = await getList(slug);
   if (!list) { 
     notFound();

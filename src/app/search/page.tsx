@@ -1,5 +1,12 @@
+import * as v from "valibot";
 import ItemList from "@/components/ItemList";
 import { repositories } from "@/lib/repositories";
+import { PageNumber, parseParams } from "@/lib/params";
+
+const SearchParams = v.object({
+  q: v.optional(v.pipe(v.string(), v.trim())),
+  page: v.optional(PageNumber),
+});
 
 const searchHref = (q: string, n: number): string => {
   const params = new URLSearchParams({ q });
@@ -9,23 +16,28 @@ const searchHref = (q: string, n: number): string => {
   return `/search?${params}`;
 };
 
-export async function generateMetadata(props: { searchParams: Promise<{ q: string }> }) {
-  const searchParams = await props.searchParams;
-  const { q } = searchParams;
+export async function generateMetadata(props: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { q } = parseParams(SearchParams, await props.searchParams);
   const data = await repositories.siteSettings.get();
   return {
-    title: `"${q}"の検索結果` + " - " + data.siteName,
+    title: (q ? `"${q}"の検索結果` : "検索") + " - " + data.siteName,
     robots: {
       index: false
     }
   };
 }
 
-export default async function SearchPage(props: { searchParams: Promise<{ q: string, page?: string }> }) {
-  const searchParams = await props.searchParams;
+export default async function SearchPage(props: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { q, page: pageNum = 1 } = parseParams(SearchParams, await props.searchParams);
+  if (!q) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold">検索</h1>
+        <p className="my-4">検索語を入力してください。</p>
+      </div>
+    );
+  }
   const data = await repositories.siteSettings.get();
-  const { q, page = 1 } = searchParams;
-  const pageNum = Number(page);
   const { items: posts, total } = await repositories.articles.search(
     q,
     { page: pageNum, size: data.itemsPerPage },
