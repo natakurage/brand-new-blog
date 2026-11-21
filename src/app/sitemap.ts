@@ -5,29 +5,28 @@ import { hrefOf, pageHref } from "@/lib/content/href";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
-const published = { preview: false };
 const firstItem = { page: 1, size: 1 };
 
 const collections = [
 	{
 		basePath: "/articles",
 		priority: 0.7,
-		count: () => repositories.articles.list({ page: firstItem }, published).then((page) => page.total),
+		count: () => repositories.articles.list({ page: firstItem }).then((page) => page.total),
 	},
 	{
 		basePath: "/songs",
 		priority: 0.7,
-		count: () => repositories.songs.list(firstItem, published).then((page) => page.total),
+		count: () => repositories.songs.list(firstItem).then((page) => page.total),
 	},
 	{
 		basePath: "/albums",
 		priority: 0.7,
-		count: () => repositories.albums.list(firstItem, published).then((page) => page.total),
+		count: () => repositories.albums.list(firstItem).then((page) => page.total),
 	},
 	{
 		basePath: "/lists",
 		priority: 0.7,
-		count: () => repositories.postLists.list(firstItem, published).then((page) => page.total),
+		count: () => repositories.postLists.list(firstItem).then((page) => page.total),
 	},
 ];
 
@@ -63,8 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		repositories.postLists.allSlugs(),
 	]);
 	const [albumDetails, listDetails] = await Promise.all([
-		Promise.all(albumSlugs.map((slug) => repositories.albums.findBySlug(slug, published))),
-		Promise.all(listSlugs.map((slug) => repositories.postLists.findBySlug(slug, published))),
+		Promise.all(albumSlugs.map((slug) => repositories.albums.findBySlug(slug))),
+		Promise.all(listSlugs.map((slug) => repositories.postLists.findBySlug(slug))),
 	]);
 
 	return [
@@ -77,5 +76,3 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		...tagSlugs.map((slug) => buildEntry(hrefOf({ slug, kind: "tag" }), 0.6)),
 	];
 }
-
-export const revalidate = 3600; // 1 hour

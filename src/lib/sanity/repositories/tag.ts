@@ -5,4 +5,4 @@ import type { ClientFor } from "../fetchOptions";
 import { slugLookup } from "./capabilities";
 
 export const createSanityTagRepository = (clientFor: ClientFor): TagRepository =>
-  slugLookup(clientFor, { cacheTag: "tags", bySlugQuery: tagBySlugQuery, slugsQuery: tagSlugsQuery, map: toTag });
+  slugLookup(clientFor, { bySlugQuery: tagBySlugQuery, slugsQuery: tagSlugsQuery, map: toTag });

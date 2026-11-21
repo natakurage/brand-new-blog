@@ -11,7 +11,7 @@ import { ORIGIN } from "@/lib/config";
 import { absoluteUrlOf, hrefOf, pageHref } from "@/lib/content/href";
 
 const getAlbum = cache((slug: string) => (
-  repositories.albums.findBySlug(slug, { preview: false })
+  repositories.albums.findBySlug(slug)
 ));
 
 export async function generateMetadata(props: PageProps<"/albums/[slug]/page/[page]">) {

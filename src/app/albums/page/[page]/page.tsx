@@ -11,13 +11,16 @@ export async function generateMetadata(props: PageProps<"/albums/page/[page]">) 
   return { title };
 }
 
+export function generateStaticParams() {
+  return [{ page: "1" }];
+}
+
 export default async function AlbumsPage(props: PageProps<"/albums/page/[page]">) {
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const pageNum = params.page;
   const { items, total } = await repositories.albums.list(
     { page: pageNum, size: data.itemsPerPage },
-    { preview: false },
   );
   if (items.length === 0) {
     return notFound();

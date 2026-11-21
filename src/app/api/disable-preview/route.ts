@@ -1,8 +1,8 @@
 import { draftMode } from "next/headers";
- 
-export const dynamic = "force-dynamic";
+import { connection } from "next/server";
 
 export async function GET() {
+  await connection();
   const dMode = await draftMode();
   if (dMode.isEnabled) {
     (await draftMode()).disable();

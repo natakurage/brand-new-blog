@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { parseParams, SlugParams } from "@/lib/params";
 import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
@@ -9,7 +8,7 @@ import { Song } from "@/lib/content/types";
 import { getShareInfo } from "@/lib/content/share";
 import { getSongCreditText } from "@/lib/content/credit";
 import { repositories } from "@/lib/repositories";
-import { draftMode } from "next/headers";
+import { isPreview } from "@/lib/preview";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import { Suspense } from "react";
 import ListNavigator from "@/components/ListNavigator";
@@ -28,16 +27,11 @@ import { siteOpenGraph } from "@/lib/metadata";
 import { absoluteUrlOf } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
-const getSong = cache((slug: string, isEnabled: boolean) => (
-  repositories.songs.findBySlug(slug, { preview: isEnabled })
-));
-
 export async function generateMetadata(props: PageProps<"/songs/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
-  const { isEnabled } = await draftMode();
   const { slug } = params;
-  const song = await getSong(slug, isEnabled);
+  const song = await repositories.songs.findBySlug(slug);
   if (!song) {
     notFound();
   }
@@ -46,7 +40,7 @@ export async function generateMetadata(props: PageProps<"/songs/[slug]">) {
   const ogpImageUrl = new URL(`/og`, ORIGIN);
   ogpImageUrl.searchParams.set("title", title);
   return {
-    title: (isEnabled ? "(プレビュー)" : "") + title,
+    title: (await isPreview() ? "(プレビュー)" : "") + title,
     description: description,
     openGraph: {
       ...siteOpenGraph(data),
@@ -165,11 +159,10 @@ function JsonLD({ song }: { song: Song }) {
 
 export default async function SongPage(props: PageProps<"/songs/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
-  const { isEnabled } = await draftMode();
   const { slug } = params;
   const [data, song] = await Promise.all([
     repositories.siteSettings.get(),
-    getSong(slug, isEnabled)
+    repositories.songs.findBySlug(slug),
   ]);
   if (!song) {
     notFound();
@@ -195,7 +188,7 @@ export default async function SongPage(props: PageProps<"/songs/[slug]">) {
             <div>by {song.artist.join(", ")}</div>
             <TagList tags={song.tags} />
             <div className="text-sm flex flex-wrap">
-              <HeaderTime createdAt={song.createdAt} length={song.length} readingMinutes={song.readingMinutes} className="ms-auto" />
+              <HeaderTime item={song} createdAt={song.createdAt} length={song.length} readingMinutes={song.readingMinutes} className="ms-auto" />
             </div>
           </header>
           { youtube_url && <YouTubePlayer vid={getYouTubeId(youtube_url) || ""} /> }

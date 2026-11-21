@@ -1,4 +1,5 @@
 import { load } from "cheerio";
+import { cacheLife } from "next/cache";
 import { Content } from "@/lib/content/types";
 import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "./config";
@@ -22,10 +23,10 @@ export async function fetchMetadata(url: string) {
     const [, type, slug] = absUrl.pathname.split("/");
     let post: Content | null = null;
     if (type === "articles") {
-      post = await repositories.articles.findBySlug(slug, { preview: false });
+      post = await repositories.articles.findBySlug(slug);
     }
     else if (type === "songs") {
-      post = await repositories.songs.findBySlug(slug, { preview: false });
+      post = await repositories.songs.findBySlug(slug);
     }
     const data = await repositories.siteSettings.get();
     const metadata: Metadata = {
@@ -51,6 +52,12 @@ export async function fetchMetadata(url: string) {
     return metadata;
   }
 
+  return fetchExternalMetadata(url);
+}
+
+async function fetchExternalMetadata(url: string): Promise<Metadata> {
+  "use cache";
+  cacheLife("weeks");
   const response = await fetch(url);
   const html = await response.text();
   const $ = load(html);

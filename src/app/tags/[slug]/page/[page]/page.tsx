@@ -8,7 +8,7 @@ import { hrefOf, pageHref } from "@/lib/content/href";
 export async function generateMetadata(props: PageProps<"/tags/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const { slug, page } = params;
-  const tag = await repositories.tags.findBySlug(slug, { preview: false });
+  const tag = await repositories.tags.findBySlug(slug);
   if (!tag) {
     notFound();
   }
@@ -27,13 +27,12 @@ export default async function TagPage(props: PageProps<"/tags/[slug]/page/[page]
   const data = await repositories.siteSettings.get();
   const { slug, page } = params;
   const pageNum = page;
-  const tag = await repositories.tags.findBySlug(slug, { preview: false });
+  const tag = await repositories.tags.findBySlug(slug);
   if (!tag) {
     notFound();
   }
   const { items: posts, total } = await repositories.articles.list(
     { page: { page: pageNum, size: data.itemsPerPage }, tag: tag.slug },
-    { preview: false },
   );
   if (posts.length === 0) {
     return notFound();

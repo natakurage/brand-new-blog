@@ -5,6 +5,7 @@ import { IoIosGlobe } from "react-icons/io";
 import AvatarIcon from "./AvatarIcon";
 import { GiOstrich } from "react-icons/gi";
 import { CALENDAR } from "@/lib/config";
+import { cacheLife } from "next/cache";
 
 function SocialIcon({ site, href }: { site: string; href: string }) {
   const icons = new Map([
@@ -28,8 +29,14 @@ function SocialIcon({ site, href }: { site: string; href: string }) {
   );
 }
 
+async function currentYear() {
+  "use cache";
+  cacheLife("days");
+  return CALENDAR.year(new Date());
+}
+
 export async function Footer() {
-  const data = await repositories.siteSettings.get();
+  const [data, year] = await Promise.all([repositories.siteSettings.get(), currentYear()]);
   return (
     <footer className="footer md:footer-horizontal bg-neutral text-neutral-content p-10">
       <aside>
@@ -46,7 +53,7 @@ export async function Footer() {
           </div>
         </div>
         <p className="justify-self-center text-center">
-          Copyright © {CALENDAR.year(new Date())} {data.copyright}
+          Copyright © {year} {data.copyright}
         </p>
       </aside>
       <nav>

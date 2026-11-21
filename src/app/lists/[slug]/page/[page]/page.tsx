@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
 
 const getList = cache((slug: string) => (
-  repositories.postLists.findBySlug(slug, { preview: false })
+  repositories.postLists.findBySlug(slug)
 ));
 
 export async function generateMetadata(props: PageProps<"/lists/[slug]/page/[page]">) {

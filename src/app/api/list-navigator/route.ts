@@ -10,9 +10,9 @@ const responseWithError = (error: string, status: number) => {
 const findList = (kind: string, slug: string): Promise<PostList | Album | null> | null => {
   switch (kind) {
     case "postList":
-      return repositories.postLists.findBySlug(slug, { preview: false });
+      return repositories.postLists.findBySlug(slug);
     case "album":
-      return repositories.albums.findBySlug(slug, { preview: false });
+      return repositories.albums.findBySlug(slug);
     default:
       return null;
   }

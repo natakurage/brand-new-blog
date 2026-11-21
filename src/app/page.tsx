@@ -44,7 +44,6 @@ export default async function Home() {
   const data = await repositories.siteSettings.get();
   const { items: posts, total } = await repositories.articles.list(
     { page: { page: pageNum, size: data.itemsPerPage } },
-    { preview: false },
   );
   return (
     <>

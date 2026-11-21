@@ -11,13 +11,16 @@ export async function generateMetadata(props: PageProps<"/articles/page/[page]">
   return { title };
 }
 
+export function generateStaticParams() {
+  return [{ page: "1" }];
+}
+
 export default async function ArticlesPage(props: PageProps<"/articles/page/[page]">) {
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const pageNum = params.page;
   const { items: posts, total } = await repositories.articles.list(
     { page: { page: pageNum, size: data.itemsPerPage } },
-    { preview: false },
   );
   if (posts.length === 0) {
       return notFound();

@@ -1,11 +1,10 @@
-import { cache } from "react";
 import { parseParams, SlugParams } from "@/lib/params";
 import { notFound } from "next/navigation";
 import { BlogPost } from "@/lib/content/types";
 import { getShareInfo } from "@/lib/content/share";
 import { getCreditText } from "@/lib/content/credit";
 import { repositories } from "@/lib/repositories";
-import { draftMode } from "next/headers";
+import { isPreview } from "@/lib/preview";
 import { Suspense } from "react";
 import type { WithContext, BlogPosting } from "schema-dts";
 import { RelatedPosts } from "@/components/RelatedPosts";
@@ -26,16 +25,11 @@ import { siteOpenGraph } from "@/lib/metadata";
 import { absoluteUrlOf, rawHref } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
-const getPost = cache((slug: string, isEnabled: boolean) => (
-  repositories.articles.findBySlug(slug, { preview: isEnabled })
-));
-
 export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
-  const { isEnabled } = await draftMode();
   const { slug } = params;
-  const post = await getPost(slug, isEnabled);
+  const post = await repositories.articles.findBySlug(slug);
   if (!post) {
     notFound();
   }
@@ -46,7 +40,7 @@ export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
     ogpImageUrl.searchParams.set("bgImage", post.mainImage);
   const description = describe(post) || data.description;
   return {
-    title: (isEnabled ? "(プレビュー)" : "") + title,
+    title: (await isPreview() ? "(プレビュー)" : "") + title,
     description: description,
     alternates: {
       types: {
@@ -115,9 +109,8 @@ async function JsonLD({ post }: { post: BlogPost }) {
 export default async function ArticlePage(props: PageProps<"/articles/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
-  const { isEnabled } = await draftMode();
   const { slug } = params;
-  const post = await getPost(slug, isEnabled);
+  const post = await repositories.articles.findBySlug(slug);
   if (!post) {
     notFound();
   }
@@ -128,9 +121,9 @@ export default async function ArticlePage(props: PageProps<"/articles/[slug]">) 
     { items: newPosts },
     { items: recommendedPosts }
   ] = await Promise.all([
-    repositories.articles.related(post, 6, { preview: false }),
-    repositories.articles.list({ page: firstSix, exclude: [post.slug] }, { preview: false }),
-    repositories.articles.list({ page: firstSix, slugs: data.recommendedPosts }, { preview: isEnabled }),
+    repositories.articles.related(post, 6),
+    repositories.articles.list({ page: firstSix, exclude: [post.slug] }),
+    repositories.articles.list({ page: firstSix, slugs: data.recommendedPosts }),
   ]);
 
   const shareInfo = getShareInfo(post, data.siteName, ORIGIN);
@@ -167,7 +160,7 @@ export default async function ArticlePage(props: PageProps<"/articles/[slug]">) 
             <TagList tags={post.tags} />
             <div className="text-sm flex flex-wrap">
               <HeaderAuthor author={data.author} avatar={data.avatar} donate={data.donate} donateURL={data.donateUrl} className="me-auto" />
-              <HeaderTime createdAt={post.createdAt} updatedAt={post.updatedAt} length={post.length} readingMinutes={post.readingMinutes} className="ms-auto" />
+              <HeaderTime item={post} createdAt={post.createdAt} updatedAt={post.updatedAt} length={post.length} readingMinutes={post.readingMinutes} className="ms-auto" />
             </div>
           </header>
           <ArticleBody content={post.content} className="my-12 sm:my-24" />

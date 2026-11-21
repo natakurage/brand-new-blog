@@ -11,13 +11,16 @@ export async function generateMetadata(props: PageProps<"/songs/page/[page]">) {
   return { title };
 }
 
+export function generateStaticParams() {
+  return [{ page: "1" }];
+}
+
 export default async function SongsPage(props: PageProps<"/songs/page/[page]">) {
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const pageNum = params.page;
   const { items: songs, total } = await repositories.songs.list(
     { page: pageNum, size: data.itemsPerPage },
-    { preview: false },
   );
   if (songs.length === 0) {
     return notFound();

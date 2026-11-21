@@ -6,7 +6,7 @@ import NextTopLoader from "nextjs-toploader";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
 import { VisualEditing } from "next-sanity/visual-editing";
-import { draftMode } from "next/headers";
+import { isPreview } from "@/lib/preview";
 import PreviewWarning from "@/components/PreviewWarning";
 import SideBar from "@/components/SideBar";
 import { ORIGIN } from "@/lib/config";
@@ -25,14 +25,12 @@ export async function generateMetadata() {
   };
 }
 
-// export const runtime = "edge";
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isEnabled } = await draftMode();
+  const preview = await isPreview();
   const isDevelopment = process.env.NODE_ENV === "development";
   const data = await repositories.siteSettings.get();
   return (
@@ -51,14 +49,14 @@ export default async function RootLayout({
           />
           <div className="flex justify-center gap-10 md:mx-4 my-8">
             <div className="max-w-2xl p-3 w-full">
-              {isEnabled && <PreviewWarning />}
+              {preview && <PreviewWarning />}
               {children}
-              {isEnabled && <VisualEditing />}
+              {preview && <VisualEditing />}
             </div>
             { data.useSidebar && <SideBar pages={data.navbarPages} /> }
           </div>
           <Footer />
-          { data.adblock && !isEnabled && <AntiAdblock /> }
+          { data.adblock && !preview && <AntiAdblock /> }
         </ThemeProvider>
       </body>
     </html>

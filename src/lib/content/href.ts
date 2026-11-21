@@ -1,6 +1,6 @@
 import type { BlogPost, Kind } from "./types";
 
-type Addressable = { kind: Kind; slug: string };
+export type Addressable = { kind: Kind; slug: string };
 
 const segments: Record<Kind, string> = {
   article: "articles",
