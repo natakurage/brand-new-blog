@@ -1,3 +1,4 @@
+import "server-only";
 import { createClient } from "next-sanity";
 
 const projectId = process.env.SANITY_PROJECT_ID;
@@ -23,7 +24,6 @@ const previewClient = createClient({
   useCdn: false,
   token: viewerToken,
   perspective: "drafts",
-  ignoreBrowserTokenWarning: true,
   apiVersion: "2025-02-19",
 });
 

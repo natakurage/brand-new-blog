@@ -1,3 +1,4 @@
+import "server-only";
 import * as v from "valibot";
 import type { NextRequest } from "next/server";
 import { parseBody } from "next-sanity/webhook";

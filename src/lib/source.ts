@@ -1,3 +1,4 @@
+import "server-only";
 import type { NextRequest } from "next/server";
 import type { Repositories } from "@/lib/content/repository";
 import type { ChangeNotification } from "@/lib/content/change";

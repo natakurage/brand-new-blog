@@ -1,3 +1,4 @@
+import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { ArticleListQuery, PageRequest, ReadContext, Repositories } from "@/lib/content/repository";
 import type { ArticleMeta, Kind } from "@/lib/content/types";
