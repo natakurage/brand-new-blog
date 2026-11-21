@@ -30,9 +30,18 @@ import type {
 
 // Sanity の文書の形を知っているのは、このファイルと queries.ts だけにする
 
+// slug のない文書はクエリで除いているので、ここに届くのはクエリの誤り
+const slugOf = (doc: { _id: string; slug?: { current?: string } }): string => {
+  const slug = doc.slug?.current;
+  if (!slug) {
+    throw new Error(`slug のない文書がクエリから届いた: ${doc._id}`);
+  }
+  return slug;
+};
+
 export const toTag = (tag: SanityTag): Tag => ({
   kind: "tag",
-  slug: tag.slug?.current ?? "",
+  slug: slugOf(tag),
   name: tag.name ?? "Unnamed Tag",
   contentWarning: tag.contentWarning
 });
@@ -54,7 +63,7 @@ export const toLicense = (licenseSelect?: CcLicenseId, license?: string): Licens
 const toArticleMeta = (entry: SanityBlogPostResolved): ArticleMeta => ({
   kind: "article",
   title: entry.title ?? "Untitled Article",
-  slug: entry.slug?.current ?? "",
+  slug: slugOf(entry),
   mainImage: entry.image,
   description: entry.description,
   createdAt: new Date(entry._createdAt),
@@ -77,7 +86,7 @@ export const toBlogPost = (entry: SanityBlogPostResolved): BlogPost => ({
 const toSongMeta = (entry: SanitySongResolved): SongMeta => ({
   kind: "song",
   title: entry.title ?? "Untitled Song",
-  slug: entry.slug?.current ?? "",
+  slug: slugOf(entry),
   createdAt: new Date(entry._createdAt),
   updatedAt: new Date(entry._updatedAt),
   artist: entry.artist ?? [],
@@ -104,7 +113,7 @@ export const toSong = (entry: SanitySongResolved): Song => ({
 const toPostListMeta = (entry: SanityPostListResolved): PostListMeta => ({
   kind: "postList",
   title: entry.title ?? "Untitled List",
-  slug: entry.slug?.current ?? "",
+  slug: slugOf(entry),
   description: entry.description,
   tags: toTags(entry.tags),
 });
@@ -122,7 +131,7 @@ export const toPostListSummary = (entry: SanityPostListResolved): PostListSummar
 const toAlbumMeta = (entry: SanityMusicAlbumResolved): AlbumMeta => ({
   kind: "album",
   title: entry.title ?? "Untitled Album",
-  slug: entry.slug?.current ?? "",
+  slug: slugOf(entry),
   description: entry.description,
   createdAt: new Date(entry._createdAt),
   updatedAt: new Date(entry._updatedAt),
