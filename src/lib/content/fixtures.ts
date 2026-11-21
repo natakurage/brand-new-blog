@@ -8,7 +8,7 @@ const work = (): Omit<WorkBase, "title" | "slug"> => (
 const digest = (): Digest => ({ excerpt: "", length: 0, readingMinutes: 0 });
 
 export const article = (slug: string): ArticleSummary => ({
-  kind: "article", slug, title: `記事 ${slug}`, showToc: false, ...work(), ...digest(),
+  kind: "article", slug, title: `記事 ${slug}`, ...work(), ...digest(),
 });
 
 export const song = (slug: string): SongSummary => ({

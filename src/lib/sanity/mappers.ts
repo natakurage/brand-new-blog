@@ -70,7 +70,6 @@ const toArticleMeta = (entry: SanityBlogPostResolved): ArticleMeta => ({
   updatedAt: new Date(entry._updatedAt),
   tags: toTags(entry.tags),
   license: toLicense(entry.licenseSelect, entry.license),
-  showToc: entry.showToc ?? false,
 });
 
 export const toArticleSummary = (entry: SanityBlogPostResolved): ArticleSummary => ({

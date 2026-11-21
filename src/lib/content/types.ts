@@ -57,7 +57,6 @@ export interface WorkBase extends ContentBase {
 export interface ArticleMeta extends WorkBase {
   kind: "article";
   mainImage?: string;
-  showToc: boolean;
 }
 
 export interface BlogPost extends ArticleMeta, Digest {
