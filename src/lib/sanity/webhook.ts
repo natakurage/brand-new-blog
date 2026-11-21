@@ -30,7 +30,7 @@ const Payload = v.object({
 });
 
 // 対象外の文書や不正な本文なら null
-export const toChange = (body: unknown): Change | null => {
+const toChange = (body: unknown): Change | null => {
   const result = v.safeParse(Payload, body);
   if (!result.success) {
     return null;
