@@ -1,4 +1,4 @@
-import { fetchMetadata } from "@/lib/fetchMetadata";
+import { fetchLinkPreview, type Metadata } from "@/lib/fetchMetadata";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -9,12 +9,28 @@ export default function EmbedCard({ url }: { url: string }) {
 }
 
 async function EmbedCardInner({ url }: { url: string }) {
-  const meta = await fetchMetadata(url);
+  const preview = await fetchLinkPreview(url);
+  switch (preview.status) {
+    case "found":
+      return <PreviewCard url={url} meta={preview.metadata} />;
+    case "notFound":
+      return <LinkOnlyCard url={url} notice="リンク先が見つかりません" />;
+    case "noPreview":
+    case "unavailable":
+      return <LinkOnlyCard url={url} />;
+    default:
+      return preview satisfies never;
+  }
+}
 
+function PreviewCard({ url, meta }: { url: string; meta: Metadata }) {
   const isInternal = url.startsWith("/") || typeof window !== "undefined" && window.location.origin === new URL(url).origin;
 
   return (
-    <div className="card glass card-side card-compact bg-base-100 shadow-xl my-5 not-prose">
+    <div
+      className="card glass card-side card-compact bg-base-100 shadow-xl my-5 not-prose"
+      style={meta.metadata.themeColor ? { borderLeft: `6px solid ${meta.metadata.themeColor}` } : undefined}
+    >
       <figure className="w-1/3">
       {
         // eslint-disable-next-line @next/next/no-img-element
@@ -25,7 +41,7 @@ async function EmbedCardInner({ url }: { url: string }) {
         />
       }
       </figure>
-      <div className={"card-body flex-1" + (meta.metadata.themeColor ? ` bg-[${meta.metadata.themeColor}]` : "")}>
+      <div className="card-body flex-1">
         <h2 className="card-title line-clamp-2">{meta.metadata.title}</h2>
         <p className="line-clamp-1 min-h-5">{meta.metadata.description}</p>
         <div className="flex gap-1 justify-end">
@@ -44,6 +60,24 @@ async function EmbedCardInner({ url }: { url: string }) {
         target={isInternal ? undefined :"_blank"}
         rel={isInternal ? undefined : "noopener noreferrer"}
       />
+    </div>
+  );
+}
+
+function LinkOnlyCard({ url, notice }: { url: string; notice?: string }) {
+  return (
+    <div className="card glass card-compact bg-base-100 shadow-xl my-5 not-prose">
+      <div className="card-body">
+        {notice && <p className="text-warning">{notice}</p>}
+        <Link
+          href={url}
+          className="link break-all"
+          target={url.startsWith("/") ? undefined : "_blank"}
+          rel={url.startsWith("/") ? undefined : "noopener noreferrer"}
+        >
+          {url}
+        </Link>
+      </div>
     </div>
   );
 }
