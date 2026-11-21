@@ -34,7 +34,7 @@ export default defineConfig([
   },
   {
     // CMS と直接やりとりする入口（キャッシュの層、変更通知、プレビュー）
-    files: ["src/lib/repositories.ts", "src/app/api/revalidate/route.ts", "src/app/api/preview/sanity/route.ts", "src/app/layout.tsx"],
+    files: ["src/lib/repositories.ts", "src/app/api/revalidate/route.ts", "src/app/api/preview/route.ts", "src/app/layout.tsx"],
     rules: restrict(sanity),
   },
   {
