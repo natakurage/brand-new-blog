@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Markdown from "react-markdown";
 import { MdMusicNote, MdDownload } from "react-icons/md";
 import Link from "next/link";
-import Script from "next/script";
+import StructuredData from "@/components/StructuredData";
 import { Song } from "@/lib/content/types";
 import { getShareInfo } from "@/lib/content/share";
 import { getSongCreditText } from "@/lib/content/credit";
@@ -148,12 +148,7 @@ function JsonLD({ song }: { song: Song }) {
   };
 
   return (
-    <Script
-      id="json-ld"
-      strategy="afterInteractive"
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
+    <StructuredData data={jsonLd} />
   );
 }
 

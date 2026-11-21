@@ -1,6 +1,6 @@
 import ItemList from "@/components/ItemList";
 import { repositories } from "@/lib/repositories";
-import Script from "next/script";
+import StructuredData from "@/components/StructuredData";
 import type { WebSite, WithContext } from "schema-dts";
 import { ORIGIN } from "@/lib/config";
 import { pageHref } from "@/lib/content/href";
@@ -30,12 +30,7 @@ async function JsonLD() {
   };
 
   return (
-    <Script
-      id="json-ld"
-      type="application/ld+json"
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
+    <StructuredData data={jsonLd} />
   );
 }
 

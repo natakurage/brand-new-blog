@@ -4,7 +4,7 @@ import { Album } from "@/lib/content/types";
 import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import ItemList from "@/components/ItemList";
-import Script from "next/script";
+import StructuredData from "@/components/StructuredData";
 import type { MusicAlbum, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
@@ -57,12 +57,7 @@ function JsonLD({ album }: { album: Album }) {
   };
 
   return (
-    <Script
-      id="json-ld"
-      strategy="afterInteractive"
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
+    <StructuredData data={jsonLd} />
   );
 }
 

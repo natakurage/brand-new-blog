@@ -16,7 +16,7 @@ import TagList from "@/components/TagList";
 import HeaderAuthor from "@/components/HeaderAuthor";
 import Credit from "@/components/Credit";
 import ContentWarning from "@/components/ContentWarning";
-import Script from "next/script";
+import StructuredData from "@/components/StructuredData";
 import { licenseUrl } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
@@ -97,12 +97,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
   };
 
   return (
-    <Script
-      id="json-ld"
-      strategy="afterInteractive"
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
+    <StructuredData data={jsonLd} />
   );
 }
 
