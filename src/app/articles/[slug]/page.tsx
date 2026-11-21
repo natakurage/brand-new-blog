@@ -26,6 +26,9 @@ import { siteOpenGraph } from "@/lib/metadata";
 import { absoluteUrlOf, ogImageHref, rawHref } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
+// 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
+export const ensureStatic = "navigation";
+
 export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();

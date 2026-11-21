@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import SiteLink from "./SiteLink";
 import { GiHamburgerMenu } from "react-icons/gi";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
@@ -29,13 +30,13 @@ export function NavBar({
   return (
     <div className="navbar sticky top-0 z-50 backdrop-blur-lg">
       <div className="flex-1">
-        <Link href="/" className="btn btn-ghost text-xl font-mono">
+        <SiteLink href="/" className="btn btn-ghost text-xl font-mono">
           {topLogo && (
             <Image src={topLogo} alt="site logo" width={48} height={48} />
           )}
           <span className="hidden sm:block">{siteName}</span>
           {isDevelopment && <span className="badge badge-accent ml-2">DEV MODE</span>}
-        </Link>
+        </SiteLink>
       </div>
       {
         mounted &&
@@ -66,12 +67,12 @@ export function NavBar({
               {
                 navbarPages.map(({ name, href }) => (
                   <li key={name}>
-                    <Link
+                    <SiteLink
                       href={href}
                       onClick={() => setOpen(false)}
                     >
                       {name}
-                    </Link>
+                    </SiteLink>
                   </li>
                 ))
               }

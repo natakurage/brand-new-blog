@@ -10,6 +10,9 @@ import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
 import { absoluteUrlOf, hrefOf, ogImageHref, pageHref } from "@/lib/content/href";
 
+// 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
+export const ensureStatic = "navigation";
+
 const getAlbum = cache((slug: string) => (
   repositories.albums.findBySlug(slug)
 ));

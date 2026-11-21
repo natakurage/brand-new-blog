@@ -2,7 +2,7 @@
 
 import type { ListNavigation } from "@/lib/content/navigation";
 import { listParam } from "@/lib/content/href";
-import Link from "next/link";
+import SiteLink from "./SiteLink";
 import { useSearchParams } from "next/navigation";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
@@ -22,30 +22,30 @@ export default function ListNavigator({ navigations }: { navigations: ListNaviga
   return (
     <nav>
       <h2 className="text-sm text-center text-base-content">
-        <Link href={href} className="link link-hover">
+        <SiteLink href={href} className="link link-hover">
           {title}
-        </Link>
+        </SiteLink>
       </h2>
       <div className="join flex justify-center flex-wrap">
         {
-          prev ? <Link
+          prev ? <SiteLink
             className="join-item btn flex-1 flex-nowrap"
             href={prev.href}
           >
             <MdNavigateBefore size={24} />
             <span className="flex-1">{withEllipsis(prev.title, 20)}</span>
-          </Link>
+          </SiteLink>
           :
           <button className="join-item invisible flex-1 flex-nowrap" />
         }
         {
-          next ? <Link
+          next ? <SiteLink
           className="join-item btn flex-1 flex-nowrap"
           href={next.href}
         >
           <span className="flex-1">{withEllipsis(next.title, 20)}</span>
           <MdNavigateNext size={24} />
-        </Link>
+        </SiteLink>
         :
         <button className="join-item invisible flex-1 flex-nowrap" />
         }

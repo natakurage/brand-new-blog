@@ -4,6 +4,9 @@ import { repositories } from "@/lib/repositories";
 import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
+// 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
+export const ensureStatic = "navigation";
+
 export async function generateMetadata(props: PageProps<"/albums/page/[page]">) {
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();

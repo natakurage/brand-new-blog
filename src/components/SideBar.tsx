@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SiteLink from "@/components/SiteLink";
 import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
 import { LinkItem } from "@/lib/content/types";
@@ -10,7 +11,7 @@ export default function SideBar({ pages }: { pages?: LinkItem[] }) {
       {
           pages?.map(({ name, href }) => (
             <li key={name}>
-              <Link href={href} >{name}</Link>
+              <SiteLink href={href}>{name}</SiteLink>
             </li>
           ))
         }

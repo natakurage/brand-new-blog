@@ -1,5 +1,6 @@
 import { repositories } from "@/lib/repositories";
 import Link from "next/link";
+import SiteLink from "./SiteLink";
 import { FaXTwitter, FaGithub, FaBluesky, FaYoutube, FaKey } from "react-icons/fa6";
 import { IoIosGlobe } from "react-icons/io";
 import AvatarIcon from "./AvatarIcon";
@@ -60,9 +61,9 @@ export async function Footer() {
         <h6 className="footer-title">Pages</h6>
         {
           data.footerPages.map(({ name, href }) => (
-            <Link key={name} href={href} className="link link-hover">
+            <SiteLink key={name} href={href} className="link link-hover">
               {name}
-            </Link>
+            </SiteLink>
           ))
         }
       </nav>

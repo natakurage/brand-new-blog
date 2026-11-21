@@ -1,5 +1,5 @@
 import { fetchLinkPreview, type Metadata } from "@/lib/fetchMetadata";
-import Link from "next/link";
+import SiteLink from "./SiteLink";
 import { Suspense } from "react";
 
 export default function EmbedCard({ url }: { url: string }) {
@@ -54,7 +54,7 @@ function PreviewCard({ url, meta }: { url: string; meta: Metadata }) {
           <span>{new URL(meta.metadata.website).host}</span>
         </div>
       </div>
-      <Link
+      <SiteLink
         href={url}
         className="absolute w-full h-full top-0 left-0"
         target={isInternal ? undefined :"_blank"}
@@ -69,14 +69,14 @@ function LinkOnlyCard({ url, notice }: { url: string; notice?: string }) {
     <div className="card glass card-compact bg-base-100 shadow-xl my-5 not-prose">
       <div className="card-body">
         {notice && <p className="text-warning">{notice}</p>}
-        <Link
+        <SiteLink
           href={url}
           className="link break-all"
           target={url.startsWith("/") ? undefined : "_blank"}
           rel={url.startsWith("/") ? undefined : "noopener noreferrer"}
         >
           {url}
-        </Link>
+        </SiteLink>
       </div>
     </div>
   );

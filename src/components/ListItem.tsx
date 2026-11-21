@@ -1,4 +1,4 @@
-import Link from "next/link";
+import SiteLink from "./SiteLink";
 import { MdAccessTime } from "react-icons/md";
 import TagList from "./TagList";
 import { FaRegHourglass, FaRulerHorizontal } from "react-icons/fa6";
@@ -34,7 +34,7 @@ export default function ListItem({ item, context, showLength = true, showDate = 
         </div>
       }
       </div>
-      <Link href={context ? hrefIn(item, context) : hrefOf(item)} className="absolute w-full h-full top-0 left-0 z-1" />
+      <SiteLink href={context ? hrefIn(item, context) : hrefOf(item)} className="absolute w-full h-full top-0 left-0 z-1" />
     </article>
   );
 }

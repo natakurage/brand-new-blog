@@ -5,6 +5,9 @@ import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
 
+// 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
+export const ensureStatic = "navigation";
+
 export async function generateMetadata(props: PageProps<"/tags/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const { slug, page } = params;

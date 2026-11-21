@@ -1,6 +1,6 @@
 import { hrefOf } from "@/lib/content/href";
 import { Tag } from "@/lib/content/types";
-import Link from "next/link";
+import SiteLink from "./SiteLink";
 
 export default function TagList({ tags, className }: { tags: Tag[], className?: string }) {
   return (
@@ -8,9 +8,9 @@ export default function TagList({ tags, className }: { tags: Tag[], className?: 
     {
       tags.map((tag) => (
         <li key={tag.slug} className="inline">
-          <Link href={hrefOf(tag)} className="badge badge-neutral link link-hover">
+          <SiteLink href={hrefOf(tag)} className="badge badge-neutral link link-hover">
             # {tag.name}
-          </Link>
+          </SiteLink>
         </li>
       ))
     }

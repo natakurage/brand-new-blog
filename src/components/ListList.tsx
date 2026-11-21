@@ -1,5 +1,5 @@
 import type { CollectionSummary } from "@/lib/content/types";
-import Link from "next/link";
+import SiteLink from "./SiteLink";
 import Paginator from "./Paginator";
 import { hrefOf } from "@/lib/content/href";
 
@@ -28,7 +28,7 @@ export default function ListList(
                 {list.title}
               </h2>
               {list.description && <p>{list.description.replace(/[#\[\]\(\)\n]/g, ' ').slice(0, 100)}...</p>}
-              <Link href={hrefOf(list)} className="absolute w-full h-full top-0 left-0 z-1" />
+              <SiteLink href={hrefOf(list)} className="absolute w-full h-full top-0 left-0 z-1" />
             </article>
           </li>
         ))}

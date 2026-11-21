@@ -40,8 +40,7 @@ const pageRewrites = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     cacheComponents: true,
-    // Partial Prefetching に移行するまでは、従来どおりキャッシュ済みのページ全体をプリフェッチする
-    partialPrefetching: false,
+    partialPrefetching: true,
     images: {
         remotePatterns: [
             {

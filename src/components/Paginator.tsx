@@ -1,4 +1,4 @@
-import Link from "next/link";
+import SiteLink from "./SiteLink";
 import { MdFirstPage, MdLastPage } from "react-icons/md";
 
 interface PaginatorProps {
@@ -15,12 +15,12 @@ export default function Paginator({ hrefFor, page, maxPages, numPages = 5 } : Pa
   return (
     <div className="join flex justify-center">
       {
-        page !== 1 && <Link
+        page !== 1 && <SiteLink
           className="join-item btn"
           href={hrefFor(1)}
         >
           <MdFirstPage size={24} />
-        </Link>
+        </SiteLink>
       }
       {
         Array.from({ length: numPages }).map((_, i) => {
@@ -28,22 +28,22 @@ export default function Paginator({ hrefFor, page, maxPages, numPages = 5 } : Pa
           if (current <= 0 || current > maxPages) return null;
           const href = hrefFor(current);
 
-          return <Link
+          return <SiteLink
             key={current}
             className={current === page ? "join-item btn btn-active" : "join-item btn"}
             href={href}
           >
             {current}
-          </Link>;
+          </SiteLink>;
         })
       }
       {
-        page !== maxPages && <Link
+        page !== maxPages && <SiteLink
         className="join-item btn"
         href={hrefFor(maxPages)}
       >
         <MdLastPage size={24} />
-      </Link>
+      </SiteLink>
       }
     </div>
   );
