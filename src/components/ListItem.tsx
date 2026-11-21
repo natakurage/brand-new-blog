@@ -2,39 +2,53 @@ import SiteLink from "./SiteLink";
 import { MdAccessTime } from "react-icons/md";
 import TagList from "./TagList";
 import { FaRegHourglass, FaRulerHorizontal } from "react-icons/fa6";
-import type { ItemSummary } from "@/lib/content/types";
+import type { ContentSummary } from "@/lib/content/types";
 import { hrefIn, hrefOf, type Addressable } from "@/lib/content/href";
 import { CALENDAR } from "@/lib/config";
 
-export default function ListItem({ item, context, showLength = true, showDate = true }: { item: ItemSummary; context?: Addressable; showLength?: boolean; showDate?: boolean }) {
+const kindLabels: Record<ContentSummary["kind"], string> = {
+  article: "記事",
+  song: "曲",
+  postList: "リスト",
+  album: "アルバム",
+};
+
+export default function ListItem(
+  { item, context, showLength = true, showDate = true, showKind = false }:
+  { item: ContentSummary; context?: Addressable; showLength?: boolean; showDate?: boolean; showKind?: boolean }
+) {
+  const isItem = item.kind === "article" || item.kind === "song";
+  // リストは日付を持たない
+  const createdAt = "createdAt" in item ? item.createdAt : undefined;
   return (
     <article className="relative p-4 shadow-lg hover:bg-base-content/20 hover:shadow-xl rounded-lg wrap-break-word">
+      {showKind && <span className="badge badge-sm badge-outline mb-1">{kindLabels[item.kind]}</span>}
       <h2 className="text-xl font-bold">
         {item.title}
       </h2>
-      <p>{item.excerpt}</p>
+      <p>{isItem ? item.excerpt : item.description}</p>
       <TagList tags={item.tags} />
       <div className="flex flex-row gap-4 mt-2 justify-end text-sm text-base-content/70">
       {
-        showLength && <div className="flex flex-row gap-1">
+        showLength && isItem && <div className="flex flex-row gap-1">
           <FaRulerHorizontal className="my-auto" />
           {item.length}文字
         </div>
       }
       {
-        showLength && <div className="flex flex-row gap-1">
+        showLength && isItem && <div className="flex flex-row gap-1">
           <FaRegHourglass className="my-auto" />
           {item.readingMinutes}分
         </div>
       }
       {
-        showDate && <div className="flex flex-row gap-1">
+        showDate && createdAt && <div className="flex flex-row gap-1">
           <MdAccessTime className="my-auto" />
-          <time dateTime={item.createdAt.toISOString()}>{CALENDAR.date(item.createdAt)}</time>
+          <time dateTime={createdAt.toISOString()}>{CALENDAR.date(createdAt)}</time>
         </div>
       }
       </div>
-      <SiteLink href={context ? hrefIn(item, context) : hrefOf(item)} className="absolute w-full h-full top-0 left-0 z-1" />
+      <SiteLink href={context && isItem ? hrefIn(item, context) : hrefOf(item)} className="absolute w-full h-full top-0 left-0 z-1" />
     </article>
   );
 }

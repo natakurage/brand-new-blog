@@ -142,6 +142,13 @@ async function allTagSlugs() {
   return allSlugs("tag", source.tags.allSlugs);
 }
 
+async function taggedItems(tagSlug: string, page: PageRequest) {
+  "use cache";
+  const result = await source.tags.tagged(tagSlug, page, await readContext());
+  tagWith((["article", "song", "postList", "album"] as const).map(kindTag), result.items.flatMap(documentsIn));
+  return result;
+}
+
 async function getSiteSettings() {
   "use cache";
   tagWith([siteSettingsTag]);
@@ -176,6 +183,6 @@ export const repositories: SiteRepositories = {
     list: listAlbums,
     containing: albumsContaining,
   },
-  tags: { findBySlug: findTag, allSlugs: allTagSlugs },
+  tags: { findBySlug: findTag, allSlugs: allTagSlugs, tagged: taggedItems },
   siteSettings: { get: getSiteSettings },
 };

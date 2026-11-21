@@ -5,6 +5,7 @@ import type {
   ArticleSummary,
   BlogPost,
   GlobalSettings,
+  ContentSummary,
   PostList,
   PostListSummary,
   Song,
@@ -29,7 +30,6 @@ export type ReadContext = { preview: boolean };
 
 export type ArticleListQuery = {
   page: PageRequest;
-  tag?: string;
   slugs?: string[];
   exclude?: string[];
 };
@@ -61,7 +61,10 @@ export interface AlbumRepository extends SlugLookup<Album>, PagedList<AlbumSumma
   containing(songSlug: string, ctx: ReadContext): Promise<AlbumSummary[]>;
 }
 
-export type TagRepository = SlugLookup<Tag>;
+export interface TagRepository extends SlugLookup<Tag> {
+  // そのタグが付いたもの（記事・曲・リスト・アルバム）を、新しい順に混ぜて返す
+  tagged(tagSlug: string, page: PageRequest, ctx: ReadContext): Promise<Page<ContentSummary>>;
+}
 
 export interface SiteSettingsRepository {
   get(): Promise<GlobalSettings>;

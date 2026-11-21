@@ -1,4 +1,4 @@
-import type { ItemSummary } from "@/lib/content/types";
+import type { ContentSummary } from "@/lib/content/types";
 import { pageCount } from "@/lib/content/pagination";
 import type { Addressable } from "@/lib/content/href";
 import Paginator from "./Paginator";
@@ -7,13 +7,15 @@ import ListExporter from "./ListExporter";
 import { ORIGIN } from "@/lib/config";
 
 interface ItemListProps {
-  items: ItemSummary[];
+  items: ContentSummary[];
   total: number;
   page: number;
   limit: number;
   // 項目をリスト・アルバムの中で見せるときの、そのリスト・アルバム
   context?: Addressable;
   showDate?: boolean;
+  // 種類の違うものを混ぜて並べるときに、種類を示す
+  showKind?: boolean;
   showLength?: boolean;
   hrefFor: (page: number) => string;
   showCount?: boolean;
@@ -22,7 +24,7 @@ interface ItemListProps {
 
 export default function ItemList(
   { hrefFor, items, total, page, limit, context,
-    showDate = true, showLength = true,
+    showDate = true, showLength = true, showKind = false,
     showCount = true, showExporter = true
   }: ItemListProps
 ) {
@@ -40,12 +42,13 @@ export default function ItemList(
       </div>
       <ul className="space-y-4">
         {items.map((item) => (item &&
-          <li key={item.slug}>
+          <li key={`${item.kind}:${item.slug}`}>
             <ListItem
               item={item}
               context={context}
               showDate={showDate}
               showLength={showLength}
+              showKind={showKind}
             />
           </li>
         ))}

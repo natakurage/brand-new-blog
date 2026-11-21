@@ -13,7 +13,6 @@ const albumProjection = /* groq */ `{ ..., "tags": tags[${refHasSlug}]->, "track
 const collectionSummaryProjection = /* groq */ `{ ..., "tags": tags[${refHasSlug}]-> }`;
 
 const articleFilter = /* groq */ `_type == "blogPost" && ${hasSlug}
-  && ($tagSlug == null || $tagSlug in tags[]->slug.current)
   && ($slugs == null || slug.current in $slugs)
   && !(slug.current in coalesce($exclude, []))`;
 
@@ -70,6 +69,17 @@ export const albumSlugsQuery = defineQuery(`*[_type == "musicAlbum" && ${hasSlug
 export const tagBySlugQuery = defineQuery(`*[_type == "tag" && slug.current == $slug][0]`);
 
 export const tagSlugsQuery = defineQuery(`*[_type == "tag" && ${hasSlug}].slug.current`);
+
+const taggedFilter = /* groq */ `_type in ["blogPost", "song", "postList", "musicAlbum"] && ${hasSlug} && $tagSlug in tags[]->slug.current`;
+
+export const taggedListQuery = defineQuery(`{
+  "items": *[${taggedFilter}] | order(_createdAt desc) [$start...$end]{
+    ...,
+    "tags": tags[${refHasSlug}]->,
+    _type == "blogPost" => { "image": image.asset->url }
+  },
+  "total": count(*[${taggedFilter}])
+}`);
 
 export const siteSettingsQuery = defineQuery(`*[_type == "globalSettings"][0]{
   ...,

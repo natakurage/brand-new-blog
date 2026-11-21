@@ -20,7 +20,7 @@ export async function generateMetadata(props: PageProps<"/tags/[slug]/page/[page
     notFound();
   }
   const data = await repositories.siteSettings.get();
-  const title = `タグ #${tag.name} がつけられた記事` + " - " + data.siteName + (page === 1 ? "" : `: Page ${page}`);
+  const title = `タグ #${tag.name} がつけられたページ` + " - " + data.siteName + (page === 1 ? "" : `: Page ${page}`);
   return { title, ...pageMetadata(data, pageHref(hrefOf(tag), page)) };
 }
 
@@ -39,18 +39,18 @@ export default async function TagPage(props: PageProps<"/tags/[slug]/page/[page]
     notFound();
   }
   const request = { page: pageNum, size: data.itemsPerPage };
-  const { items: posts, total } = await repositories.articles.list({ page: request, tag: tag.slug });
+  const { items, total } = await repositories.tags.tagged(tag.slug, request);
   if (!hasPage(total, request)) {
     notFound();
   }
   return (
     <div className="space-y-4">
       { tag.contentWarning && <ContentWarning warningContent={tag.contentWarning} /> }
-      <h1 className="text-3xl font-bold">タグ #{tag.name} がつけられた記事</h1>
+      <h1 className="text-3xl font-bold">タグ #{tag.name} がつけられたページ</h1>
       {
-        posts.length === 0
-          ? <p className="my-4">記事が見つかりません。</p>
-          : <ItemList hrefFor={(n) => pageHref(hrefOf(tag), n)} items={posts} total={total} page={pageNum} limit={data.itemsPerPage} />
+        items.length === 0
+          ? <p className="my-4">このタグがつけられたページはありません。</p>
+          : <ItemList hrefFor={(n) => pageHref(hrefOf(tag), n)} items={items} total={total} page={pageNum} limit={data.itemsPerPage} showKind />
       }
     </div>
   );

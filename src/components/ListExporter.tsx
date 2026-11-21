@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { ItemSummary } from "@/lib/content/types";
+import type { ContentSummary } from "@/lib/content/types";
 import { MdClose, MdContentCopy } from "react-icons/md";
 import { PiExport } from "react-icons/pi";
 import useTimeout from "@/app/hooks/useTimeout";
@@ -28,7 +28,7 @@ const separatorValues = {
 type Format = keyof typeof formats;
 type Separator = keyof typeof separators;
 
-export default function ListExporter({ origin, items }: { origin: string; items: ItemSummary[] }) {
+export default function ListExporter({ origin, items }: { origin: string; items: ContentSummary[] }) {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [format, setFormat] = useState<Format>("normal");
   const [separator, setSeparator] = useState<Separator>("newline");

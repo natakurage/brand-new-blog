@@ -10,10 +10,10 @@ type ArticlePage = { items: SanityBlogPostResolved[]; total: number };
 export const createSanityArticleRepository = (clientFor: ClientFor): ArticleRepository => ({
   ...slugLookup(clientFor, { bySlugQuery: articleBySlugQuery, slugsQuery: articleSlugsQuery, map: toBlogPost }),
 
-  async list({ page, tag, slugs, exclude }, ctx) {
+  async list({ page, slugs, exclude }, ctx) {
     const result = await clientFor(ctx).fetch<ArticlePage>(
       articleListQuery,
-      { tagSlug: tag ?? null, slugs: slugs ?? null, exclude: exclude ?? null, ...sliceOf(page) },
+      { slugs: slugs ?? null, exclude: exclude ?? null, ...sliceOf(page) },
     );
     return { items: result.items.map(toArticleSummary), total: result.total };
   },

@@ -112,3 +112,4 @@ export type AlbumSummary = AlbumMeta;
 
 export type ItemSummary = ArticleSummary | SongSummary;
 export type CollectionSummary = PostListSummary | AlbumSummary;
+export type ContentSummary = ItemSummary | CollectionSummary;
