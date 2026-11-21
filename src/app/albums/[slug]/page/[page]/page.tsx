@@ -81,7 +81,7 @@ export default async function AlbumPage(props: PageProps<"/albums/[slug]/page/[p
           total={songs.length}
           page={pageNum}
           limit={data.itemsPerPage}
-          suffix={`?key=${album.slug}`}
+          context={album}
           showDate={false}
         />
       </div>

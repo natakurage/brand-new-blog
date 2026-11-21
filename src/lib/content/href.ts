@@ -34,3 +34,9 @@ export const absoluteUrlOf = (item: Addressable, origin: string): string => {
 export const pageHref = (base: string, n: number): string => {
   return n === 1 ? base : `${base}/page/${n}`;
 };
+// どのリスト・アルバムの中で見ているかを表すクエリ。項目そのものの URL は hrefOf のまま
+export const listParam = "list";
+
+export const hrefIn = (item: Addressable, collection: Addressable): string => {
+  return `${hrefOf(item)}?${new URLSearchParams({ [listParam]: collection.slug })}`;
+};

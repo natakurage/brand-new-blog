@@ -2,7 +2,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { ArticleListQuery, PageRequest, ReadContext, Repositories } from "@/lib/content/repository";
 import type { ArticleMeta, Kind } from "@/lib/content/types";
 import type { Addressable } from "@/lib/content/href";
-import { documentTag, documentsIn, kindTag, siteSettingsTag, tagsFor, type Taggable } from "@/lib/content/cacheTags";
+import { containingTag, documentTag, documentsIn, kindTag, siteSettingsTag, tagsFor, type Taggable } from "@/lib/content/cacheTags";
 import { source } from "@/lib/source";
 import { isPreview } from "@/lib/preview";
 
@@ -34,6 +34,8 @@ const allSlugs = async (kind: Kind, all: () => Promise<string[]>): Promise<strin
 };
 
 const listed = (kind: Kind, items: Taggable[]) => tagWith([kindTag(kind)], items.flatMap(documentsIn));
+
+const containing = (item: Addressable, collections: Taggable[]) => tagWith([containingTag(item)], collections.flatMap(documentsIn));
 
 async function findArticle(slug: string) {
   "use cache";
@@ -101,7 +103,7 @@ async function listPostLists(page: PageRequest) {
 async function postListsContaining(articleSlug: string) {
   "use cache";
   const items = await source.postLists.containing(articleSlug, await readContext());
-  listed("postList", items);
+  containing({ kind: "article", slug: articleSlug }, items);
   return items;
 }
 
@@ -125,7 +127,7 @@ async function listAlbums(page: PageRequest) {
 async function albumsContaining(songSlug: string) {
   "use cache";
   const items = await source.albums.containing(songSlug, await readContext());
-  listed("album", items);
+  containing({ kind: "song", slug: songSlug }, items);
   return items;
 }
 

@@ -1,4 +1,5 @@
 import type { ItemSummary } from "@/lib/content/types";
+import type { Addressable } from "@/lib/content/href";
 import Paginator from "./Paginator";
 import ListItem from "./ListItem";
 import ListExporter from "./ListExporter";
@@ -9,7 +10,8 @@ interface ItemListProps {
   total: number;
   page: number;
   limit: number;
-  suffix?: string;
+  // 項目をリスト・アルバムの中で見せるときの、そのリスト・アルバム
+  context?: Addressable;
   showDate?: boolean;
   showLength?: boolean;
   hrefFor: (page: number) => string;
@@ -18,7 +20,7 @@ interface ItemListProps {
 }
 
 export default function ItemList(
-  { hrefFor, items, total, page, limit, suffix,
+  { hrefFor, items, total, page, limit, context,
     showDate = true, showLength = true,
     showCount = true, showExporter = true
   }: ItemListProps
@@ -33,14 +35,14 @@ export default function ItemList(
             {currentNum} / {total} 件
           </p>
         )}
-        {showExporter && <ListExporter origin={ORIGIN} items={items} suffix={suffix} />}
+        {showExporter && <ListExporter origin={ORIGIN} items={items} />}
       </div>
       <ul className="space-y-4">
         {items.map((item) => (item &&
           <li key={item.slug}>
             <ListItem
               item={item}
-              suffix={suffix}
+              context={context}
               showDate={showDate}
               showLength={showLength}
             />

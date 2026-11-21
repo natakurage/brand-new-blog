@@ -3,10 +3,10 @@ import { MdAccessTime } from "react-icons/md";
 import TagList from "./TagList";
 import { FaRegHourglass, FaRulerHorizontal } from "react-icons/fa6";
 import type { ItemSummary } from "@/lib/content/types";
-import { hrefOf } from "@/lib/content/href";
+import { hrefIn, hrefOf, type Addressable } from "@/lib/content/href";
 import { CALENDAR } from "@/lib/config";
 
-export default function ListItem({ item, suffix, showLength = true, showDate = true }: { item: ItemSummary; suffix?: string; showLength?: boolean; showDate?: boolean }) {
+export default function ListItem({ item, context, showLength = true, showDate = true }: { item: ItemSummary; context?: Addressable; showLength?: boolean; showDate?: boolean }) {
   return (
     <article className="relative p-4 shadow-lg hover:bg-base-content/20 hover:shadow-xl rounded-lg wrap-break-word">
       <h2 className="text-xl font-bold">
@@ -34,7 +34,7 @@ export default function ListItem({ item, suffix, showLength = true, showDate = t
         </div>
       }
       </div>
-      <Link href={hrefOf(item) + (suffix ? suffix : '')} className="absolute w-full h-full top-0 left-0 z-1" />
+      <Link href={context ? hrefIn(item, context) : hrefOf(item)} className="absolute w-full h-full top-0 left-0 z-1" />
     </article>
   );
 }

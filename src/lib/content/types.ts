@@ -97,18 +97,6 @@ export interface Album extends AlbumMeta {
   items: SongSummary[];
 }
 
-export interface listNavigatorItem {
-  title: string;
-  href: string;
-}
-
-export interface listNavigatorInfo {
-  listTitle: string;
-  listHref: string;
-  prev: null | listNavigatorItem;
-  next: null | listNavigatorItem;
-}
-
 export type Content = BlogPost | Song | PostList | Album;
 
 export interface Digest {

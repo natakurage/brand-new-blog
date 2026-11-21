@@ -12,6 +12,7 @@ import { isPreview } from "@/lib/preview";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import { Suspense } from "react";
 import ListNavigator from "@/components/ListNavigator";
+import { navigationsFor } from "@/lib/content/navigation";
 import { FaExternalLinkAlt, FaFileSignature } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
 import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
@@ -143,9 +144,10 @@ function JsonLD({ song }: { song: Song }) {
 export default async function SongPage(props: PageProps<"/songs/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const { slug } = params;
-  const [data, song] = await Promise.all([
+  const [data, song, navigations] = await Promise.all([
     repositories.siteSettings.get(),
     repositories.songs.findBySlug(slug),
+    navigationsFor(slug, repositories.albums),
   ]);
   if (!song) {
     notFound();
@@ -223,8 +225,8 @@ export default async function SongPage(props: PageProps<"/songs/[slug]">) {
             </section>
           }
           <footer className="space-y-5">
-            <Suspense fallback={<div>Loading...</div>}>
-              <ListNavigator slug={slug} kind="album" />
+            <Suspense>
+              <ListNavigator navigations={navigations} />
             </Suspense>
             <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
             <Credit

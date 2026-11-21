@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import type { WithContext, BlogPosting } from "schema-dts";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import ListNavigator from "@/components/ListNavigator";
+import { navigationsFor } from "@/lib/content/navigation";
 import ShareButtons from "@/components/ShareButtons";
 import ArticleBody from "@/components/ArticleBody";
 import HeaderTime from "@/components/HeaderTime";
@@ -98,11 +99,13 @@ export default async function ArticlePage(props: PageProps<"/articles/[slug]">) 
   const [
     relatedPosts,
     { items: newPosts },
-    { items: recommendedPosts }
+    { items: recommendedPosts },
+    navigations,
   ] = await Promise.all([
     repositories.articles.related(post, 6),
     repositories.articles.list({ page: firstSix, exclude: [post.slug] }),
     repositories.articles.list({ page: firstSix, slugs: data.recommendedPosts }),
+    navigationsFor(post.slug, repositories.postLists),
   ]);
 
   const shareInfo = getShareInfo(post, data.siteName, ORIGIN);
@@ -144,8 +147,8 @@ export default async function ArticlePage(props: PageProps<"/articles/[slug]">) 
           </header>
           <ArticleBody content={post.content} className="my-12 sm:my-24" />
           <footer className="space-y-5">
-            <Suspense fallback={<div>Loading...</div>}>
-              <ListNavigator slug={slug} kind="postList" />
+            <Suspense>
+              <ListNavigator navigations={navigations} />
             </Suspense>
             <ShareButtons shareText={shareInfo.text} shareUrl={shareInfo.url} fullText={shareFullText} />
             <Credit

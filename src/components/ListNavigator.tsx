@@ -1,65 +1,36 @@
 "use client";
 
-import { listNavigatorInfo, listNavigatorItem } from "@/lib/content/types";
+import type { ListNavigation } from "@/lib/content/navigation";
+import { listParam } from "@/lib/content/href";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
 const withEllipsis = (str: string, len: number) => (
   str.length > len ? str.substring(0, len - 3) + "..." : str
 );
 
-export default function ListNavigator(
-  { slug, kind }
-: { slug: string, kind: "postList" | "album" }) {
-  const router = useRouter();
-  const key = useSearchParams().get("key");
-  
-  const [title, setTitle] = useState<string | undefined>();
-  const [listHref, setListHref] = useState<string | undefined>();
-  const [prev, setPrev] = useState<listNavigatorItem | null>();
-  const [next, setNext] = useState<listNavigatorItem | null>();
+// 項目を含むリストすべての前後をページに埋め込んでおき、どのリストの中で見ているかはブラウザでクエリから選ぶ（ページを静的に保つため）
+export default function ListNavigator({ navigations }: { navigations: ListNavigation[] }) {
+  const listSlug = useSearchParams().get(listParam);
+  const navigation = navigations.find((n) => n.slug === listSlug);
+  if (!navigation) {
+    return null;
+  }
+  const { title, href, prev, next } = navigation;
 
-  useEffect(() => {
-    if (key == null) {
-      router.push("?");
-      return;
-    }
-    const f = async () => {
-      const searchParams = new URLSearchParams({
-        slug,
-        key,
-        kind,
-      });
-      const response = await fetch("/api/list-navigator?" + searchParams);
-      const navigatorInfo: listNavigatorInfo = await response.json();
-      if (navigatorInfo == null) {
-        router.push("?");
-        return;
-      }
-      setTitle(navigatorInfo.listTitle);
-      setListHref(navigatorInfo.listHref);
-      setPrev(navigatorInfo.prev);
-      setNext(navigatorInfo.next);
-    };
-    f();
-  }, [key, router, slug, kind]);
-  
   return (
     <nav>
       <h2 className="text-sm text-center text-base-content">
-        {
-          listHref && <Link href={listHref} className="link link-hover">
-            {title}
-          </Link>
-        }
+        <Link href={href} className="link link-hover">
+          {title}
+        </Link>
       </h2>
       <div className="join flex justify-center flex-wrap">
         {
           prev ? <Link
             className="join-item btn flex-1 flex-nowrap"
-            href={prev.href + "?key=" + key}
+            href={prev.href}
           >
             <MdNavigateBefore size={24} />
             <span className="flex-1">{withEllipsis(prev.title, 20)}</span>
@@ -70,7 +41,7 @@ export default function ListNavigator(
         {
           next ? <Link
           className="join-item btn flex-1 flex-nowrap"
-          href={next.href + "?key=" + key}
+          href={next.href}
         >
           <span className="flex-1">{withEllipsis(next.title, 20)}</span>
           <MdNavigateNext size={24} />

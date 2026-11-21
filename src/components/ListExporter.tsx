@@ -28,7 +28,7 @@ const separatorValues = {
 type Format = keyof typeof formats;
 type Separator = keyof typeof separators;
 
-export default function ListExporter({ origin, items, suffix }: { origin: string; items: ItemSummary[]; suffix?: string }) {
+export default function ListExporter({ origin, items }: { origin: string; items: ItemSummary[] }) {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [format, setFormat] = useState<Format>("normal");
   const [separator, setSeparator] = useState<Separator>("newline");
@@ -40,7 +40,7 @@ export default function ListExporter({ origin, items, suffix }: { origin: string
   const exportedContent = () => {
     const separatorValue = separatorValues[separator];
     const formatExtension = format === "normal" ? "" : `.${format}`;
-    const urls = items.map((item) => absoluteUrlOf(item, origin)+ formatExtension + (suffix ? suffix : ''));
+    const urls = items.map((item) => absoluteUrlOf(item, origin) + formatExtension);
     const content = urls.join(separatorValue);
 
     return content;

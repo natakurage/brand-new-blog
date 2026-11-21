@@ -10,6 +10,9 @@ export const documentTag = ({ kind, slug }: Addressable): string => `${kind}:${s
 
 export const siteSettingsTag = "siteSettings";
 
+// その項目を含むリスト・アルバムの一覧に付ける。項目が加わったリストは、まだその一覧に含まれていないので文書のタグでは無効にならない
+export const containingTag = (item: Addressable): string => `containing:${documentTag(item)}`;
+
 export type Taggable = Content | ItemSummary | CollectionSummary | Tag;
 
 export const documentsIn = (value: Taggable): Addressable[] => {
@@ -34,9 +37,10 @@ export const tagsToInvalidate = (change: Change): string[] => {
   if (change.target === "siteSettings") {
     return [siteSettingsTag];
   }
-  const { kind, slugs, membershipChanged } = change;
+  const { kind, slugs, membershipChanged, items } = change;
   return [
     ...(membershipChanged ? [kindTag(kind)] : []),
     ...slugs.map((slug) => documentTag({ kind, slug })),
+    ...items.map(containingTag),
   ];
 };
