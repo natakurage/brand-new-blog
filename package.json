@@ -11,7 +11,9 @@
     "encrypt": "dotenvx encrypt -f .env.local",
     "setup-key": "node scripts/setup-key.mjs",
     "decrypt": "node scripts/with-key.mjs dotenvx decrypt -f .env.local --stdout",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc",
+    "test": "vitest"
   },
   "dependencies": {
     "cheerio": "^1.0.0",
@@ -52,6 +54,8 @@
     "postcss": "^8",
     "schema-dts": "^2.1.0",
     "tailwindcss": "^4.1.18",
-    "typescript": "npm:@typescript/typescript6@^6.0.2"
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
   }
 }

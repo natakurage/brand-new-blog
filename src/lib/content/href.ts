@@ -2,13 +2,16 @@ import type { BlogPost, Kind } from "./types";
 
 export type Addressable = { kind: Kind; slug: string };
 
-const segments: Record<Kind, string> = {
+const segments = {
   article: "articles",
   song: "songs",
   postList: "lists",
   album: "albums",
   tag: "tags",
-};
+} as const satisfies Record<Kind, string>;
+
+// フレームワークのルートと照合するために型として出す（src/app/routes.test.ts）
+export type SegmentOf<K extends Kind> = (typeof segments)[K];
 
 export const hrefOf = (item: Addressable): string => {
   return `/${segments[item.kind]}/${item.slug}`;

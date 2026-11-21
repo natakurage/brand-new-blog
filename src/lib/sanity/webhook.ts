@@ -40,7 +40,7 @@ const Payload = v.object({
 const definedSlugs = (slugs: (string | null)[]): string[] => [...new Set(slugs.filter((slug): slug is string => !!slug))];
 
 // 対象外の文書や不正な本文なら null
-const toChange = (body: unknown): Change | null => {
+export const toChange = (body: unknown): Change | null => {
   const result = v.safeParse(Payload, body);
   if (!result.success) {
     return null;
