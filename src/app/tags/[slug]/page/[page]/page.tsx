@@ -4,6 +4,7 @@ import ContentWarning from "@/components/ContentWarning";
 import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
+import { hasPage } from "@/lib/content/pagination";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
 export const ensureStatic = "navigation";
@@ -36,11 +37,10 @@ export default async function TagPage(props: PageProps<"/tags/[slug]/page/[page]
   if (!tag) {
     notFound();
   }
-  const { items: posts, total } = await repositories.articles.list(
-    { page: { page: pageNum, size: data.itemsPerPage }, tag: tag.slug },
-  );
-  if (posts.length === 0) {
-    return notFound();
+  const request = { page: pageNum, size: data.itemsPerPage };
+  const { items: posts, total } = await repositories.articles.list({ page: request, tag: tag.slug });
+  if (!hasPage(total, request)) {
+    notFound();
   }
   return (
     <div className="space-y-4">

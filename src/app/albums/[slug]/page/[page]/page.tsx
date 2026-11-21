@@ -9,6 +9,7 @@ import type { MusicAlbum, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
 import { absoluteUrlOf, hrefOf, ogImageHref, pageHref } from "@/lib/content/href";
+import { hasPage, pageOf } from "@/lib/content/pagination";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
 export const ensureStatic = "navigation";
@@ -72,7 +73,11 @@ export default async function AlbumPage(props: PageProps<"/albums/[slug]/page/[p
   if (!album) { 
     notFound();
   }
-  const songs = album.items;
+  const request = { page: pageNum, size: data.itemsPerPage };
+  const { items: songs, total } = pageOf(album.items, request);
+  if (!hasPage(total, request)) {
+    notFound();
+  }
   return (
     <>
       <JsonLD album={album} />
@@ -83,7 +88,7 @@ export default async function AlbumPage(props: PageProps<"/albums/[slug]/page/[p
         <ItemList
           hrefFor={(n) => pageHref(hrefOf(album), n)}
           items={songs}
-          total={songs.length}
+          total={total}
           page={pageNum}
           limit={data.itemsPerPage}
           context={album}

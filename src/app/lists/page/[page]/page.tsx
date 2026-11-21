@@ -2,6 +2,7 @@ import ListList from "@/components/ListList";
 import { parseParams, PageParams } from "@/lib/params";
 import { repositories } from "@/lib/repositories";
 import { pageHref } from "@/lib/content/href";
+import { hasPage } from "@/lib/content/pagination";
 import { notFound } from "next/navigation";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
@@ -24,12 +25,11 @@ export default async function ListsPage(props: PageProps<"/lists/page/[page]">) 
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const pageNum = params.page;
-  const { items, total } = await repositories.postLists.list(
-    { page: pageNum, size: data.itemsPerPage },
-  );
-  if (items.length === 0) {
-      return notFound();
-    }
+  const request = { page: pageNum, size: data.itemsPerPage };
+  const { items, total } = await repositories.postLists.list(request);
+  if (!hasPage(total, request)) {
+    notFound();
+  }
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">リスト一覧</h1>

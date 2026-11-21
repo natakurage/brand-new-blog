@@ -1,4 +1,5 @@
 import type { ItemSummary } from "@/lib/content/types";
+import { pageCount } from "@/lib/content/pagination";
 import type { Addressable } from "@/lib/content/href";
 import Paginator from "./Paginator";
 import ListItem from "./ListItem";
@@ -25,7 +26,7 @@ export default function ItemList(
     showCount = true, showExporter = true
   }: ItemListProps
 ) {
-  const maxPages = Math.ceil(total / limit);
+  const maxPages = pageCount(total, limit);
   const currentNum = items.length + (page - 1) * limit;
   return (
     <div className="space-y-8">

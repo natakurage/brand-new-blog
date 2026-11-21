@@ -2,6 +2,7 @@ import ItemList from "@/components/ItemList";
 import { parseParams, PageParams } from "@/lib/params";
 import { repositories } from "@/lib/repositories";
 import { pageHref } from "@/lib/content/href";
+import { hasPage } from "@/lib/content/pagination";
 import { notFound } from "next/navigation";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
@@ -24,12 +25,11 @@ export default async function ArticlesPage(props: PageProps<"/articles/page/[pag
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const pageNum = params.page;
-  const { items: posts, total } = await repositories.articles.list(
-    { page: { page: pageNum, size: data.itemsPerPage } },
-  );
-  if (posts.length === 0) {
-      return notFound();
-    }
+  const request = { page: pageNum, size: data.itemsPerPage };
+  const { items: posts, total } = await repositories.articles.list({ page: request });
+  if (!hasPage(total, request)) {
+    notFound();
+  }
   return (
     <ItemList hrefFor={(n) => pageHref("/articles", n)} items={posts} page={pageNum} total={total} limit={data.itemsPerPage} />
   );

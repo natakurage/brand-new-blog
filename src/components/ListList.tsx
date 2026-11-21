@@ -1,4 +1,5 @@
 import type { CollectionSummary } from "@/lib/content/types";
+import { pageCount } from "@/lib/content/pagination";
 import SiteLink from "./SiteLink";
 import Paginator from "./Paginator";
 import { hrefOf } from "@/lib/content/href";
@@ -14,7 +15,7 @@ interface ListListProps {
 export default function ListList(
   { hrefFor, lists, total, page, limit }: ListListProps
 ) {
-  const maxPages = Math.ceil(total / limit);
+  const maxPages = pageCount(total, limit);
   return (
     <div className="space-y-8">
       <ul className="space-y-4">

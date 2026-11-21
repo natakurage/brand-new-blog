@@ -4,6 +4,7 @@ import ItemList from "@/components/ItemList";
 import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
+import { hasPage, pageOf } from "@/lib/content/pagination";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
 export const ensureStatic = "navigation";
@@ -40,8 +41,11 @@ export default async function ListsPage(props: PageProps<"/lists/[slug]/page/[pa
   if (!list) { 
     notFound();
   }
-  const length = list.items.length;
-  const posts = list.items.slice((pageNum - 1) * data.itemsPerPage, pageNum * data.itemsPerPage);
+  const request = { page: pageNum, size: data.itemsPerPage };
+  const { items: posts, total } = pageOf(list.items, request);
+  if (!hasPage(total, request)) {
+    notFound();
+  }
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">記事リスト &ldquo;{list.title}&rdquo;</h1>
@@ -49,7 +53,7 @@ export default async function ListsPage(props: PageProps<"/lists/[slug]/page/[pa
       <ItemList
         hrefFor={(n) => pageHref(hrefOf(list), n)}
         items={posts}
-        total={length}
+        total={total}
         page={pageNum}
         limit={data.itemsPerPage}
         context={list}

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "@/lib/config";
 import { hrefOf, pageHref } from "@/lib/content/href";
+import { pageCount } from "@/lib/content/pagination";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -43,7 +44,7 @@ function buildEntry(path: string, priority: number, changeFrequency: SitemapEntr
 }
 
 function buildPageEntries(basePath: string, totalItems: number, itemsPerPage: number, priority = 0.8): MetadataRoute.Sitemap {
-	const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+	const totalPages = pageCount(totalItems, itemsPerPage);
 	return Array.from({ length: totalPages }, (_, index) => ({
 		url: toAbsoluteUrl(pageHref(basePath, index + 1)),
 		changeFrequency: "weekly" as const,
