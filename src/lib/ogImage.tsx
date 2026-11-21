@@ -25,8 +25,8 @@ export async function renderOgImage({ title, background }: { title: string; back
               data.avatar && <img
                 src={data.avatar}
                 alt=""
-                width="80"
-                height="80"
+                width={80}
+                height={80}
                 tw="rounded-full"
               />
             }
