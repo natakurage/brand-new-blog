@@ -8,7 +8,7 @@ import StructuredData from "@/components/StructuredData";
 import type { MusicAlbum, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
-import { absoluteUrlOf, hrefOf, pageHref } from "@/lib/content/href";
+import { absoluteUrlOf, hrefOf, ogImageHref, pageHref } from "@/lib/content/href";
 
 const getAlbum = cache((slug: string) => (
   repositories.albums.findBySlug(slug)
@@ -32,15 +32,12 @@ export async function generateStaticParams() {
 }
 
 function JsonLD({ album }: { album: Album }) {
-  const ogpImageUrl = new URL(`/og`, ORIGIN);
-  ogpImageUrl.searchParams.set("title", album.title);
-
   const jsonLd: WithContext<MusicAlbum> = {
     "@context": "https://schema.org",
     "@type": "MusicAlbum",
     name: album.title,
     url: absoluteUrlOf(album, ORIGIN),
-    image: ogpImageUrl.href,
+    image: new URL(ogImageHref(album), ORIGIN).href,
     byArtist: album.artist.map((artist) => ({
       "@type": "MusicGroup",
       name: artist

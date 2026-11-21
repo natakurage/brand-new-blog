@@ -20,7 +20,7 @@ async function JsonLD() {
     name: data.siteName,
     url: ORIGIN,
     description: data.description,
-    image: new URL("/banner.png", ORIGIN).href,
+    image: new URL("/opengraph-image", ORIGIN).href,
     potentialAction: {
       "@type": "SearchAction",
       target: new URL("/search?q={search_term_string}", ORIGIN).href,

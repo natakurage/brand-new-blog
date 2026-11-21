@@ -22,7 +22,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CALENDAR, ORIGIN } from "@/lib/config";
 import { siteOpenGraph } from "@/lib/metadata";
-import { absoluteUrlOf, rawHref } from "@/lib/content/href";
+import { absoluteUrlOf, ogImageHref, rawHref } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
 export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
@@ -34,10 +34,6 @@ export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
     notFound();
   }
   const title = post.title + " - " + data.siteName;
-  const ogpImageUrl = new URL(`/og`, ORIGIN);
-  ogpImageUrl.searchParams.set("title", title);
-  if (post.mainImage)
-    ogpImageUrl.searchParams.set("bgImage", post.mainImage);
   const description = describe(post) || data.description;
   return {
     title: (await isPreview() ? "(プレビュー)" : "") + title,
@@ -53,14 +49,6 @@ export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
       title: title,
       description: description,
       url: absoluteUrlOf(post, ORIGIN),
-      images: [
-        {
-          url: ogpImageUrl.href,
-          width: 1200,
-          height: 630,
-          alt: post.title + " OGP"
-        }
-      ]
     }
   };
 }
@@ -72,10 +60,6 @@ export async function generateStaticParams() {
 
 async function JsonLD({ post }: { post: BlogPost }) {
   const data = await repositories.siteSettings.get();
-  const ogpImageUrl = new URL(`/og`, ORIGIN);
-  ogpImageUrl.searchParams.set("title", post.title);
-  if (post.mainImage)
-    ogpImageUrl.searchParams.set("bgImage", post.mainImage);
   const jsonLd: WithContext<BlogPosting> = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -84,7 +68,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
     url: absoluteUrlOf(post, ORIGIN),
     datePublished: post.createdAt.toISOString(),
     dateModified: post.updatedAt.toISOString(),
-    image: [ogpImageUrl.href],
+    image: [new URL(ogImageHref(post), ORIGIN).href],
     author: [
       {
         "@type": "Person",

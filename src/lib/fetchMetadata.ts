@@ -4,6 +4,7 @@ import { Content } from "@/lib/content/types";
 import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "./config";
 import { describe } from "./content/summary";
+import { ogImageHref } from "./content/href";
 
 export interface Metadata {
   metadata: {
@@ -43,11 +44,6 @@ async function internalPreview(url: string): Promise<LinkPreview> {
     return { status: "notFound" };
   }
   const data = await repositories.siteSettings.get();
-  const bannerUrl = new URL(`/og`, ORIGIN);
-  bannerUrl.searchParams.set("title", post.title);
-  if ("mainImage" in post && post.mainImage) {
-    bannerUrl.searchParams.set("bgImage", post.mainImage);
-  }
   return {
     status: "found",
     metadata: {
@@ -55,7 +51,7 @@ async function internalPreview(url: string): Promise<LinkPreview> {
         website: absUrl.href,
         title: post.title,
         description: describe(post),
-        banner: bannerUrl.href,
+        banner: new URL(ogImageHref(post), ORIGIN).href,
         themeColor: undefined,
       },
       favicons: [data.favicon],

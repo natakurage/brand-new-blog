@@ -22,6 +22,11 @@ export const rawHref = (article: BlogPost, format: RawFormat): string => {
   return `${hrefOf(article)}.${format}`;
 };
 
+// opengraph-image.tsx を置いている種類だけ
+export const ogImageHref = (item: Addressable & { kind: "article" | "song" | "album" }): string => {
+  return `${hrefOf(item)}/opengraph-image`;
+};
+
 export const absoluteUrlOf = (item: Addressable, origin: string): string => {
   return new URL(hrefOf(item), origin).toString();
 };

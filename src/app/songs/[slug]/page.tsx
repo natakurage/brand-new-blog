@@ -37,8 +37,6 @@ export async function generateMetadata(props: PageProps<"/songs/[slug]">) {
   }
   const title = song.title + " - " + data.siteName;
   const description = describe(song) || data.description;
-  const ogpImageUrl = new URL(`/og`, ORIGIN);
-  ogpImageUrl.searchParams.set("title", title);
   return {
     title: (await isPreview() ? "(プレビュー)" : "") + title,
     description: description,
@@ -47,14 +45,6 @@ export async function generateMetadata(props: PageProps<"/songs/[slug]">) {
       title: title,
       description: description,
       url: absoluteUrlOf(song, ORIGIN),
-      images: [
-        {
-          url: ogpImageUrl.href,
-          width: 1200,
-          height: 630,
-          alt: song.title + " OGP"
-        }
-      ]
     }
   };
 }
@@ -131,8 +121,6 @@ export async function generateStaticParams() {
 }
 
 function JsonLD({ song }: { song: Song }) {
-  const ogpImageUrl = new URL(`/og`, ORIGIN);
-  ogpImageUrl.searchParams.set("title", song.title);
   const jsonLd: WithContext<MusicRecording> = {
     "@context": "https://schema.org",
     "@type": "MusicRecording",

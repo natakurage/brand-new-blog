@@ -1,25 +1,19 @@
-import { repositories } from '@/lib/repositories';
-import { ImageResponse } from 'next/og';
-import { NextRequest } from 'next/server';
+import { ImageResponse } from "next/og";
+import { repositories } from "@/lib/repositories";
 
-// export const runtime = 'edge';
+export const ogImageSize = { width: 1200, height: 630 };
 
-export async function GET(request: NextRequest) {
+export async function renderOgImage({ title, background }: { title: string; background?: string }) {
   const data = await repositories.siteSettings.get();
-  const { searchParams } = new URL(request.url);
-  const title = searchParams.get('title') || 'Default Title';
-  const bgImageUrl = searchParams.get('bgImage') || null;
-  const absIconUrl = new URL(data.avatar ?? "", request.url).href;
-
   return new ImageResponse(
     (
       <div tw="w-full h-full p-16 text-6xl text-white bg-[#ED5126] flex">
         <div tw="w-full h-full bg-[#020C15] flex flex-col rounded-3xl items-center justify-center relative">
           {
             /* eslint-disable-next-line @next/next/no-img-element */
-            bgImageUrl && <img
-              src={bgImageUrl}
-              alt="Background"
+            background && <img
+              src={background}
+              alt=""
               tw="absolute inset-0 w-full h-full rounded-3xl"
               style={{ filter: "brightness(0.7) blur(5px)", objectFit: "cover" }}
             />
@@ -29,8 +23,8 @@ export async function GET(request: NextRequest) {
             {
               /* eslint-disable-next-line @next/next/no-img-element */
               data.avatar && <img
-                src={absIconUrl}
-                alt="Logo"
+                src={data.avatar}
+                alt=""
                 width="80"
                 height="80"
                 tw="rounded-full"
@@ -43,9 +37,6 @@ export async function GET(request: NextRequest) {
         </div>
       </div>
     ),
-    {
-      width: 1200,
-      height: 630,
-    }
+    ogImageSize,
   );
 }
