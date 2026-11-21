@@ -1,5 +1,6 @@
 import type { Addressable } from "./href";
 import type { CollectionSummary, Content, ItemSummary, Kind, Tag } from "./types";
+import type { Change } from "./change";
 
 // キャッシュの無効化に使う名前。結果に含まれる文書ごとのタグと、どの文書が含まれるかが変わりうる結果に付ける種類ごとのタグがある
 
@@ -27,12 +28,6 @@ export const tagsFor = (tags: string[], documents: Addressable[], limit: number)
   }
   return [...tags, ...new Set(documents.map((document) => kindTag(document.kind)))];
 };
-
-// CMS で起きた変更。slugs は変更前後の slug（slug が変わったときは両方）。
-// membershipChanged は、その種類にどの文書が含まれるか・どのタグに属するかが変わりうる変更（作成・削除・slug やタグの変更）かどうか
-export type Change =
-  | { target: "content"; kind: Kind; slugs: string[]; membershipChanged: boolean }
-  | { target: "siteSettings" };
 
 // 内容だけの変更では種類のタグを無効にしない。その文書を表示している結果は文書のタグで無効になる
 export const tagsToInvalidate = (change: Change): string[] => {

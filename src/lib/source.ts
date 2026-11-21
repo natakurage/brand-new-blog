@@ -1,5 +1,6 @@
+import type { NextRequest } from "next/server";
 import type { Repositories } from "@/lib/content/repository";
-import type { Change } from "@/lib/content/cacheTags";
+import type { ChangeNotification } from "@/lib/content/change";
 import { createSanityRepositories } from "@/lib/sanity/repositories";
 import { getClient } from "@/lib/sanity/client";
 import { parseSanityWebhook } from "@/lib/sanity/webhook";
@@ -8,5 +9,5 @@ import { parseSanityWebhook } from "@/lib/sanity/webhook";
 
 export const source: Repositories = createSanityRepositories((ctx) => getClient(ctx.preview));
 
-// CMS からの変更通知の本文を Change に翻訳する。対象外や不正な本文なら null
-export const parseChangeNotification: (body: unknown) => Change | null = parseSanityWebhook;
+// CMS からの変更通知を、送り主を確かめたうえで Change に翻訳する
+export const parseChangeNotification: (req: NextRequest) => Promise<ChangeNotification> = parseSanityWebhook;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
-import { parseChangeNotification } from '@/lib/source';
+import { toChange } from '@/lib/sanity/webhook';
 import { tagsToInvalidate } from '@/lib/content/cacheTags';
 
 // 旧形式の webhook（{ contentType, slug }）用。Sanity の設定を /api/revalidate に切り替えたら削除する
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid secret' }, { status: 401 });
   }
   const { contentType, slug } = await req.json();
-  const change = parseChangeNotification({ _type: contentType, slugs: [slug] });
+  const change = toChange({ _type: contentType, slugs: [slug] });
   if (!change) {
     return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
   }
