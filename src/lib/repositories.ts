@@ -59,11 +59,9 @@ async function relatedArticles(article: ArticleMeta, limit: number) {
   return items;
 }
 
+// 検索語ごとの結果は再利用されにくく、本文の変更でも結果が変わるため、キャッシュしない
 async function searchArticles(text: string, page: PageRequest) {
-  "use cache";
-  const result = await source.articles.search(text, page, await readContext());
-  listed("article", result.items);
-  return result;
+  return source.articles.search(text, page, await readContext());
 }
 
 async function findSong(slug: string) {

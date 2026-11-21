@@ -28,8 +28,20 @@ export const tagsFor = (tags: string[], documents: Addressable[], limit: number)
   return [...tags, ...new Set(documents.map((document) => kindTag(document.kind)))];
 };
 
-// 文書が作られた・変わった・消えたときに無効にするタグ。slug が変わったときは前後の両方を渡す
-export const tagsToInvalidate = (kind: Kind, slugs: string[]): string[] => [
-  kindTag(kind),
-  ...slugs.map((slug) => documentTag({ kind, slug })),
-];
+// CMS で起きた変更。slugs は変更前後の slug（slug が変わったときは両方）。
+// membershipChanged は、その種類にどの文書が含まれるか・どのタグに属するかが変わりうる変更（作成・削除・slug やタグの変更）かどうか
+export type Change =
+  | { target: "content"; kind: Kind; slugs: string[]; membershipChanged: boolean }
+  | { target: "siteSettings" };
+
+// 内容だけの変更では種類のタグを無効にしない。その文書を表示している結果は文書のタグで無効になる
+export const tagsToInvalidate = (change: Change): string[] => {
+  if (change.target === "siteSettings") {
+    return [siteSettingsTag];
+  }
+  const { kind, slugs, membershipChanged } = change;
+  return [
+    ...(membershipChanged ? [kindTag(kind)] : []),
+    ...slugs.map((slug) => documentTag({ kind, slug })),
+  ];
+};
