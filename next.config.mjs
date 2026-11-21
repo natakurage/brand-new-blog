@@ -44,9 +44,6 @@ const nextConfig = {
     images: {
         remotePatterns: [
             {
-                hostname: "images.ctfassets.net",
-            },
-            {
                 hostname: "cdn.sanity.io"
             }
         ]

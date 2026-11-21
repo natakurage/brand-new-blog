@@ -11,11 +11,11 @@
 ### インストール
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### Sanity.ioの設定
-@types/sanity.types.tsを見て察してください。
+@types/sanity/sanity.types.tsを見て察してください。
 
 ### 環境変数
 
@@ -26,7 +26,6 @@ npm install
 |SANITY_PROJECT_ID | SanityのProject ID |
 |SANITY_DATASET_NAME | Sanityのデータセット名 |
 |SANITY_VIEWER_TOKEN | SanityのAPIトークン（閲覧者権限必須） |
-|SANITY_PREVIEW_SECRET | プレビュー用シークレット（任意の文字列） |
 |SANITY_WEBHOOK_SECRET | Sanity の webhook の Secret と同じ値（`/api/revalidate` が署名の照合に使う） |
 |NEXT_PUBLIC_ORIGIN | サイトのオリジン |
 
