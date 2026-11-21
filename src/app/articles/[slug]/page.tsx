@@ -22,8 +22,8 @@ import { licenseUrl } from "@/lib/content/license";
 import Image from "next/image";
 import Link from "next/link";
 import { CALENDAR, ORIGIN } from "@/lib/config";
-import { siteOpenGraph } from "@/lib/metadata";
-import { absoluteUrlOf, ogImageHref, rawHref } from "@/lib/content/href";
+import { pageMetadata } from "@/lib/metadata";
+import { absoluteUrlOf, hrefOf, ogImageHref, rawHref } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
@@ -41,21 +41,27 @@ export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
   }
   const title = post.title + " - " + data.siteName;
   const description = describe(post) || data.description;
+  const metadata = pageMetadata(data, hrefOf(post), {
+    type: "article",
+    title: title,
+    description: description,
+    publishedTime: post.createdAt.toISOString(),
+    modifiedTime: post.updatedAt.toISOString(),
+    // OGP の article:author はプロフィールの URL。なければ名前で代える
+    authors: [data.authorUrl || data.author],
+    tags: post.tags.map((tag) => tag.name),
+  });
   return {
+    ...metadata,
     title: (await isPreview() ? "(プレビュー)" : "") + title,
     description: description,
     alternates: {
+      ...metadata.alternates,
       types: {
         "text/markdown": rawHref(post, "md"),
         "text/plain": rawHref(post, "txt"),
       },
     },
-    openGraph: {
-      ...siteOpenGraph(data),
-      title: title,
-      description: description,
-      url: absoluteUrlOf(post, ORIGIN),
-    }
   };
 }
 

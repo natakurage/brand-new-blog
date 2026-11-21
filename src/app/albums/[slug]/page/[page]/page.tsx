@@ -10,6 +10,8 @@ import { licenseUrl } from "@/lib/content/license";
 import { ORIGIN } from "@/lib/config";
 import { absoluteUrlOf, hrefOf, ogImageHref, pageHref } from "@/lib/content/href";
 import { hasPage, pageOf } from "@/lib/content/pagination";
+import { pageMetadata } from "@/lib/metadata";
+import { digestOf } from "@/lib/content/summary";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
 export const ensureStatic = "navigation";
@@ -28,8 +30,19 @@ export async function generateMetadata(props: PageProps<"/albums/[slug]/page/[pa
   if (!album) { 
     notFound();
   }
-  const title = `アルバム ${data.siteName}` + (params.page === 1 ? "" : `: Page ${params.page}`);
-  return { title };
+  const title = `アルバム “${album.title}” - ${data.siteName}` + (params.page === 1 ? "" : `: Page ${params.page}`);
+  const description = album.description ? digestOf(album.description).excerpt : data.description;
+  return {
+    title,
+    description,
+    ...pageMetadata(data, pageHref(hrefOf(album), params.page), {
+      type: "music.album",
+      description,
+      // OGP の music:musician はプロフィールの URL で、アーティストの URL は持っていないので省く
+      songs: album.items.map((song, index) => ({ url: absoluteUrlOf(song, ORIGIN), track: index + 1 })),
+      releaseDate: album.releaseDate,
+    }),
+  };
 }
 
 export async function generateStaticParams() {

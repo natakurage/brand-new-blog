@@ -12,7 +12,7 @@ import { isPreview } from "@/lib/preview";
 import { YouTubePlayer } from "@/components/YoutubePlayer";
 import { Suspense } from "react";
 import ListNavigator from "@/components/ListNavigator";
-import { navigationsFor } from "@/lib/content/navigation";
+import { navigationsFor, placementsFor } from "@/lib/content/navigation";
 import { FaExternalLinkAlt, FaFileSignature } from "react-icons/fa";
 import ShareButtons from "@/components/ShareButtons";
 import { getYouTubeId, isYouTube } from "@/components/LinkProcessor";
@@ -24,8 +24,8 @@ import Credit from "@/components/Credit";
 import type { MusicRecording, WithContext } from "schema-dts";
 import { licenseUrl } from "@/lib/content/license";
 import { CALENDAR, ORIGIN } from "@/lib/config";
-import { siteOpenGraph } from "@/lib/metadata";
-import { absoluteUrlOf } from "@/lib/content/href";
+import { pageMetadata } from "@/lib/metadata";
+import { absoluteUrlOf, hrefOf } from "@/lib/content/href";
 import { describe } from "@/lib/content/summary";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
@@ -43,15 +43,17 @@ export async function generateMetadata(props: PageProps<"/songs/[slug]">) {
   }
   const title = song.title + " - " + data.siteName;
   const description = describe(song) || data.description;
+  const albums = await placementsFor(song.slug, repositories.albums);
   return {
-    title: (await isPreview() ? "(プレビュー)" : "") + title,
-    description: description,
-    openGraph: {
-      ...siteOpenGraph(data),
+    ...pageMetadata(data, hrefOf(song), {
+      type: "music.song",
       title: title,
       description: description,
-      url: absoluteUrlOf(song, ORIGIN),
-    }
+      // OGP の music:musician はプロフィールの URL で、アーティストの URL は持っていないので省く
+      albums: albums.map(({ collection, index }) => ({ url: absoluteUrlOf(collection, ORIGIN), track: index + 1 })),
+    }),
+    title: (await isPreview() ? "(プレビュー)" : "") + title,
+    description: description,
   };
 }
 

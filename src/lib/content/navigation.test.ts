@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { navigationIn, navigationsFor } from "./navigation";
+import { navigationIn, navigationsFor, placementIn } from "./navigation";
 import { album, article, postList, song } from "./fixtures";
 import type { PostList } from "./types";
 
@@ -36,6 +36,14 @@ describe("navigationIn", () => {
       prev: { href: "/songs/s1?list=al" },
       next: null,
     });
+  });
+});
+
+describe("placementIn", () => {
+  test("項目の位置を 0 始まりで返し、重複していれば最初の位置", () => {
+    const repeated = postList("r", [article("a"), article("b"), article("b")]);
+    expect(placementIn(repeated, "b")).toEqual({ collection: repeated, index: 1 });
+    expect(placementIn(repeated, "x")).toBeNull();
   });
 });
 

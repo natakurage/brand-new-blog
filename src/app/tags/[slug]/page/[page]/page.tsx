@@ -5,6 +5,7 @@ import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
 import { hasPage } from "@/lib/content/pagination";
+import { pageMetadata } from "@/lib/metadata";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
 export const ensureStatic = "navigation";
@@ -20,7 +21,7 @@ export async function generateMetadata(props: PageProps<"/tags/[slug]/page/[page
   }
   const data = await repositories.siteSettings.get();
   const title = `タグ #${tag.name} がつけられた記事` + " - " + data.siteName + (page === 1 ? "" : `: Page ${page}`);
-  return { title };
+  return { title, ...pageMetadata(data, pageHref(hrefOf(tag), page)) };
 }
 
 export async function generateStaticParams() {

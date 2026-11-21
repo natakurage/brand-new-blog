@@ -5,6 +5,8 @@ import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
 import { hasPage, pageOf } from "@/lib/content/pagination";
+import { pageMetadata } from "@/lib/metadata";
+import { digestOf } from "@/lib/content/summary";
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
 export const ensureStatic = "navigation";
@@ -23,8 +25,13 @@ export async function generateMetadata(props: PageProps<"/lists/[slug]/page/[pag
   if (!list) { 
     notFound();
   }
-  const title = `記事リスト ${data.siteName}` + (params.page === 1 ? "" : `: Page ${params.page}`);
-  return { title };
+  const title = `記事リスト “${list.title}” - ${data.siteName}` + (params.page === 1 ? "" : `: Page ${params.page}`);
+  const description = list.description ? digestOf(list.description).excerpt : data.description;
+  return {
+    title,
+    description,
+    ...pageMetadata(data, pageHref(hrefOf(list), params.page), { description }),
+  };
 }
 
 export async function generateStaticParams() {

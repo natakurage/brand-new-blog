@@ -4,11 +4,13 @@ import StructuredData from "@/components/StructuredData";
 import type { WebSite, WithContext } from "schema-dts";
 import { ORIGIN } from "@/lib/config";
 import { pageHref } from "@/lib/content/href";
+import { pageMetadata } from "@/lib/metadata";
 
 export async function generateMetadata() {
   const data = await repositories.siteSettings.get();
   return {
     title: data.siteName,
+    ...pageMetadata(data, "/"),
   };
 }
 
