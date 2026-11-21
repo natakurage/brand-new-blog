@@ -12,6 +12,8 @@ import { absoluteUrlOf, hrefOf, ogImageHref, pageHref } from "@/lib/content/href
 
 // 完成したページを返す。作り置きにない URL は完成を待ってから返すので、存在しなければ 404 になる（待たないと、先に枠を 200 で送ってしまう）
 export const ensureStatic = "navigation";
+// params を Suspense の外で読むので、移動では枠を先に出さず完成を待つ（fallback を置いていないため、空の枠より前のページのまま待つほうがよい）
+export const instant = false;
 
 const getAlbum = cache((slug: string) => (
   repositories.albums.findBySlug(slug)
