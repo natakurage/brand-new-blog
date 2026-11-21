@@ -57,7 +57,7 @@ export interface WorkBase extends ContentBase {
 export interface ArticleMeta extends WorkBase {
   kind: "article";
   mainImage?: string;
-  showToc?: boolean;
+  showToc: boolean;
 }
 
 export interface BlogPost extends ArticleMeta, Digest {
@@ -67,9 +67,9 @@ export interface BlogPost extends ArticleMeta, Digest {
 export interface SongMeta extends WorkBase {
   kind: "song";
   artist: string[];
-  credit?: string[];
+  credit: string[];
   releaseDate?: string;
-  url?: string[];
+  url: string[];
   streamUrl?: string;
 }
 
@@ -89,8 +89,8 @@ export interface PostList extends PostListMeta {
 export interface AlbumMeta extends WorkBase {
   kind: "album";
   releaseDate?: string;
-  artist?: string[];
-  credit?: string[];
+  artist: string[];
+  credit: string[];
 }
 
 export interface Album extends AlbumMeta {

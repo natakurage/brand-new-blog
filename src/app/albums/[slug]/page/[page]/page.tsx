@@ -41,7 +41,7 @@ function JsonLD({ album }: { album: Album }) {
     name: album.title,
     url: absoluteUrlOf(album, ORIGIN),
     image: ogpImageUrl.href,
-    byArtist: album.artist?.map((artist) => ({
+    byArtist: album.artist.map((artist) => ({
       "@type": "MusicGroup",
       name: artist
     })),
@@ -81,7 +81,7 @@ export default async function AlbumPage(props: PageProps<"/albums/[slug]/page/[p
       <JsonLD album={album} />
       <div className="space-y-4">
         <h1 className="text-3xl font-bold">アルバム &ldquo;{album.title}&rdquo;</h1>
-        <div>{album.artist?.join(", ")}</div>
+        <div>{album.artist.join(", ")}</div>
         <p className="text-sm">{album.description}</p>
         <ItemList
           hrefFor={(n) => pageHref(hrefOf(album), n)}

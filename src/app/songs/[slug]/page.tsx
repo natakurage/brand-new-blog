@@ -175,7 +175,7 @@ export default async function SongPage(props: PageProps<"/songs/[slug]">) {
     notFound();
   }
 
-  const { youtube_url, mp3_url, flac_url, other_urls } = separate_urls(song.url ?? []);
+  const { youtube_url, mp3_url, flac_url, other_urls } = separate_urls(song.url);
   const downloadable = !!(mp3_url || flac_url);
 
   const modifiedLyrics = song.lyrics?.replaceAll(/(?<!\n)\n(?!\n)/g, '  \n');
@@ -223,12 +223,12 @@ export default async function SongPage(props: PageProps<"/songs/[slug]">) {
                 <MdDownload className="inline align-middle" />
                 Download
               </h2>
-              <DownloadLinkTable urls={song.url ?? []} />
+              <DownloadLinkTable urls={song.url} />
             </section>
           }
           <ArticleBody content={song.content} />
           {
-            song.credit && <ul className="text-right">
+            song.credit.length > 0 && <ul className="text-right">
               {
                 song.credit.map((credit, index) => (
                   <li key={index}>{credit}</li>

@@ -56,12 +56,12 @@ const toArticleMeta = (entry: SanityBlogPostResolved): ArticleMeta => ({
   title: entry.title ?? "Untitled Article",
   slug: entry.slug?.current ?? "",
   mainImage: entry.image,
-  description: entry.description ?? "",
+  description: entry.description,
   createdAt: new Date(entry._createdAt),
   updatedAt: new Date(entry._updatedAt),
   tags: toTags(entry.tags),
   license: toLicense(entry.licenseSelect, entry.license),
-  showToc: entry.showToc,
+  showToc: entry.showToc ?? false,
 });
 
 export const toArticleSummary = (entry: SanityBlogPostResolved): ArticleSummary => ({
@@ -81,11 +81,11 @@ const toSongMeta = (entry: SanitySongResolved): SongMeta => ({
   createdAt: new Date(entry._createdAt),
   updatedAt: new Date(entry._updatedAt),
   artist: entry.artist ?? [],
-  credit: entry.credit,
+  credit: entry.credit ?? [],
   releaseDate: entry.releaseDate,
   tags: toTags(entry.tags),
   license: toLicense(entry.licenseSelect, entry.license),
-  url: entry.url,
+  url: entry.url ?? [],
   streamUrl: entry.streamUrl,
 });
 
@@ -127,8 +127,8 @@ const toAlbumMeta = (entry: SanityMusicAlbumResolved): AlbumMeta => ({
   createdAt: new Date(entry._createdAt),
   updatedAt: new Date(entry._updatedAt),
   releaseDate: entry.releaseDate,
-  artist: entry.artist,
-  credit: entry.credit,
+  artist: entry.artist ?? [],
+  credit: entry.credit ?? [],
   tags: toTags(entry.tags),
   license: toLicense(entry.licenseSelect, entry.license),
 });

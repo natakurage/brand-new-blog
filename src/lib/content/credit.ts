@@ -21,7 +21,7 @@ export const getSongCreditText = (song: Song, origin: string, calendar: Calendar
     ["タイトル", song.title],
     ["アーティスト", song.artist.join(", ")]
   ]);
-  song.credit?.forEach((credit) => {
+  song.credit.forEach((credit) => {
     const [k, v] = credit.split(":");
     creditInfo.set(k, v);
   });
