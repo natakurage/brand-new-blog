@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "@/lib/config";
-import { hrefOf, pageHref } from "@/lib/content/href";
+import { hrefOf, indexHref, pageHref } from "@/lib/content/href";
 import { pageCount } from "@/lib/content/pagination";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
@@ -10,22 +10,22 @@ const firstItem = { page: 1, size: 1 };
 
 const collections = [
 	{
-		basePath: "/articles",
+		basePath: indexHref("article"),
 		priority: 0.7,
 		count: () => repositories.articles.list({ page: firstItem }).then((page) => page.total),
 	},
 	{
-		basePath: "/songs",
+		basePath: indexHref("song"),
 		priority: 0.7,
 		count: () => repositories.songs.list(firstItem).then((page) => page.total),
 	},
 	{
-		basePath: "/albums",
+		basePath: indexHref("album"),
 		priority: 0.7,
 		count: () => repositories.albums.list(firstItem).then((page) => page.total),
 	},
 	{
-		basePath: "/lists",
+		basePath: indexHref("postList"),
 		priority: 0.7,
 		count: () => repositories.postLists.list(firstItem).then((page) => page.total),
 	},

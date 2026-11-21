@@ -3,6 +3,7 @@ import SiteLink from "@/components/SiteLink";
 import SearchBar from "@/components/SearchBar";
 import { MdRssFeed } from "react-icons/md";
 import { LinkItem } from "@/lib/content/types";
+import { rssPath } from "@/lib/content/href";
 
 export default function SideBar({ pages }: { pages?: LinkItem[] }) {
   return (
@@ -17,7 +18,7 @@ export default function SideBar({ pages }: { pages?: LinkItem[] }) {
         }
         <li><SearchBar /></li>
         <li className="flex flex-row">
-          <Link href="/rss">
+          <Link href={rssPath}>
             <MdRssFeed size={24} />
           </Link>
         </li>

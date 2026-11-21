@@ -1,7 +1,7 @@
 import ListList from "@/components/ListList";
 import { parseParams, PageParams } from "@/lib/params";
 import { repositories } from "@/lib/repositories";
-import { pageHref } from "@/lib/content/href";
+import { indexHref, pageHref } from "@/lib/content/href";
 import { pageMetadata } from "@/lib/metadata";
 import { hasPage } from "@/lib/content/pagination";
 import { notFound } from "next/navigation";
@@ -15,7 +15,7 @@ export async function generateMetadata(props: PageProps<"/lists/page/[page]">) {
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const title = "記事リスト一覧 - " + data.siteName + (params.page === 1 ? "" : `: Page ${params.page}`);
-  return { title, ...pageMetadata(data, pageHref("/lists", params.page)) };
+  return { title, ...pageMetadata(data, pageHref(indexHref("postList"), params.page)) };
 }
 
 export function generateStaticParams() {
@@ -34,7 +34,7 @@ export default async function ListsPage(props: PageProps<"/lists/page/[page]">) 
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">リスト一覧</h1>
-      <ListList hrefFor={(n) => pageHref("/lists", n)} lists={items} total={total} page={pageNum} limit={data.itemsPerPage} />
+      <ListList hrefFor={(n) => pageHref(indexHref("postList"), n)} lists={items} total={total} page={pageNum} limit={data.itemsPerPage} />
     </div>
   );
 }

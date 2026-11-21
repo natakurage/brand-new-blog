@@ -13,6 +13,11 @@ const segments = {
 // フレームワークのルートと照合するために型として出す（src/app/routes.test.ts）
 export type SegmentOf<K extends Kind> = (typeof segments)[K];
 
+// 一覧のページを持つ種類（タグは個々のタグのページだけ）
+export type IndexedKind = "article" | "song" | "postList" | "album";
+
+export const indexHref = (kind: IndexedKind): string => `/${segments[kind]}`;
+
 export const hrefOf = (item: Addressable): string => {
   return `/${segments[item.kind]}/${item.slug}`;
 };
@@ -45,6 +50,11 @@ export const hrefIn = (item: Addressable, collection: Addressable): string => {
 };
 
 export const searchPath = "/search";
+
+export const rssPath = "/rss";
+
+// サイト全体の OG 画像（app/opengraph-image.tsx）
+export const siteOgImagePath = "/opengraph-image";
 
 export const searchHref = (q: string, n: number): string => {
   const params = new URLSearchParams({ q });

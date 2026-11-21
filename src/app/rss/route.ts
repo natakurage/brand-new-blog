@@ -1,7 +1,7 @@
 import { Feed } from "feed";
 import { repositories } from "@/lib/repositories";
 import { ORIGIN } from "@/lib/config";
-import { absoluteUrlOf } from "@/lib/content/href";
+import { absoluteUrlOf, rssPath } from "@/lib/content/href";
 import { describe, toPlainText } from "@/lib/content/summary";
 
 export async function GET() {
@@ -17,7 +17,7 @@ export async function GET() {
     link: ORIGIN,
     language: "ja",
     generator: data.siteName,
-    feedLinks: { rss: new URL("/rss", ORIGIN).href },
+    feedLinks: { rss: new URL(rssPath, ORIGIN).href },
     // 内容が最後に変わった時刻
     updated: posts.length > 0 ? new Date(Math.max(...posts.map((post) => post.updatedAt.getTime()))) : undefined,
   });

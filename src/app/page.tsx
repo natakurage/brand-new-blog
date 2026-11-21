@@ -3,7 +3,7 @@ import { repositories } from "@/lib/repositories";
 import StructuredData from "@/components/StructuredData";
 import type { WebSite, WithContext } from "schema-dts";
 import { ORIGIN } from "@/lib/config";
-import { pageHref } from "@/lib/content/href";
+import { indexHref, pageHref, searchPath, siteOgImagePath } from "@/lib/content/href";
 import { pageMetadata } from "@/lib/metadata";
 
 export async function generateMetadata() {
@@ -22,10 +22,10 @@ async function JsonLD() {
     name: data.siteName,
     url: ORIGIN,
     description: data.description,
-    image: new URL("/opengraph-image", ORIGIN).href,
+    image: new URL(siteOgImagePath, ORIGIN).href,
     potentialAction: {
       "@type": "SearchAction",
-      target: new URL("/search?q={search_term_string}", ORIGIN).href,
+      target: new URL(`${searchPath}?q={search_term_string}`, ORIGIN).href,
       // @ts-expect-error: 'query-input' is not in the schema-dts types but required by schema.org
       "query-input": "required name=search_term_string"
     },
@@ -45,7 +45,7 @@ export default async function Home() {
   return (
     <>
       <JsonLD />
-      <ItemList hrefFor={(n) => pageHref("/articles", n)} items={posts} page={pageNum} total={total} limit={data.itemsPerPage} showCount={false} showExporter={false} />
+      <ItemList hrefFor={(n) => pageHref(indexHref("article"), n)} items={posts} page={pageNum} total={total} limit={data.itemsPerPage} showCount={false} showExporter={false} />
     </>
   );
 }

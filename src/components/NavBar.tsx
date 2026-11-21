@@ -9,6 +9,7 @@ import { MdComputer, MdDarkMode, MdLightMode, MdRssFeed } from "react-icons/md";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useMounted } from "@/app/hooks/useMounted";
+import { rssPath } from "@/lib/content/href";
 
 export function NavBar({
   topLogo,
@@ -78,7 +79,7 @@ export function NavBar({
               }
               <li><SearchBar onSubmit={() => setOpen(false)} /></li>
               <li className="flex flex-row">
-                <Link href="/rss">
+                <Link href={rssPath}>
                   <MdRssFeed size={24} />
                 </Link>
               </li>
