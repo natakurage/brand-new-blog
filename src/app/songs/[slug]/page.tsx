@@ -121,7 +121,7 @@ function DownloadLinkTable({ urls }: { urls: string[] }) {
 
 export async function generateStaticParams() {
   const slugs = await repositories.songs.allSlugs();
-  return slugs.map((slug) => ({ slug, key: undefined }));
+  return slugs.map((slug) => ({ slug }));
 }
 
 function JsonLD({ song }: { song: Song }) {

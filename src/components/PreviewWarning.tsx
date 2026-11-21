@@ -1,7 +1,13 @@
-import DisablePreview from "@/components/DisablePreview";
 import { repositories } from "@/lib/repositories";
 import Link from "next/link";
 import { MdWarning } from "react-icons/md";
+import { draftMode } from "next/headers";
+
+// Cookie を変えた Server Action の後は、今のページが描き直される
+async function disablePreview() {
+  "use server";
+  (await draftMode()).disable();
+}
 
 export default async function PreviewWarning() {
   const data = await repositories.siteSettings.get();
@@ -29,7 +35,11 @@ export default async function PreviewWarning() {
 
         </span>
       </div>
-      <DisablePreview className="btn btn-ghost btn-sm" />
+      <form action={disablePreview}>
+        <button type="submit" className="btn btn-ghost btn-sm">
+          プレビューを無効にする
+        </button>
+      </form>
     </div>
   );
 }

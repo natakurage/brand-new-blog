@@ -20,12 +20,12 @@ const pageRewrites = [
         destination: "/lists/:slug/page/1"
     },
     {
-        source: "/albums/:id",
-        destination: "/albums/:id/page/1"
+        source: "/albums/:slug",
+        destination: "/albums/:slug/page/1"
     },
     {
-        source: "/tags/:id",
-        destination: "/tags/:id/page/1"
+        source: "/tags/:slug",
+        destination: "/tags/:slug/page/1"
     },
     {
         source: "/articles/:slug.md",

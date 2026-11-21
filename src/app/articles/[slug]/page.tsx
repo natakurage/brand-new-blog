@@ -59,7 +59,7 @@ export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
 
 export async function generateStaticParams() {
   const slugs = await repositories.articles.allSlugs();
-  return slugs.map((slug) => ({ slug, key: undefined }));
+  return slugs.map((slug) => ({ slug }));
 }
 
 async function JsonLD({ post }: { post: BlogPost }) {
