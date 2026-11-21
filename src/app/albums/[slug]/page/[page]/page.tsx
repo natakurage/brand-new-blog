@@ -14,7 +14,7 @@ const getAlbum = cache((slug: string) => (
   repositories.albums.findBySlug(slug, { preview: false })
 ));
 
-export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
+export async function generateMetadata(props: PageProps<"/albums/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug } = params;
@@ -66,7 +66,7 @@ function JsonLD({ album }: { album: Album }) {
   );
 }
 
-export default async function AlbumPage(props: { params: Promise<{ slug: string, page: string }> }) {
+export default async function AlbumPage(props: PageProps<"/albums/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug, page } = params;

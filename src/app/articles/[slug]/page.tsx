@@ -30,7 +30,7 @@ const getPost = cache((slug: string, isEnabled: boolean) => (
   repositories.articles.findBySlug(slug, { preview: isEnabled })
 ));
 
-export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata(props: PageProps<"/articles/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
@@ -112,7 +112,7 @@ async function JsonLD({ post }: { post: BlogPost }) {
   );
 }
 
-export default async function ArticlePage(props: { params: Promise<{ slug: string }> }) {
+export default async function ArticlePage(props: PageProps<"/articles/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();

@@ -32,7 +32,7 @@ const getSong = cache((slug: string, isEnabled: boolean) => (
   repositories.songs.findBySlug(slug, { preview: isEnabled })
 ));
 
-export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata(props: PageProps<"/songs/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { isEnabled } = await draftMode();
@@ -163,7 +163,7 @@ function JsonLD({ song }: { song: Song }) {
   );
 }
 
-export default async function SongPage(props: { params: Promise<{ slug: string }> }) {
+export default async function SongPage(props: PageProps<"/songs/[slug]">) {
   const params = parseParams(SlugParams, await props.params);
   const { isEnabled } = await draftMode();
   const { slug } = params;

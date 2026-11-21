@@ -1,7 +1,7 @@
 import * as v from "valibot";
 import ItemList from "@/components/ItemList";
 import { repositories } from "@/lib/repositories";
-import { PageNumber, parseParams } from "@/lib/params";
+import { PageNumber, parseSearchParams } from "@/lib/params";
 
 const SearchParams = v.object({
   q: v.optional(v.pipe(v.string(), v.trim())),
@@ -16,8 +16,8 @@ const searchHref = (q: string, n: number): string => {
   return `/search?${params}`;
 };
 
-export async function generateMetadata(props: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const { q } = parseParams(SearchParams, await props.searchParams);
+export async function generateMetadata(props: PageProps<"/search">) {
+  const { q } = parseSearchParams(SearchParams, await props.searchParams);
   const data = await repositories.siteSettings.get();
   return {
     title: (q ? `"${q}"の検索結果` : "検索") + " - " + data.siteName,
@@ -27,8 +27,8 @@ export async function generateMetadata(props: { searchParams: Promise<Record<str
   };
 }
 
-export default async function SearchPage(props: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const { q, page: pageNum = 1 } = parseParams(SearchParams, await props.searchParams);
+export default async function SearchPage(props: PageProps<"/search">) {
+  const { q, page: pageNum = 1 } = parseSearchParams(SearchParams, await props.searchParams);
   if (!q) {
     return (
       <div className="space-y-4">

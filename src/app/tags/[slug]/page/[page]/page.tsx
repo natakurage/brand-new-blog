@@ -5,7 +5,7 @@ import { repositories } from "@/lib/repositories";
 import { notFound } from "next/navigation";
 import { hrefOf, pageHref } from "@/lib/content/href";
 
-export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
+export async function generateMetadata(props: PageProps<"/tags/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const { slug, page } = params;
   const tag = await repositories.tags.findBySlug(slug, { preview: false });
@@ -22,7 +22,7 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug, page: "1" }));
 }
 
-export default async function TagPage(props: { params: Promise<{ slug: string, page: string }> }) {
+export default async function TagPage(props: PageProps<"/tags/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug, page } = params;

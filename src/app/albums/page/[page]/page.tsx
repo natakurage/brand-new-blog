@@ -4,14 +4,14 @@ import { repositories } from "@/lib/repositories";
 import { pageHref } from "@/lib/content/href";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata(props: { params: Promise<{ page: string }> }) {
+export async function generateMetadata(props: PageProps<"/albums/page/[page]">) {
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const title = "アルバム一覧 - " + data.siteName + (params.page === 1 ? "" : `: Page ${params.page}`);
   return { title };
 }
 
-export default async function AlbumsPage(props: { params: Promise<{ page: string }> }) {
+export default async function AlbumsPage(props: PageProps<"/albums/page/[page]">) {
   const params = parseParams(PageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const pageNum = params.page;

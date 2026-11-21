@@ -9,7 +9,7 @@ const getList = cache((slug: string) => (
   repositories.postLists.findBySlug(slug, { preview: false })
 ));
 
-export async function generateMetadata(props: { params: Promise<{ slug: string, page: string }> }) {
+export async function generateMetadata(props: PageProps<"/lists/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const data = await repositories.siteSettings.get();
   const { slug } = params;
@@ -26,7 +26,7 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug, page: "1" }));
 }
 
-export default async function ListsPage(props: { params: Promise<{ slug: string, page: string }> }) {
+export default async function ListsPage(props: PageProps<"/lists/[slug]/page/[page]">) {
   const params = parseParams(SlugPageParams, await props.params);
   const { slug, page } = params;
   const data = await repositories.siteSettings.get();

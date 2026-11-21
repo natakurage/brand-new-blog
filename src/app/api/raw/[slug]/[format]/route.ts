@@ -9,7 +9,7 @@ import { CALENDAR, ORIGIN } from "@/lib/config";
 import { toPlainText } from "@/lib/content/summary";
 import { rawFormats } from "@/lib/content/href";
 
-const RawParams = v.object({ slug: SlugParam, format: v.picklist(rawFormats) });
+const RawParams = v.strictObject({ slug: SlugParam, format: v.pipe(v.string(), v.picklist(rawFormats)) });
 
 const getPost = cache((slug: string, isEnabled: boolean) =>
   repositories.articles.findBySlug(slug, { preview: isEnabled })
@@ -27,7 +27,7 @@ export async function generateStaticParams() {
 
 export async function GET(
   _request: Request,
-  props: { params: Promise<{ slug: string; format: string }> }
+  props: RouteContext<"/api/raw/[slug]/[format]">
 ) {
   const { slug, format } = parseParams(RawParams, await props.params);
 
