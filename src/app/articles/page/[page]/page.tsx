@@ -32,6 +32,13 @@ export default async function ArticlesPage(props: PageProps<"/articles/page/[pag
     notFound();
   }
   return (
-    <ItemList hrefFor={(n) => pageHref(indexHref("article"), n)} items={posts} page={pageNum} total={total} limit={data.itemsPerPage} />
+    <ItemList
+      hrefFor={(n) => pageHref(indexHref("article"), n)}
+      items={posts}
+      page={pageNum}
+      total={total}
+      limit={data.itemsPerPage}
+      allItems={await repositories.articles.addresses()}
+    />
   );
 }

@@ -12,6 +12,7 @@ import type {
   SongSummary,
   Tag,
 } from "./types";
+import type { Addressable } from "./href";
 
 /*
  * 実装が守る契約
@@ -49,9 +50,14 @@ export interface ArticleRepository extends SlugLookup<BlogPost> {
   // タグを共有する記事を、article 自身を除いて返す
   related(article: ArticleMeta, limit: number, ctx: ReadContext): Promise<ArticleSummary[]>;
   search(text: string, page: PageRequest, ctx: ReadContext): Promise<Page<ArticleSummary>>;
+  // 一覧・検索に当たるものすべての識別子を、同じ順に返す。本文などを取らないので軽い
+  addresses(ctx: ReadContext): Promise<Addressable[]>;
+  searchAddresses(text: string, ctx: ReadContext): Promise<Addressable[]>;
 }
 
-export interface SongRepository extends SlugLookup<Song>, PagedList<SongSummary> {}
+export interface SongRepository extends SlugLookup<Song>, PagedList<SongSummary> {
+  addresses(ctx: ReadContext): Promise<Addressable[]>;
+}
 
 export interface PostListRepository extends SlugLookup<PostList>, PagedList<PostListSummary> {
   containing(articleSlug: string, ctx: ReadContext): Promise<PostListSummary[]>;
@@ -64,6 +70,7 @@ export interface AlbumRepository extends SlugLookup<Album>, PagedList<AlbumSumma
 export interface TagRepository extends SlugLookup<Tag> {
   // そのタグが付いたもの（記事・曲・リスト・アルバム）を、新しい順に混ぜて返す
   tagged(tagSlug: string, page: PageRequest, ctx: ReadContext): Promise<Page<ContentSummary>>;
+  taggedAddresses(tagSlug: string, ctx: ReadContext): Promise<Addressable[]>;
 }
 
 export interface SiteSettingsRepository {

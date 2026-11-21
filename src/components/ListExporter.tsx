@@ -1,11 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { ContentSummary } from "@/lib/content/types";
 import { MdClose, MdContentCopy } from "react-icons/md";
 import { PiExport } from "react-icons/pi";
 import useTimeout from "@/app/hooks/useTimeout";
-import { absoluteUrlOf } from "@/lib/content/href";
+import { absoluteUrlOf, type Addressable } from "@/lib/content/href";
 
 const formats = {
   normal: "通常",
@@ -26,10 +25,21 @@ const separatorValues = {
 } as const;
 
 type Format = keyof typeof formats;
+type Scope = "page" | "all";
 type Separator = keyof typeof separators;
 
-export default function ListExporter({ origin, items }: { origin: string; items: ContentSummary[] }) {
+export default function ListExporter(
+  { origin, pageItems, allItems }: { origin: string; pageItems: Addressable[]; allItems?: Addressable[] }
+) {
   const modalRef = useRef<HTMLDialogElement>(null);
+  const [scope, setScope] = useState<Scope>("page");
+  // 全項目が表示中の項目より多いときだけ、範囲を選べる
+  const canChooseScope = !!allItems && allItems.length > pageItems.length;
+  const items = canChooseScope && scope === "all" ? allItems : pageItems;
+  const scopes: Record<Scope, string> = {
+    page: `表示中の項目（${pageItems.length}件）`,
+    all: `すべての項目（${allItems?.length ?? 0}件）`,
+  };
   const [format, setFormat] = useState<Format>("normal");
   const [separator, setSeparator] = useState<Separator>("newline");
   const [copied, setCopied] = useState(false);
@@ -71,6 +81,27 @@ export default function ListExporter({ origin, items }: { origin: string; items:
           </form>
           <form className="flex flex-col space-y-1">
             <h2 className="text-2xl font-bold mb-4">URL一覧をエクスポート</h2>
+            {
+              canChooseScope && <>
+                <h3 className="font-bold">範囲</h3>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {
+                    (["page", "all"] as const).map((s) => (
+                      <label className="w-full flex items-center gap-2" key={s}>
+                        <input
+                          type="radio"
+                          name="scope"
+                          value={s}
+                          checked={scope === s}
+                          onChange={() => setScope(s)}
+                        />
+                        {scopes[s]}
+                      </label>
+                    ))
+                  }
+                </div>
+              </>
+            }
             <h3 className="font-bold">記事のフォーマット</h3>
             <div className="flex flex-wrap gap-2">
               {

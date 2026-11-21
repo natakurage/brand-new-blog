@@ -28,7 +28,8 @@ import type {
   SanityPostListResolved,
   SanitySongResolved,
 } from "./types";
-import type { SanityEntryOf } from "./kinds";
+import { kindOfSanityType, type SanityEntryOf } from "./kinds";
+import type { Addressable } from "@/lib/content/href";
 
 // Sanity の文書の形を知っているのは、このファイルと queries.ts だけにする
 
@@ -149,6 +150,14 @@ export const toAlbum = (entry: SanityMusicAlbumResolved): Album => ({
 });
 
 export const toAlbumSummary = (entry: SanityMusicAlbumResolved): AlbumSummary => toAlbumMeta(entry);
+
+export const toAddress = ({ _type, slug }: { _type: string; slug: string }): Addressable => {
+  const kind = kindOfSanityType.get(_type);
+  if (!kind) {
+    throw new Error(`種類に翻訳できない型の文書が届いた: ${_type}`);
+  }
+  return { kind, slug };
+};
 
 // 型を問わず取ってきた文書を要約に翻訳する。変換を持たない型の文書が来たら例外にする
 export const toContentSummary = (entry: SanityEntryOf[ContentKind]): ContentSummary => {

@@ -49,10 +49,7 @@ async function SearchResults(props: Pick<PageProps<"/search">, "searchParams">) 
     );
   }
   const data = await repositories.siteSettings.get();
-  const { items: posts, total } = await repositories.articles.search(
-    q,
-    { page: pageNum, size: data.itemsPerPage },
-  );
+  const { items: posts, total } = await repositories.articles.search(q, { page: pageNum, size: data.itemsPerPage });
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold">&ldquo;{q}&rdquo;の検索結果</h1>
@@ -65,6 +62,7 @@ async function SearchResults(props: Pick<PageProps<"/search">, "searchParams">) 
               total={total}
               page={pageNum}
               limit={data.itemsPerPage}
+              allItems={await repositories.articles.searchAddresses(q)}
             />
       }
     </div>

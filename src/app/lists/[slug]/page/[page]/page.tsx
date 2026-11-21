@@ -64,6 +64,7 @@ export default async function ListsPage(props: PageProps<"/lists/[slug]/page/[pa
         page={pageNum}
         limit={data.itemsPerPage}
         context={list}
+        allItems={list.items}
       />
     </div>
   );

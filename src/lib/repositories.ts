@@ -62,6 +62,17 @@ async function relatedArticles(article: ArticleMeta, limit: number) {
   return items;
 }
 
+// 識別子の一覧が変わるのは所属が変わるときだけなので、種類のタグだけを付ける
+async function articleAddresses() {
+  "use cache";
+  tagWith([kindTag("article")]);
+  return source.articles.addresses(await readContext());
+}
+
+async function searchArticleAddresses(text: string) {
+  return source.articles.searchAddresses(text, await readContext());
+}
+
 // 検索語ごとの結果は再利用されにくく、本文の変更でも結果が変わるため、キャッシュしない
 async function searchArticles(text: string, page: PageRequest) {
   return source.articles.search(text, page, await readContext());
@@ -82,6 +93,12 @@ async function listSongs(page: PageRequest) {
   const result = await source.songs.list(page, await readContext());
   listed("song", result.items);
   return result;
+}
+
+async function songAddresses() {
+  "use cache";
+  tagWith([kindTag("song")]);
+  return source.songs.addresses(await readContext());
 }
 
 async function findPostList(slug: string) {
@@ -149,6 +166,12 @@ async function taggedItems(tagSlug: string, page: PageRequest) {
   return result;
 }
 
+async function taggedAddresses(tagSlug: string) {
+  "use cache";
+  tagWith([taggedTag]);
+  return source.tags.taggedAddresses(tagSlug, await readContext());
+}
+
 async function getSiteSettings() {
   "use cache";
   tagWith([siteSettingsTag]);
@@ -169,8 +192,10 @@ export const repositories: SiteRepositories = {
     list: listArticles,
     related: relatedArticles,
     search: searchArticles,
+    addresses: articleAddresses,
+    searchAddresses: searchArticleAddresses,
   },
-  songs: { findBySlug: findSong, allSlugs: allSongSlugs, list: listSongs },
+  songs: { findBySlug: findSong, allSlugs: allSongSlugs, list: listSongs, addresses: songAddresses },
   postLists: {
     findBySlug: findPostList,
     allSlugs: allPostListSlugs,
@@ -183,6 +208,6 @@ export const repositories: SiteRepositories = {
     list: listAlbums,
     containing: albumsContaining,
   },
-  tags: { findBySlug: findTag, allSlugs: allTagSlugs, tagged: taggedItems },
+  tags: { findBySlug: findTag, allSlugs: allTagSlugs, tagged: taggedItems, taggedAddresses },
   siteSettings: { get: getSiteSettings },
 };

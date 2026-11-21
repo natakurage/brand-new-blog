@@ -105,6 +105,7 @@ export default async function AlbumPage(props: PageProps<"/albums/[slug]/page/[p
           page={pageNum}
           limit={data.itemsPerPage}
           context={album}
+          allItems={album.items}
           showDate={false}
         />
       </div>

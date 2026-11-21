@@ -11,6 +11,8 @@ const articleProjection = /* groq */ `{ ..., "tags": tags[${refHasSlug}]->, "ima
 const songProjection = /* groq */ `{ ..., "tags": tags[${refHasSlug}]-> }`;
 const postListProjection = /* groq */ `{ ..., "tags": tags[${refHasSlug}]->, "posts": posts[${refHasSlug}]->${articleProjection} }`;
 const albumProjection = /* groq */ `{ ..., "tags": tags[${refHasSlug}]->, "tracks": tracks[${refHasSlug}]->${songProjection} }`;
+// 識別子だけ。一覧の全件を本文なしで取るときに使う
+const addressProjection = /* groq */ `{ _type, "slug": slug.current }`;
 const collectionSummaryProjection = /* groq */ `{ ..., "tags": tags[${refHasSlug}]-> }`;
 
 const articleFilter = /* groq */ `_type == "${sanityTypeOf.article}" && ${hasSlug}
@@ -29,6 +31,10 @@ export const relatedArticlesQuery = defineQuery(`*[_type == "${sanityTypeOf.arti
 
 const articleSearchFilter = /* groq */ `_type == "${sanityTypeOf.article}" && ${hasSlug} && (body match $terms || title match $terms)`;
 
+export const articleAddressesQuery = defineQuery(`*[${articleFilter}] | order(_createdAt desc)${addressProjection}`);
+
+export const articleSearchAddressesQuery = defineQuery(`*[${articleSearchFilter}] | order(_createdAt desc)${addressProjection}`);
+
 export const articleSearchQuery = defineQuery(`{
   "items": *[${articleSearchFilter}] | order(_createdAt desc) [$start...$end]${articleProjection},
   "total": count(*[${articleSearchFilter}])
@@ -42,6 +48,8 @@ export const songListQuery = defineQuery(`{
   "items": *[_type == "${sanityTypeOf.song}" && ${hasSlug}] | order(_createdAt desc) [$start...$end]${songProjection},
   "total": count(*[_type == "${sanityTypeOf.song}" && ${hasSlug}])
 }`);
+
+export const songAddressesQuery = defineQuery(`*[_type == "${sanityTypeOf.song}" && ${hasSlug}] | order(_createdAt desc)${addressProjection}`);
 
 export const songSlugsQuery = defineQuery(`*[_type == "${sanityTypeOf.song}" && ${hasSlug}].slug.current`);
 
@@ -93,3 +101,5 @@ export const siteSettingsQuery = defineQuery(`*[_type == "globalSettings"][0]{
 }`);
 
 export const linkListsQuery = defineQuery(`*[_type == "linkList" && id.current in $ids]{ ..., "item": item[]-> }`);
+
+export const taggedAddressesQuery = defineQuery(`*[${taggedFilter}] | order(_createdAt desc)${addressProjection}`);

@@ -50,7 +50,8 @@ export default async function TagPage(props: PageProps<"/tags/[slug]/page/[page]
       {
         items.length === 0
           ? <p className="my-4">このタグがつけられたページはありません。</p>
-          : <ItemList hrefFor={(n) => pageHref(hrefOf(tag), n)} items={items} total={total} page={pageNum} limit={data.itemsPerPage} showKind />
+          : <ItemList hrefFor={(n) => pageHref(hrefOf(tag), n)} items={items} total={total} page={pageNum} limit={data.itemsPerPage} showKind
+            allItems={await repositories.tags.taggedAddresses(tag.slug)} />
       }
     </div>
   );

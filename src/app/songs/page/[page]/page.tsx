@@ -32,6 +32,13 @@ export default async function SongsPage(props: PageProps<"/songs/page/[page]">) 
     notFound();
   }
   return (
-    <ItemList hrefFor={(n) => pageHref(indexHref("song"), n)} items={songs} page={pageNum} total={total} limit={data.itemsPerPage} />
+    <ItemList
+      hrefFor={(n) => pageHref(indexHref("song"), n)}
+      items={songs}
+      page={pageNum}
+      total={total}
+      limit={data.itemsPerPage}
+      allItems={await repositories.songs.addresses()}
+    />
   );
 }
