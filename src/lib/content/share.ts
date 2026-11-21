@@ -1,4 +1,4 @@
-import type { BlogData } from "./types";
+import type { CollectionSummary, ItemSummary } from "./types";
 import { absoluteUrlOf } from "./href";
 
 interface ShareInfo {
@@ -6,7 +6,7 @@ interface ShareInfo {
   url: string;
 }
 
-export const getShareInfo = (item: BlogData, siteName: string, origin: string): ShareInfo => {
+export const getShareInfo = (item: ItemSummary | CollectionSummary, siteName: string, origin: string): ShareInfo => {
   return {
     text: `${item.title} - ${siteName}`,
     url: absoluteUrlOf(item, origin)

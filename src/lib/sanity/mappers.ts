@@ -124,6 +124,8 @@ const toAlbumMeta = (entry: SanityMusicAlbumResolved): AlbumMeta => ({
   title: entry.title ?? "Untitled Album",
   slug: entry.slug?.current ?? "",
   description: entry.description,
+  createdAt: new Date(entry._createdAt),
+  updatedAt: new Date(entry._updatedAt),
   releaseDate: entry.releaseDate,
   artist: entry.artist,
   credit: entry.credit,

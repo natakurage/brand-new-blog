@@ -40,25 +40,21 @@ export interface GlobalSettings {
   appleTouchIcon: string;
 }
 
-export interface BlogData {
-  kind: Kind;
+// kind を持たない共通部分。kind は末端の型でリテラルとして決める
+export interface ContentBase {
   title: string;
   slug: string;
   description?: string;
   tags: Tag[];
 }
 
-export interface BlogItemMeta extends BlogData {
+export interface WorkBase extends ContentBase {
   createdAt: Date;
   updatedAt: Date;
   license: License;
 }
 
-export interface BlogItem extends BlogItemMeta {
-  content: string;
-}
-
-export interface ArticleMeta extends BlogItemMeta {
+export interface ArticleMeta extends WorkBase {
   kind: "article";
   mainImage?: string;
   showToc?: boolean;
@@ -68,7 +64,7 @@ export interface BlogPost extends ArticleMeta, Digest {
   content: string;
 }
 
-export interface SongMeta extends BlogItemMeta {
+export interface SongMeta extends WorkBase {
   kind: "song";
   artist: string[];
   credit?: string[];
@@ -82,7 +78,7 @@ export interface Song extends SongMeta, Digest {
   lyrics?: string;
 }
 
-export interface PostListMeta extends BlogData {
+export interface PostListMeta extends ContentBase {
   kind: "postList";
 }
 
@@ -90,12 +86,11 @@ export interface PostList extends PostListMeta {
   items: ArticleSummary[];
 }
 
-export interface AlbumMeta extends BlogData {
+export interface AlbumMeta extends WorkBase {
   kind: "album";
   releaseDate?: string;
   artist?: string[];
   credit?: string[];
-  license: License;
 }
 
 export interface Album extends AlbumMeta {
