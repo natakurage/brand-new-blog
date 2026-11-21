@@ -19,6 +19,7 @@ export interface GlobalSettings {
   description: string;
   author: string;
   authorUrl?: string;
+  // 「Copyright © 年」に続く権利者の表記。前置きと年は表示する側が付ける
   copyright: string;
   donate?: string;
   donateUrl?: string;

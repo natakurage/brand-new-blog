@@ -18,7 +18,6 @@ import type {
 } from "@/lib/content/types";
 import type { CcLicenseId, License } from "@/lib/content/license";
 import { digestOf } from "@/lib/content/summary";
-import { CALENDAR } from "@/lib/config";
 import type {
   SanityBlogPostResolved,
   SanityGlobalSettingsResolved,
@@ -165,12 +164,13 @@ const toLinkItems = (list?: SanityLinkListResolved): LinkItem[] => {
 
 export const toSiteSettings = (gs: SanityGlobalSettingsResolved, linkLists: SanityLinkListResolved[]): GlobalSettings => {
   const linkList = (id: string) => linkLists.find((list) => list.id?.current === id);
+  const author = gs.author ?? "Unknown Author";
   return {
     siteName: gs.siteName ?? "Unnamed Blog",
     description: gs.description ?? "",
-    author: gs.author ?? "Unknown Author",
+    author,
     authorUrl: gs.authorUrl,
-    copyright: gs.copyright ?? "Copyright © " + CALENDAR.year(new Date()) + " " + gs.author,
+    copyright: gs.copyright ?? author,
     donate: gs.donate,
     donateUrl: gs.donateUrl,
     bio: gs.bio ?? "",
