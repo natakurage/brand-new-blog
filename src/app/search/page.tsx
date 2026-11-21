@@ -3,19 +3,12 @@ import * as v from "valibot";
 import ItemList from "@/components/ItemList";
 import { repositories } from "@/lib/repositories";
 import { PageNumber, parseSearchParams } from "@/lib/params";
+import { searchHref } from "@/lib/content/href";
 
 const SearchParams = v.object({
   q: v.optional(v.pipe(v.string(), v.trim())),
   page: v.optional(PageNumber),
 });
-
-const searchHref = (q: string, n: number): string => {
-  const params = new URLSearchParams({ q });
-  if (n !== 1) {
-    params.set("page", String(n));
-  }
-  return `/search?${params}`;
-};
 
 export async function generateMetadata(props: PageProps<"/search">) {
   const { q } = parseSearchParams(SearchParams, await props.searchParams);

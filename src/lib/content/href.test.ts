@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { absoluteUrlOf, hrefIn, hrefOf, pageHref } from "./href";
+import { absoluteUrlOf, hrefIn, hrefOf, pageHref, searchHref } from "./href";
 
 describe("hrefOf", () => {
   test("種類ごとの区切りの下に slug を置く", () => {
@@ -26,5 +26,12 @@ describe("hrefIn", () => {
   test("リストの slug をクエリとしてエンコードする", () => {
     expect(hrefIn({ kind: "article", slug: "a" }, { kind: "postList", slug: "日本 語&x" }))
       .toBe("/articles/a?list=%E6%97%A5%E6%9C%AC+%E8%AA%9E%26x");
+  });
+});
+
+describe("searchHref", () => {
+  test("検索語をクエリとしてエンコードし、1ページ目は page を付けない", () => {
+    expect(searchHref("C# & C++", 1)).toBe("/search?q=C%23+%26+C%2B%2B");
+    expect(searchHref("a", 2)).toBe("/search?q=a&page=2");
   });
 });

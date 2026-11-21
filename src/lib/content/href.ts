@@ -43,3 +43,13 @@ export const listParam = "list";
 export const hrefIn = (item: Addressable, collection: Addressable): string => {
   return `${hrefOf(item)}?${new URLSearchParams({ [listParam]: collection.slug })}`;
 };
+
+export const searchPath = "/search";
+
+export const searchHref = (q: string, n: number): string => {
+  const params = new URLSearchParams({ q });
+  if (n !== 1) {
+    params.set("page", String(n));
+  }
+  return `${searchPath}?${params}`;
+};

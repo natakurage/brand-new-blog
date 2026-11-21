@@ -1,6 +1,6 @@
 import { expectTypeOf, test } from "vitest";
 import type { AppRoutes, RewriteRoutes } from "../../.next/types/routes";
-import type { RawFormat, SegmentOf } from "@/lib/content/href";
+import type { RawFormat, SegmentOf, searchPath } from "@/lib/content/href";
 import type { Kind } from "@/lib/content/types";
 
 // 型だけの照合なので tsc で確かめる。ルートの型は next typegen（build・dev でも）が src/app と next.config から作る
@@ -15,4 +15,8 @@ test("hrefOf のパスはルートとして実在する", () => {
 
 test("rawHref のパスはルートとして実在する", () => {
   expectTypeOf<`/${SegmentOf<"article">}/[slug].${RawFormat}`>().toExtend<Routes>();
+});
+
+test("検索のパスはルートとして実在する", () => {
+  expectTypeOf<typeof searchPath>().toExtend<Routes>();
 });

@@ -3,6 +3,7 @@
 import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
 import { MdSearch } from "react-icons/md";
+import { searchHref } from "@/lib/content/href";
 
 export default function SearchBar({ onSubmit }: { onSubmit?: () => void }) {
   const [query, setQuery] = useState("");
@@ -12,7 +13,7 @@ export default function SearchBar({ onSubmit }: { onSubmit?: () => void }) {
     e.preventDefault();
     if (query.length < 2) return;
     onSubmit?.();
-    router.push(`/search?q=${query}`);
+    router.push(searchHref(query, 1));
   };
 
   return (
