@@ -5,12 +5,12 @@ import { repositories } from "@/lib/repositories";
 import NextTopLoader from "nextjs-toploader";
 import AntiAdblock from "@/components/AntiAdblock";
 import { ThemeProvider } from "next-themes";
-import { VisualEditing } from "next-sanity/visual-editing";
 import { isPreview } from "@/lib/preview";
 import PreviewWarning from "@/components/PreviewWarning";
 import SideBar from "@/components/SideBar";
 import { ORIGIN } from "@/lib/config";
 import { siteOpenGraph } from "@/lib/metadata";
+import { PreviewTools } from "@/lib/source";
 
 export async function generateMetadata() {
   const data = await repositories.siteSettings.get();
@@ -51,7 +51,7 @@ export default async function RootLayout({
             <div className="max-w-2xl p-3 w-full">
               {preview && <PreviewWarning />}
               {children}
-              {preview && <VisualEditing />}
+              {preview && <PreviewTools />}
             </div>
             { data.useSidebar && <SideBar pages={data.navbarPages} /> }
           </div>
