@@ -26,7 +26,7 @@ export default async function ShareButtons({ shareText, shareUrl, fullText }: { 
   hatenaShareURL.searchParams.append("btitle", shareText);
   hatenaShareURL.searchParams.append("url", shareUrl);
 
-  const lineShareURL = new URL("https://line.me/R/msg/text");
+  const lineShareURL = new URL("https://line.me/R/share");
   lineShareURL.searchParams.append("text", `${shareText}\n${shareUrl}`);
 
   const socialButtons: SocialButton[] = [
