@@ -1,7 +1,7 @@
 import { expectTypeOf, test } from "vitest";
 import type { AppRouteHandlerRoutes, AppRoutes, RewriteRoutes } from "../../.next/types/routes";
-import type { IndexedKind, RawFormat, SegmentOf, rssPath, searchPath } from "@/lib/content/href";
-import type { Kind } from "@/lib/content/types";
+import type { RawFormat, SegmentOf, rssPath, searchPath } from "@/lib/content/href";
+import type { CollectionKind, ContentKind, Kind, Tag } from "@/lib/content/types";
 
 // 型だけの照合なので tsc で確かめる。ルートの型は next typegen（build・dev でも）が src/app と next.config から作る
 type Routes = AppRoutes | RewriteRoutes | AppRouteHandlerRoutes;
@@ -14,12 +14,12 @@ test("hrefOf のパスはルートとして実在する", () => {
 });
 
 test("一覧のパスとそのページ番号のパスはルートとして実在する", () => {
-  expectTypeOf<WithoutRoute<{ [K in IndexedKind]: `/${SegmentOf<K>}` }>>().toBeNever();
-  expectTypeOf<WithoutRoute<{ [K in IndexedKind]: `/${SegmentOf<K>}/page/[page]` }>>().toBeNever();
+  expectTypeOf<WithoutRoute<{ [K in ContentKind]: `/${SegmentOf<K>}` }>>().toBeNever();
+  expectTypeOf<WithoutRoute<{ [K in ContentKind]: `/${SegmentOf<K>}/page/[page]` }>>().toBeNever();
 });
 
 test("リスト・アルバム・タグのページ番号のパスはルートとして実在する", () => {
-  type Paged = "postList" | "album" | "tag";
+  type Paged = CollectionKind | Tag["kind"];
   expectTypeOf<WithoutRoute<{ [K in Paged]: `/${SegmentOf<K>}/[slug]/page/[page]` }>>().toBeNever();
 });
 

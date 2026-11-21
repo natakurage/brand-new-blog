@@ -1,5 +1,5 @@
 import removeMd from "remove-markdown";
-import type { CollectionSummary, ItemSummary, Digest } from "./types";
+import { hasDigest, type ContentSummary, type Digest } from "./types";
 
 const lettersPerMinute = 500;
 const summaryLength = 100;
@@ -19,13 +19,6 @@ export const digestOf = (markdown: string): Digest => {
   return { excerpt, length, readingMinutes };
 };
 
-export const describe = (item: ItemSummary | CollectionSummary): string => {
-  switch (item.kind) {
-    case "article": case "song":
-      return item.description || item.excerpt;
-    case "postList": case "album":
-      return item.description || "";
-    default:
-      return item satisfies never;
-  }
+export const describe = (item: ContentSummary): string => {
+  return item.description || (hasDigest(item) ? item.excerpt : "");
 };

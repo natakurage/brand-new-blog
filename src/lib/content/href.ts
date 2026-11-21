@@ -1,4 +1,4 @@
-import type { BlogPost, Kind } from "./types";
+import type { BlogPost, ContentKind, Kind } from "./types";
 
 export type Addressable = { kind: Kind; slug: string };
 
@@ -13,10 +13,8 @@ const segments = {
 // フレームワークのルートと照合するために型として出す（src/app/routes.test.ts）
 export type SegmentOf<K extends Kind> = (typeof segments)[K];
 
-// 一覧のページを持つ種類（タグは個々のタグのページだけ）
-export type IndexedKind = "article" | "song" | "postList" | "album";
-
-export const indexHref = (kind: IndexedKind): string => `/${segments[kind]}`;
+// タグには一覧のページがなく、個々のタグのページだけがある
+export const indexHref = (kind: ContentKind): string => `/${segments[kind]}`;
 
 export const hrefOf = (item: Addressable): string => {
   return `/${segments[item.kind]}/${item.slug}`;

@@ -3,7 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import type { ArticleListQuery, PageRequest, ReadContext, Repositories } from "@/lib/content/repository";
 import type { ArticleMeta, Kind } from "@/lib/content/types";
 import type { Addressable } from "@/lib/content/href";
-import { containingTag, documentTag, documentsIn, kindTag, siteSettingsTag, tagsFor, type Taggable } from "@/lib/content/cacheTags";
+import { containingTag, documentTag, documentsIn, kindTag, siteSettingsTag, taggedTag, tagsFor, type Taggable } from "@/lib/content/cacheTags";
 import { source } from "@/lib/source";
 import { isPreview } from "@/lib/preview";
 
@@ -145,7 +145,7 @@ async function allTagSlugs() {
 async function taggedItems(tagSlug: string, page: PageRequest) {
   "use cache";
   const result = await source.tags.tagged(tagSlug, page, await readContext());
-  tagWith((["article", "song", "postList", "album"] as const).map(kindTag), result.items.flatMap(documentsIn));
+  tagWith([taggedTag], result.items.flatMap(documentsIn));
   return result;
 }
 

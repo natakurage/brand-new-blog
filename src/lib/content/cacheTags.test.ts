@@ -33,7 +33,7 @@ describe("tagsToInvalidate", () => {
 
   test("所属が変わりうる変更では種類のタグも無効にする", () => {
     expect(tagsToInvalidate({ target: "content", kind: "article", slugs: ["old", "new"], membershipChanged: true, items: [] }))
-      .toEqual(["article", "article:old", "article:new"]);
+      .toEqual(["article", "tagged", "article:old", "article:new"]);
   });
 
   test("リストの変更では、今含まれる項目の逆引きのタグも無効にする", () => {

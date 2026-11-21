@@ -6,6 +6,8 @@ import type {
   ArticleMeta,
   ArticleSummary,
   BlogPost,
+  ContentKind,
+  ContentSummary,
   GlobalSettings,
   LinkItem,
   PostList,
@@ -26,6 +28,7 @@ import type {
   SanityPostListResolved,
   SanitySongResolved,
 } from "./types";
+import type { SanityEntryOf } from "./kinds";
 
 // Sanity の文書の形を知っているのは、このファイルと queries.ts だけにする
 
@@ -146,6 +149,24 @@ export const toAlbum = (entry: SanityMusicAlbumResolved): Album => ({
 });
 
 export const toAlbumSummary = (entry: SanityMusicAlbumResolved): AlbumSummary => toAlbumMeta(entry);
+
+// 型を問わず取ってきた文書を要約に翻訳する。変換を持たない型の文書が来たら例外にする
+export const toContentSummary = (entry: SanityEntryOf[ContentKind]): ContentSummary => {
+  switch (entry._type) {
+    case "blogPost":
+      return toArticleSummary(entry);
+    case "song":
+      return toSongSummary(entry);
+    case "postList":
+      return toPostListSummary(entry);
+    case "musicAlbum":
+      return toAlbumSummary(entry);
+    default: {
+      const unsupported: never = entry;
+      throw new Error(`要約に翻訳できない型の文書が届いた: ${(unsupported as { _type: string })._type}`);
+    }
+  }
+};
 
 export const linkListIds = {
   socials: "socials",

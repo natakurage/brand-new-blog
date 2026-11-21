@@ -1,6 +1,6 @@
 import type { License } from "./license";
 
-export type Kind = "article" | "song" | "postList" | "album" | "tag";
+export type Kind = ContentKind | Tag["kind"];
 
 export interface LinkItem {
   href: string;
@@ -113,3 +113,20 @@ export type AlbumSummary = AlbumMeta;
 export type ItemSummary = ArticleSummary | SongSummary;
 export type CollectionSummary = PostListSummary | AlbumSummary;
 export type ContentSummary = ItemSummary | CollectionSummary;
+
+export type ItemKind = ItemSummary["kind"];
+export type CollectionKind = CollectionSummary["kind"];
+export type ContentKind = ContentSummary["kind"];
+
+// 本文を持ち、抜粋と分量があるもの（記事・曲）
+export const hasDigest = <T extends ContentBase>(value: T): value is Extract<T, Digest> => "excerpt" in value;
+
+// 作品として日付とライセンスを持つもの（記事・曲・アルバム）
+export const isWork = <T extends ContentBase>(value: T): value is Extract<T, WorkBase> => "createdAt" in value;
+
+type ItemKindIn<C extends CollectionKind> = Extract<PostList | Album, { kind: C }>["items"][number]["kind"];
+
+// リスト・アルバムに入る項目の種類
+export const itemKindIn: { [C in CollectionKind]: ItemKindIn<C> } = { postList: "article", album: "song" };
+
+export const isCollectionKind = (kind: Kind): kind is CollectionKind => Object.hasOwn(itemKindIn, kind);

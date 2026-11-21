@@ -2,11 +2,11 @@ import SiteLink from "./SiteLink";
 import { MdAccessTime } from "react-icons/md";
 import TagList from "./TagList";
 import { FaRegHourglass, FaRulerHorizontal } from "react-icons/fa6";
-import type { ContentSummary } from "@/lib/content/types";
+import { hasDigest, isWork, type ContentKind, type ContentSummary } from "@/lib/content/types";
 import { hrefIn, hrefOf, type Addressable } from "@/lib/content/href";
 import { CALENDAR } from "@/lib/config";
 
-const kindLabels: Record<ContentSummary["kind"], string> = {
+const kindLabels: Record<ContentKind, string> = {
   article: "記事",
   song: "曲",
   postList: "リスト",
@@ -17,28 +17,27 @@ export default function ListItem(
   { item, context, showLength = true, showDate = true, showKind = false }:
   { item: ContentSummary; context?: Addressable; showLength?: boolean; showDate?: boolean; showKind?: boolean }
 ) {
-  const isItem = item.kind === "article" || item.kind === "song";
-  // リストは日付を持たない
-  const createdAt = "createdAt" in item ? item.createdAt : undefined;
+  const digest = hasDigest(item) ? item : undefined;
+  const createdAt = isWork(item) ? item.createdAt : undefined;
   return (
     <article className="relative p-4 shadow-lg hover:bg-base-content/20 hover:shadow-xl rounded-lg wrap-break-word">
       {showKind && <span className="badge badge-sm badge-outline mb-1">{kindLabels[item.kind]}</span>}
       <h2 className="text-xl font-bold">
         {item.title}
       </h2>
-      <p>{isItem ? item.excerpt : item.description}</p>
+      <p>{digest ? digest.excerpt : item.description}</p>
       <TagList tags={item.tags} />
       <div className="flex flex-row gap-4 mt-2 justify-end text-sm text-base-content/70">
       {
-        showLength && isItem && <div className="flex flex-row gap-1">
+        showLength && digest && <div className="flex flex-row gap-1">
           <FaRulerHorizontal className="my-auto" />
-          {item.length}文字
+          {digest.length}文字
         </div>
       }
       {
-        showLength && isItem && <div className="flex flex-row gap-1">
+        showLength && digest && <div className="flex flex-row gap-1">
           <FaRegHourglass className="my-auto" />
-          {item.readingMinutes}分
+          {digest.readingMinutes}分
         </div>
       }
       {
@@ -48,7 +47,7 @@ export default function ListItem(
         </div>
       }
       </div>
-      <SiteLink href={context && isItem ? hrefIn(item, context) : hrefOf(item)} className="absolute w-full h-full top-0 left-0 z-1" />
+      <SiteLink href={context ? hrefIn(item, context) : hrefOf(item)} className="absolute w-full h-full top-0 left-0 z-1" />
     </article>
   );
 }

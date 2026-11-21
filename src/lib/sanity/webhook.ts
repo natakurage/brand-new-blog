@@ -3,7 +3,8 @@ import * as v from "valibot";
 import type { NextRequest } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 import type { Change, ChangeNotification } from "@/lib/content/change";
-import type { Kind } from "@/lib/content/types";
+import { isCollectionKind, itemKindIn } from "@/lib/content/types";
+import { kindOfSanityType } from "./kinds";
 
 /*
  * Sanity の webhook の設定と対になる。
@@ -13,19 +14,6 @@ import type { Kind } from "@/lib/content/types";
  *   "membershipChanged": delta::operation() != "update" || delta::changedAny((slug, tags)) }
  * Secret: 環境変数 SANITY_WEBHOOK_SECRET と同じ値
  */
-
-const kindOfSanityType = new Map<string, Kind>([
-  ["blogPost", "article"],
-  ["song", "song"],
-  ["postList", "postList"],
-  ["musicAlbum", "album"],
-  ["tag", "tag"],
-]);
-
-const itemKindOfSanityType = new Map<string, Kind>([
-  ["postList", "article"],
-  ["musicAlbum", "song"],
-]);
 
 const siteSettingsTypes = new Set(["globalSettings", "linkList", "linkItem"]);
 
@@ -53,7 +41,7 @@ export const toChange = (body: unknown): Change | null => {
   if (!kind) {
     return null;
   }
-  const itemKind = itemKindOfSanityType.get(_type);
+  const itemKind = isCollectionKind(kind) ? itemKindIn[kind] : null;
   return {
     target: "content",
     kind,
